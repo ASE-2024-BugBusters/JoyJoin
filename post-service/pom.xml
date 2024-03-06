@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.joyjoin</groupId>
-	<artifactId>posts-service</artifactId>
+	<artifactId>post-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>posts-service</name>
 	<description>Spring Boot Event-Service</description>

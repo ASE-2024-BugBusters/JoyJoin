@@ -30,7 +30,7 @@ jobs:
           args: --project-dir,event-service
           artifact-name: qodana-event-service
         env:
-          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN_EVENTS_SERVICE }}
+          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN_EVENT_SERVICE }}
 
   qodana-posts-service:
     runs-on: ubuntu-latest
@@ -38,24 +38,10 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: 'Qodana Posts-Service'
+      - name: 'Qodana Post-Service'
         uses: JetBrains/qodana-action@v2023.3
         with:
-          args: --project-dir,posts-service
-          artifact-name: qodana-posts-service
+          args: --project-dir,post-service
+          artifact-name: qodana-post-service
         env:
-          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN_POSTS_SERVICE }}
-
-  qodana-joyjoin-frontend:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: 'Qodana JoyJoin-Frontend'
-        uses: JetBrains/qodana-action@v2023.3
-        with:
-          args: --project-dir,joyjoin-frontend
-          artifact-name: qodana-joyjoin-frontend
-        env:
-          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN_JOYJOIN_FRONTEND }}
+          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN_POST_SERVICE }}
