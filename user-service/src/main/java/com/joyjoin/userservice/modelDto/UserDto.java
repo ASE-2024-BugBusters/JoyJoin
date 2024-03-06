@@ -12,7 +12,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-public class UserDto {
+public class UserDto extends DefaultProperties {
     private UUID id;
     private String firstName;
     private String lastName;
@@ -20,7 +20,5 @@ public class UserDto {
     private String accountName;
     private boolean loggedIn;
     private boolean deactivated;
-    private LocalDateTime createdOn;
-    private boolean isDeleted;
-    private LocalDateTime lastEdited;
+    private String postTag;
 }

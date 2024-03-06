@@ -4,6 +4,7 @@ import com.joyjoin.userservice.exception.EmailAlreadyExistsException;
 import com.joyjoin.userservice.exception.ErrorCode;
 import com.joyjoin.userservice.exception.ResourceNotFoundException;
 import com.joyjoin.userservice.model.User;
+import com.joyjoin.userservice.modelDto.PostDto;
 import com.joyjoin.userservice.modelDto.UserDto;
 import com.joyjoin.userservice.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +12,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -22,10 +22,12 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
+    private PostsApiClient postsApiClient;
 
-    public UserService(UserRepository userRepository, ModelMapper modelMapper) {
+    public UserService(UserRepository userRepository, ModelMapper modelMapper, PostsApiClient postsApiClient) {
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
+        this.postsApiClient = postsApiClient;
     }
 
     public UserDto saveUser(User user) {
@@ -38,6 +40,8 @@ public class UserService {
     }
 
     public List<UserDto> getAllUsers() {
+        List<PostDto> posts = postsApiClient.getAllPosts();
+        System.out.println(posts);
         List<User> users = userRepository.findAll();
         return users.stream().map(user -> modelMapper.map(user, UserDto.class)).collect(Collectors.toList());
     }

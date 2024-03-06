@@ -33,6 +33,7 @@ public class User extends DefaultProperties {
 
     private boolean loggedIn = false;
     private boolean deactivated = false;
+    private String postTag;
 
 
     /**
