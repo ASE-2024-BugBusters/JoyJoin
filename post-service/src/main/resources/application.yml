@@ -1,12 +1,12 @@
 server:
-  port: 8083
+  port: 8082
   error:
     include-stacktrace: always
     include-message: always
 
 spring:
   datasource:
-    url: "jdbc:postgresql://localhost:5432/userService"
+    url: "jdbc:postgresql://localhost:5432/postService"
     username: "postgres"
     password: "1234"
 
@@ -37,7 +37,7 @@ management:
 info:
   app:
     name: "Spring Boot JoyJoin"
-    description: "This is the JoyJoin UserService"
+    description: "This is the JoyJoin PostService"
     version: "0.0.1"
 
 logging:

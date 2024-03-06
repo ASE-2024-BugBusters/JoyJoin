@@ -4,7 +4,7 @@ on:
   pull_request:
   push:
 jobs:
-  qodana-user-service:
+  qodana-user-service-code-insprection:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -18,7 +18,7 @@ jobs:
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN_USER_SERVICE }}
 
-  qodana-event-service:
+  qodana-event-service-code-insprection:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -32,7 +32,7 @@ jobs:
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN_EVENT_SERVICE }}
 
-  qodana-posts-service:
+  qodana-post-service-code-insprection:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

@@ -1,12 +1,12 @@
 server:
-  port: 8083
+  port: 8081
   error:
     include-stacktrace: always
     include-message: always
 
 spring:
   datasource:
-    url: "jdbc:postgresql://localhost:5432/userService"
+    url: "jdbc:postgresql://localhost:5432/eventService"
     username: "postgres"
     password: "1234"
 
