@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
-    private PostsApiClient postsApiClient;
+    private final PostsApiClient postsApiClient;
 
     public UserService(UserRepository userRepository, ModelMapper modelMapper, PostsApiClient postsApiClient) {
         this.userRepository = userRepository;
