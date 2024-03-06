@@ -1,0 +1,61 @@
+name: Qodana
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+jobs:
+  qodana-user-service:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: 'Qodana User-Service'
+        uses: JetBrains/qodana-action@v2023.3
+        with:
+          args: --project-dir,user-service
+          artifact-name: qodana-user-service
+        env:
+          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN_USER_SERVICE }}
+
+  qodana-event-service:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: 'Qodana Event-Service'
+        uses: JetBrains/qodana-action@v2023.3
+        with:
+          args: --project-dir,event-service
+          artifact-name: qodana-event-service
+        env:
+          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN_EVENTS_SERVICE }}
+
+  qodana-posts-service:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: 'Qodana Posts-Service'
+        uses: JetBrains/qodana-action@v2023.3
+        with:
+          args: --project-dir,posts-service
+          artifact-name: qodana-posts-service
+        env:
+          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN_POSTS_SERVICE }}
+
+  qodana-joyjoin-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: 'Qodana JoyJoin-Frontend'
+        uses: JetBrains/qodana-action@v2023.3
+        with:
+          args: --project-dir,joyjoin-frontend
+          artifact-name: qodana-joyjoin-frontend
+        env:
+          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN_JOYJOIN_FRONTEND }}

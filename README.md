@@ -1,9 +1,2 @@
-![Auto Assign](https://github.com/ASE-2024-BugBusters/demo-repository/actions/workflows/auto-assign.yml/badge.svg)
-
-![Proof HTML](https://github.com/ASE-2024-BugBusters/demo-repository/actions/workflows/proof-html.yml/badge.svg)
-
-# Welcome to your organization's demo respository
-This code repository (or "repo") is designed to demonstrate the best GitHub has to offer with the least amount of noise.
-
-The repo includes an `index.html` file (so it can render a web page), two GitHub Actions workflows, and a CSS stylesheet dependency.
-asdf
+# Swagger API Documentation
+To see the Swagger API Documentation, run the service and go to this link: http://localhost:8085/swagger-ui/index.html#/
