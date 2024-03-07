@@ -1,10 +1,12 @@
 server:
-  port: 8083
+  port: 8085
   error:
     include-stacktrace: always
     include-message: always
 
 spring:
+  application:
+    name: "USER-SERVICE"
   datasource:
     url: "jdbc:postgresql://localhost:5432/userService"
     username: "postgres"
@@ -45,5 +47,10 @@ logging:
     org:
       springframework:
         web: INFO
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: "http://localhost:8761/eureka/"
 
 api.version: "v1"
