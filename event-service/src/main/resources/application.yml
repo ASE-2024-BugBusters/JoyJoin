@@ -5,6 +5,8 @@ server:
     include-message: always
 
 spring:
+  application:
+    name: "EVENT-SERVICE"
   datasource:
     url: "jdbc:postgresql://localhost:5432/eventService"
     username: "postgres"
@@ -46,4 +48,10 @@ logging:
       springframework:
         web: INFO
 
-api.version: "v1"
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: "http://localhost:8761/eureka/"
+
+api:
+  version: "v1"

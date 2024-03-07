@@ -5,6 +5,8 @@ server:
     include-message: always
 
 spring:
+  application:
+    name: "POST-SERVICE"
   datasource:
     url: "jdbc:postgresql://localhost:5432/postService"
     username: "postgres"
@@ -45,5 +47,9 @@ logging:
     org:
       springframework:
         web: INFO
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: "http://localhost:8761/eureka/"
 
 api.version: "v1"

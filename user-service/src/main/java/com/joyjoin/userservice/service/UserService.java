@@ -4,9 +4,10 @@ import com.joyjoin.userservice.exception.EmailAlreadyExistsException;
 import com.joyjoin.userservice.exception.ErrorCode;
 import com.joyjoin.userservice.exception.ResourceNotFoundException;
 import com.joyjoin.userservice.model.User;
-import com.joyjoin.userservice.modelDto.PostDto;
+import com.joyjoin.userservice.modelDto.postService.PostDto;
 import com.joyjoin.userservice.modelDto.UserDto;
 import com.joyjoin.userservice.repository.UserRepository;
+import com.joyjoin.userservice.service.postServiceApi.PostApiClient;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -22,12 +23,12 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
-    private final PostsApiClient postsApiClient;
+    private final PostApiClient postApiClient;
 
-    public UserService(UserRepository userRepository, ModelMapper modelMapper, PostsApiClient postsApiClient) {
+    public UserService(UserRepository userRepository, ModelMapper modelMapper, PostApiClient postApiClient) {
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
-        this.postsApiClient = postsApiClient;
+        this.postApiClient = postApiClient;
     }
 
     public UserDto saveUser(User user) {
@@ -40,10 +41,15 @@ public class UserService {
     }
 
     public List<UserDto> getAllUsers() {
-        List<PostDto> posts = postsApiClient.getAllPosts();
-        System.out.println(posts);
+        List<PostDto> posts = postApiClient.getAllPosts();
         List<User> users = userRepository.findAll();
-        return users.stream().map(user -> modelMapper.map(user, UserDto.class)).collect(Collectors.toList());
+        return users.stream().map(user -> {
+            UserDto userDto = modelMapper.map(user, UserDto.class);
+
+            // only to check if the API works: id does
+            userDto.setPostDto(posts);
+            return userDto;
+        }).collect(Collectors.toList());
     }
 
     public UserDto getUser(UUID uuid) {

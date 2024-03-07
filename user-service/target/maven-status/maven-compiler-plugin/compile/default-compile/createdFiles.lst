@@ -1,0 +1,17 @@
+com/joyjoin/userservice/service/UserService.class
+com/joyjoin/userservice/beanConfig/MapperConfig.class
+com/joyjoin/userservice/modelDto/postService/PostDto.class
+com/joyjoin/userservice/aspect/LoggingAspect.class
+com/joyjoin/userservice/exception/EmailAlreadyExistsException.class
+com/joyjoin/userservice/controller/UserController.class
+com/joyjoin/userservice/modelDto/UserDto$UserDtoBuilder.class
+com/joyjoin/userservice/UserServiceApplication.class
+com/joyjoin/userservice/model/template/DefaultProperties.class
+com/joyjoin/userservice/exception/GlobalExceptionHandler.class
+com/joyjoin/userservice/exception/ResourceNotFoundException.class
+com/joyjoin/userservice/model/User.class
+com/joyjoin/userservice/repository/UserRepository.class
+com/joyjoin/userservice/modelDto/UserDto.class
+com/joyjoin/userservice/exception/ErrorDetails.class
+com/joyjoin/userservice/service/postServiceApi/PostApiClient.class
+com/joyjoin/userservice/exception/ErrorCode.class

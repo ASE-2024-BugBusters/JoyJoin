@@ -1,10 +1,12 @@
 package com.joyjoin.userservice.modelDto;
 
 import com.joyjoin.userservice.model.template.DefaultProperties;
+import com.joyjoin.userservice.modelDto.postService.PostDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @NoArgsConstructor
@@ -20,5 +22,5 @@ public class UserDto extends DefaultProperties {
     private String accountName;
     private boolean loggedIn;
     private boolean deactivated;
-    private String postTag;
+    private List<PostDto> postDto;
 }
