@@ -2,6 +2,8 @@ name: Qodana
 on:
   workflow_dispatch:
   push:
+    branches:
+      - main
 jobs:
   qodana-user-service-code-inspection:
     runs-on: ubuntu-latest
