@@ -1,10 +1,9 @@
 name: Qodana
 on:
   workflow_dispatch:
-  pull_request:
   push:
 jobs:
-  qodana-user-service-code-insprection:
+  qodana-user-service-code-inspection:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -18,7 +17,7 @@ jobs:
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN_USER_SERVICE }}
 
-  qodana-event-service-code-insprection:
+  qodana-event-service-code-inspection:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -32,7 +31,7 @@ jobs:
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN_EVENT_SERVICE }}
 
-  qodana-post-service-code-insprection:
+  qodana-post-service-code-inspection:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
