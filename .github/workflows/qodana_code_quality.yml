@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - development
 jobs:
   qodana-user-service-code-inspection:
     runs-on: ubuntu-latest

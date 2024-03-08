@@ -1,11 +1,11 @@
-package com.joyjoin.userservice.service.postServiceApi;
+package com.joyjoin.userservice.service.client.postServiceApi;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
-import com.joyjoin.userservice.modelDto.postService.PostDto;
+import com.joyjoin.userservice.modelDto.userPostDto.PostDto;
 import java.util.List;
 
-@FeignClient(url = "POST-SERVICE", value = "POST-SERVICE")
+@FeignClient(name = "POST-SERVICE")
 public interface PostApiClient {
     @GetMapping("post")
     List<PostDto> getAllPosts();

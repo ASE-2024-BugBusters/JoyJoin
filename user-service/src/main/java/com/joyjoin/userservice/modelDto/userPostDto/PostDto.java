@@ -1,4 +1,4 @@
-package com.joyjoin.userservice.modelDto.postService;
+package com.joyjoin.userservice.modelDto.userPostDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

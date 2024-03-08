@@ -39,6 +39,11 @@ public class UserController {
         return userService.getUser(uuid);
     }
 
+    @GetMapping("/{uuid}/name")
+    public UserDto getUserByName(@PathVariable UUID uuid) {
+        return userService.getUser(uuid);
+    }
+
     /**
      * the request param is passed in the URL like this: http://localhost:8085/user/by-email?email=josip97@gmail.com
      * @param email
