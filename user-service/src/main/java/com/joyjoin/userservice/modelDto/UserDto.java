@@ -1,8 +1,10 @@
 package com.joyjoin.userservice.modelDto;
 
-import com.joyjoin.userservice.model.template.DefaultProperties;
+
 import com.joyjoin.userservice.modelDto.userPostDto.PostDto;
+import com.joyjoin.userservice.model.template.DefaultProperties;
 import lombok.*;
+
 
 import java.util.List;
 import java.util.UUID;
