@@ -18,6 +18,7 @@ public class User extends DefaultProperties {
     private String firstName;
     private String lastName;
 
+    @Column(unique = true)
     @NotBlank(message = "Email can't be empty")
     @Email(message = "Invalid Email format")
     private String email;
