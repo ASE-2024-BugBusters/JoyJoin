@@ -22,7 +22,7 @@ jobs:
 
       - name: Switch to User-Service directory
         run: cd user-service
-        working-directory: user-service
+        working-directory: ./user-service
 
       - name: User-Service  Build and push Docker image
         env:
