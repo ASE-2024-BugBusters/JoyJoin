@@ -18,7 +18,7 @@ jobs:
         uses: docker/login-action@v1
         with:
           username: josip97
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
           args: --project-dir,user-service
 
       - name: User-Service  Build and push Docker image
