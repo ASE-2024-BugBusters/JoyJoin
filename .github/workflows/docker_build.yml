@@ -21,8 +21,7 @@ jobs:
           password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
 
       - name: Switch to User-Service directory
-        run: cd user-service
-        working-directory: ./user-service
+        run: echo "hello world"
 
       - name: User-Service  Build and push Docker image
         env:
