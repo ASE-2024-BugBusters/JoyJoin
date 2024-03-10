@@ -41,13 +41,13 @@ public class UserService {
     }
 
     public List<UserDto> getAllUsers() {
-        List<PostDto> posts = postApiClient.getAllPosts();
+//        List<PostDto> posts = postApiClient.getAllPosts();
         List<User> users = userRepository.findAll();
         return users.stream().map(user -> {
             UserDto userDto = modelMapper.map(user, UserDto.class);
 
             // only to check if the API works: id does
-            userDto.setPostDto(posts);
+//            userDto.setPostDto(posts);
             return userDto;
         }).collect(Collectors.toList());
     }
