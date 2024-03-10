@@ -6,13 +6,11 @@ on:
       - main
       - development
 
-
-
 jobs:
   build:
     strategy:
       matrix:
-        image_name: ["user-service"]
+        image_name: ["user-service", "event-service", "post-service", "registry-service"]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
