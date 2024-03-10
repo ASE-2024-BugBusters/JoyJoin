@@ -13,7 +13,7 @@ jobs:
   build:
     strategy:
       matrix:
-        image_name: ["user-service", "post-service", "api-gateway", "event-service", "registry-service"]
+        image_name: ["user-service"]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
