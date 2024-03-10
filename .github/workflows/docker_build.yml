@@ -5,8 +5,10 @@ on:
     branches:
       - main
       - development
+
 env:
   REGISTRY: ghcr.io
+
 jobs:
   build:
     strategy:
@@ -33,15 +35,13 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images:
-            ${{env.REGISTRY}}/josip97/${{matrix.image_name}}
-
+          images: ${{env.REGISTRY}}/josip97/${{matrix.image_name}}
 
       - name: Build and push ${{matrix.image_name}}
         uses: docker/build-push-action@v4
         with:
-          context: ${{matrix.image_name}}
-          file: ${{matrix.image_name}}/Dockerfile
+          context: .
+          file: ./${{matrix.image_name}}/Dockerfile
           push: true
           tags: ${{steps.meta.outputs.tags}}
           labels: ${{steps.meta.outputs.labels}}
