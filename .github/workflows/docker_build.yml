@@ -28,7 +28,7 @@ jobs:
         run: mvn clean install -DskipTests
         working-directory: ${{matrix.image_name}}
       - name: Build the Docker image
-        run: docker build -t josip97/${{matrix.image_name}}:${GITHUB_SHA::8} .
+        run: docker build -t josip97/${{matrix.image_name}}:latest .
         working-directory: ${{matrix.image_name}}
       - name: docker push
-        run: docker push josip97/${{matrix.image_name}}:${GITHUB_SHA::8}
+        run: docker push josip97/${{matrix.image_name}}:latest
