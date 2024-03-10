@@ -27,6 +27,7 @@ jobs:
 
       - name: Build with maven
         run: mvn clean install
+        working-directory: ${{matrix.image_name}}
 
       - name: Docker login
         env:
