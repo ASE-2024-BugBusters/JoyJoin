@@ -25,13 +25,14 @@ jobs:
       - name: Docker login
         env:
           DOCKER_USERNAME: josip97
-          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_ACCESS_TOKEN }}
         run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
 
-      - name: Build mvn Package
-        working-directory: ${{matrix.image_name}}
-        run: mvn install
-      - name: Build the Docker image
-        run: docker build -t josip97/user-service:${GITHUB_SHA::8} .
-      - name: docker push
-        run: docker push josip97/user-service:${GITHUB_SHA::8}
+      - name: Build and push ${{matrix.image_name}}
+        uses: docker/build-push-action@v4
+        with:
+          context: ${{matrix.image_name}}
+          file: ${{matrix.image_name}}/Dockerfile
+          push: true
+          secrets: |
+            GITHUB_TOKEN=${{ secrets.DOCKER_ACCESS_TOKEN }}
