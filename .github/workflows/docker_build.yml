@@ -7,22 +7,31 @@ on:
       - development
 
 jobs:
-  user-service:
+  build:
+    strategy:
+      matrix:
+        image_name: ["user-service", "post-service", "api-gateway", "event-service", "registry-service"]
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout the repo
-        uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v2
 
-      - name: Login to DockerHub
-        uses: docker/login-action@v1
+      - name: Java Setup
+        uses: actions/setup-java@v3
         with:
-          username: josip97
-          password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
+          java-version: 17
+          distribution: "corretto"
 
-      - name: User-Service Build and push Docker image
-        uses: docker/build-push-action@v4
-        with:
-          context: user-service/
-          push: true
-          tags: josip97/user-service:latest
+      - name: Docker login
+        env:
+          DOCKER_USERNAME: josip97
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+        run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+
+      - name: Build mvn Package
+        working-directory: ${{matrix.image_name}}
+        run: mvn install
+      - name: Build the Docker image
+        run: docker build -t josip97/user-service:${GITHUB_SHA::8} .
+      - name: docker push
+        run: docker push josip97/user-service:${GITHUB_SHA::8}
