@@ -16,38 +16,17 @@ jobs:
         image_name: ["user-service"]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Java Setup
-        uses: actions/setup-java@v3
-        with:
-          java-version: 17
-          distribution: "corretto"
-
-      - name: Build with maven
-        run: mvn clean install
-        working-directory: ${{matrix.image_name}}
-
+      - uses: actions/checkout@v2
       - name: Docker login
         env:
           DOCKER_USERNAME: josip97
           DOCKER_PASSWORD: ${{ secrets.DOCKER_ACCESS_TOKEN }}
         run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-
-      - name: Extract image metadata from ${{matrix.image_name}}
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          images: ${{env.REGISTRY}}/josip97/${{matrix.image_name}}
-
-      - name: Build and push ${{matrix.image_name}}
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          file: ./${{matrix.image_name}}/Dockerfile
-          push: true
-          tags: ${{steps.meta.outputs.tags}}
-          labels: ${{steps.meta.outputs.labels}}
-          secrets: |
-            GITHUB_TOKEN=${{ secrets.DOCKER_ACCESS_TOKEN }}
+      - name: Build mvn Package
+        run: mvn install
+        working-directory: /${{matrix.image_name}}
+      - name: Build the Docker image
+        run: docker build -t josip97/${{matrix.image_name}}:${GITHUB_SHA::8} .
+        working-directory: /${{matrix.image_name}}
+      - name: docker push
+        run: docker push josip97/${{matrix.image_name}}:${GITHUB_SHA::8}
