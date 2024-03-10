@@ -19,5 +19,37 @@ services:
 
   registry-service:
     image: josip97/registry-service:latest
+    container_name: registry-service
+    pull_policy: always
+    ports:
+      - "8761:8761"
 
+  api-gateway:
+    image: josip97/api-gateway:latest
+    container_name: api-gateway
+    pull_policy: always
+    ports:
+      - "9191:9191"
+    expose:
+      - "9191"
+    depends_on:
+      registry-service:
+        condition: service_started
+
+
+  user-service:
+    image: josip97/user-service:latest
+    container_name: user-service
+    pull_policy: always
+    ports:
+      - "8085:8085"
+    expose:
+      - "8085"
+    depends_on:
+      postgres-user:
+        condition: service_started
+      registry-service:
+        condition: service_started
+      api-gateway:
+        condition: service_started
 
