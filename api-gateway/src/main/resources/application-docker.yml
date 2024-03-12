@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: "API-GATEWAY"
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: "http://registry-service:8761/eureka/"
+      # muss eventuel angepasst werdden mit http://eureka:password@registry-service:8761
+
+server:
+  port: 9191
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+# Routes for Employee Service
+logging:
+  level:
+    org:
+      springframework:
+        cloud:
+          gateway:
+            handler:
+              org.springframework.cloud.gateway.handler.RoutePredicateHandlerMapping: DEBUG
