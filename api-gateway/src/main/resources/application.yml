@@ -26,10 +26,12 @@ spring:
 eureka:
   client:
     serviceUrl:
-      defaultZone: "http://eureka:password@registry-service:8761/eureka/"
+      defaultZone: "http://eureka:password@registry-service:8761/eureka"
+      # muss eventuel angepasst werdden mit http://eureka:password@registry-service:8761/eureka
 
 server:
   port: 9191
+
 
 management:
   endpoints:
