@@ -8,7 +8,7 @@ spring:
   application:
     name: "USER-SERVICE"
   datasource:
-    url: "jdbc:postgresql://postgres-user:5435/userService"
+    url: "jdbc:postgresql://postgres-user:5436/userService"
     username: "postgres"
     password: "1234"
 

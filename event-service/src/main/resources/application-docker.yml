@@ -8,7 +8,7 @@ spring:
   application:
     name: "EVENT-SERVICE"
   datasource:
-    url: "jdbc:postgresql://postgres-event:5433/eventService"
+    url: "jdbc:postgresql://postgres-event:5434/eventService"
     username: "postgres"
     password: "1234"
 
