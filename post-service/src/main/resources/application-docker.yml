@@ -1,14 +1,14 @@
 server:
-  port: 8083
+  port: 8084
   error:
     include-stacktrace: always
     include-message: always
 
 spring:
   application:
-    name: "USER-SERVICE"
+    name: "POST-SERVICE"
   datasource:
-    url: "jdbc:postgresql://localhost:5432/userService"
+    url: "jdbc:postgresql://postgres-post:5435/postService"
     username: "postgres"
     password: "1234"
 
@@ -39,7 +39,7 @@ management:
 info:
   app:
     name: "Spring Boot JoyJoin"
-    description: "This is the JoyJoin UserService"
+    description: "This is the JoyJoin PostService"
     version: "0.0.1"
 
 logging:
@@ -47,10 +47,7 @@ logging:
     org:
       springframework:
         web: INFO
-
 eureka:
   client:
     serviceUrl:
       defaultZone: "http://registry-service:8761/eureka/"
-
-api.version: "v1"

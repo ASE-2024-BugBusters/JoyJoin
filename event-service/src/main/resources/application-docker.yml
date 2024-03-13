@@ -6,9 +6,9 @@ server:
 
 spring:
   application:
-    name: "USER-SERVICE"
+    name: "EVENT-SERVICE"
   datasource:
-    url: "jdbc:postgresql://localhost:5432/userService"
+    url: "jdbc:postgresql://postgres-event:5434/eventService"
     username: "postgres"
     password: "1234"
 
@@ -52,5 +52,3 @@ eureka:
   client:
     serviceUrl:
       defaultZone: "http://registry-service:8761/eureka/"
-
-api.version: "v1"

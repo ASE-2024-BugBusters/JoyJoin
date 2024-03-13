@@ -1,4 +1,4 @@
-# joyjoin-frontend
+# frontend
 
 ## Project setup
 ```
