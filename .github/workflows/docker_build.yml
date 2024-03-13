@@ -7,10 +7,10 @@ on:
       - development
 
 jobs:
-  build:
+  build-services:
     strategy:
       matrix:
-        image_name: ["user-service", "event-service", "post-service", "registry-service", "api-gateway"]
+        image_name: [ "user-service", "event-service", "post-service", "registry-service", "api-gateway" ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -32,3 +32,36 @@ jobs:
         working-directory: ${{matrix.image_name}}
       - name: docker push
         run: docker push josip97/${{matrix.image_name}}:latest
+
+  build-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Node.js and Yarn
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        working-directory: "frontend"
+        run: yarn install
+
+      - name: Build Vue.js application
+        working-directory: "frontend"
+        run: yarn build
+
+      - name: Docker login
+        env:
+          DOCKER_USERNAME: josip97
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_ACCESS_TOKEN }}
+        run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+
+      - name: Build the Docker image
+        run: docker build -t josip97/frontend:latest .
+        working-directory: "frontend"
+
+      - name: docker push
+        run: docker push josip97/frontend:latest
