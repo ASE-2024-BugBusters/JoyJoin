@@ -1,6 +1,7 @@
 version: "1"
 services:
 
+### Databases ###
   postgres-event:
     container_name: postgres-event
     image: postgres
@@ -53,6 +54,7 @@ services:
     restart: unless-stopped
 
 
+### Micro Services ###
   registry-service:
     image: josip97/registry-service:latest
     container_name: registry-service
@@ -131,3 +133,13 @@ services:
         condition: service_started
       api-gateway:
         condition: service_started
+
+
+  frontend:
+    image: josip97/frontend:latest
+    container_name: frontend
+    pull_policy: always
+    ports:
+      - "3000:3000"
+    expose:
+      - "3000"
