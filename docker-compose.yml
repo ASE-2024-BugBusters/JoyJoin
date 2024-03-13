@@ -134,7 +134,6 @@ services:
       api-gateway:
         condition: service_started
 
-
   frontend:
     image: josip97/frontend:latest
     container_name: frontend
