@@ -1,10 +1,10 @@
 # Use a lightweight Node.js image as a base
-FROM node:14-alpine AS build
+FROM node:14-alpine
 
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy the package.json and yarn.lock files into the container
+# Copy package.json and yarn.lock into the container
 COPY package.json yarn.lock ./
 
 # Install dependencies using Yarn
@@ -16,14 +16,8 @@ COPY . .
 # Build the Vue.js application for production
 RUN yarn build
 
-# Use a lightweight HTTP server to serve the static files
-FROM nginx:alpine
+# Expose port 80 to the outside world
+EXPOSE 80
 
-# Copy the built static files from the 'build' stage into the nginx server
-COPY --from=build /app/dist /usr/share/nginx/html
-
-# Expose port 80
-EXPOSE 3000
-
-# Start the nginx server when the container starts
-CMD ["nginx", "-g", "daemon off;"]
+# Command to run the application
+CMD ["yarn", "serve"]
