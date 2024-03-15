@@ -1,11 +1,11 @@
 package com.joyjoin.userservice.service;
 
+import com.joyjoin.userservice.beanConfig.PasswordEncoder;
 import com.joyjoin.userservice.exception.EmailAlreadyExistsException;
 import com.joyjoin.userservice.exception.ErrorCode;
 import com.joyjoin.userservice.exception.ResourceNotFoundException;
 import com.joyjoin.userservice.model.User;
 import com.joyjoin.userservice.modelDto.UserDto;
-import com.joyjoin.userservice.modelDto.userPostDto.PostDto;
 import com.joyjoin.userservice.repository.UserRepository;
 import com.joyjoin.userservice.service.client.postServiceApi.PostApiClient;
 import lombok.extern.slf4j.Slf4j;
@@ -24,11 +24,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final PostApiClient postApiClient;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, ModelMapper modelMapper, PostApiClient postApiClient) {
+    public UserService(UserRepository userRepository, ModelMapper modelMapper, PostApiClient postApiClient, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
         this.postApiClient = postApiClient;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public UserDto saveUser(User user) {
@@ -36,6 +38,7 @@ public class UserService {
         if (optionalUser != null) {
             throw new EmailAlreadyExistsException(ErrorCode.USER_EMAIL_ALREADY_EXISTS.getErrorCode());
         }
+        user.setPassword(passwordEncoder.passwordEncoder().encode(user.getPassword()));
         User savedUser = userRepository.save(user);
         return modelMapper.map(savedUser, UserDto.class);
     }
