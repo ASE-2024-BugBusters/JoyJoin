@@ -89,7 +89,7 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
       - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY=TRACE
     depends_on:
-      postgres-post:
+      postgres-event:
         condition: service_started
       registry-service:
         condition: service_started

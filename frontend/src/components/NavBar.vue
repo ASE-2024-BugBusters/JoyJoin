@@ -20,6 +20,7 @@
       <div class="navbar-start">
         <router-link to="/" class="navbar-item">Home</router-link>
         <router-link to="/about" class="navbar-item">About</router-link>
+        <router-link to="/profile" class="navbar-item">Profile</router-link>
       </div>
       <div class="navbar-end">
         <div class="navbar-item">
@@ -27,7 +28,7 @@
             <a class="button is-dark">
               <strong>Sign In</strong>
             </a>
-            <a class="button is-dark">
+            <a class="button is-dark" @click="getData">
               <strong>Login</strong>
             </a>
           </div>
@@ -37,17 +38,37 @@
   </nav>
 </template>
 <script>
+import axios from "axios";
+
 export default {
   name: 'Nav',
+  data() {
+    return {
+      responseData: null,
+    }
+  },
+  methods: {
+    async getData() {
+      try {
+        const response = await axios.get('http://localhost:9191/user-service/user');
+        this.responseData = response.data;
+        console.log(this.responseData)
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }
+  }
 };
 </script>
 <style lang="scss" scoped>
 nav {
   margin-top: 25px;
   margin-bottom: 30px;
+
   a {
     font-weight: bold;
     color: #2c3e50;
+
     &.router-link-exact-active {
       color: #d88d00;
     }
