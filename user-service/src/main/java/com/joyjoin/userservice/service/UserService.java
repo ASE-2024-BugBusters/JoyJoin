@@ -5,7 +5,6 @@ import com.joyjoin.userservice.exception.ErrorCode;
 import com.joyjoin.userservice.exception.ResourceNotFoundException;
 import com.joyjoin.userservice.model.User;
 import com.joyjoin.userservice.modelDto.UserDto;
-import com.joyjoin.userservice.modelDto.userPostDto.PostDto;
 import com.joyjoin.userservice.repository.UserRepository;
 import com.joyjoin.userservice.service.client.postServiceApi.PostApiClient;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -40,6 +40,17 @@ public class UserService {
         return modelMapper.map(savedUser, UserDto.class);
     }
 
+    public UserDto updateUser(UserDto user) {
+        Optional<User> optionalUser = userRepository.findById(user.getId());
+        if (optionalUser.isEmpty()) {
+            throw new ResourceNotFoundException("user", "id", user.getId().toString());
+        }
+        User existedUser = optionalUser.get();
+
+        User savedUser = userRepository.save(existedUser);
+        return modelMapper.map(savedUser, UserDto.class);
+    }
+
     public List<UserDto> getAllUsers() {
 //        List<PostDto> posts = postApiClient.getAllPosts();
         List<User> users = userRepository.findAll();
@@ -53,12 +64,12 @@ public class UserService {
     }
 
     public UserDto getUser(UUID uuid) {
-        User user =  userRepository.findById(uuid).orElseThrow(() -> new ResourceNotFoundException("User", "id", uuid.toString()));
+        User user = userRepository.findById(uuid).orElseThrow(() -> new ResourceNotFoundException("User", "id", uuid.toString()));
         return modelMapper.map(user, UserDto.class);
     }
 
     public UserDto getUserByEmail(String email) {
-        User user =  userRepository.findUserByEmail(email);
+        User user = userRepository.findUserByEmail(email);
         if (user == null) {
             throw new ResourceNotFoundException("User", "email", email);
         }

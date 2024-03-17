@@ -34,6 +34,12 @@ public class UserController {
         return userService.saveUser(user);
     }
 
+    @PatchMapping()
+    public UserDto updateUser(@RequestBody UserDto user) {
+        return userService.updateUser(user);
+    }
+
+
     @GetMapping("/{uuid}")
     public UserDto getUserByUUID(@PathVariable UUID uuid) {
         return userService.getUser(uuid);
