@@ -24,11 +24,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final PostApiClient postApiClient;
+//    private final PasswordEncoder passwordEncoder;
 
     public UserService(UserRepository userRepository, ModelMapper modelMapper, PostApiClient postApiClient) {
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
         this.postApiClient = postApiClient;
+//        this.passwordEncoder = passwordEncoder;
     }
 
     public UserDto saveUser(User user) {
@@ -36,6 +38,7 @@ public class UserService {
         if (optionalUser != null) {
             throw new EmailAlreadyExistsException(ErrorCode.USER_EMAIL_ALREADY_EXISTS.getErrorCode());
         }
+//        user.setPassword(passwordEncoder.passwordEncoder().encode(user.getPassword()));
         User savedUser = userRepository.save(user);
         return modelMapper.map(savedUser, UserDto.class);
     }

@@ -24,13 +24,22 @@ public class UserController {
         this.userService = userService;
     }
 
+    @PostMapping()
+    public UserDto createUser(@Valid @RequestBody User user) {
+        return userService.saveUser(user);
+    }
+
+    /**
+     * this can only be user for testing, in production needs to be deleted
+     * @return
+     */
     @GetMapping()
     public List<UserDto> getAllUsers() {
         return userService.getAllUsers();
     }
 
-    @PostMapping()
-    public UserDto createUser(@Valid @RequestBody User user) {
+    @PostMapping("/register")
+    public UserDto registerUser(@Valid @RequestBody User user) {
         return userService.saveUser(user);
     }
 

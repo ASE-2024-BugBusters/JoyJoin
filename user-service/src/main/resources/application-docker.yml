@@ -52,5 +52,3 @@ eureka:
   client:
     serviceUrl:
       defaultZone: "http://registry-service:8761/eureka/"
-
-api.version: "v1"
