@@ -1,7 +1,9 @@
 package com.joyjoin.userservice.controller;
 
-import com.joyjoin.userservice.dto.GetAvatarUploadUrlResponse;
-import com.joyjoin.userservice.dto.UpdateUserRequest;
+import com.joyjoin.userservice.controller.dto.GetAvatarUploadUrlResponse;
+import com.joyjoin.userservice.controller.dto.UpdateUserRequest;
+import com.joyjoin.userservice.model.Image;
+import com.joyjoin.userservice.model.ImageUrl;
 import com.joyjoin.userservice.model.User;
 import com.joyjoin.userservice.modelDto.UserDto;
 import com.joyjoin.userservice.service.ImageService;
@@ -65,7 +67,7 @@ public class UserController {
     @GetMapping("/{uuid}/upload_avatar")
     public GetAvatarUploadUrlResponse getAvatarUploadUrl(@PathVariable UUID uuid) {
         var expireTime = LocalDateTime.now().plusMinutes(30);
-        return new GetAvatarUploadUrlResponse(userService.getAvatarUploadUrl(uuid, expireTime), expireTime);
+        return new GetAvatarUploadUrlResponse(userService.getAvatarUploadInformation(uuid, expireTime));
     }
 
     @GetMapping("/{uuid}")

@@ -1,5 +1,6 @@
-package com.joyjoin.userservice.dto;
+package com.joyjoin.userservice.controller.dto;
 
+import com.joyjoin.userservice.model.ImageRef;
 import com.joyjoin.userservice.model.InterestTag;
 import com.joyjoin.userservice.model.ProfileVisibility;
 import lombok.AllArgsConstructor;
@@ -23,4 +24,5 @@ public class UpdateUserRequest {
     private String biography;
     private List<InterestTag> interestTags;
     private ProfileVisibility profileVisibility;
+    private ImageRef avatar;
 }

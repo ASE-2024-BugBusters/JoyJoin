@@ -1,14 +1,12 @@
 package com.joyjoin.userservice.model;
 
-import com.joyjoin.userservice.model.converter.ImageConverter;
+import com.joyjoin.userservice.model.converter.ImageRefConverter;
 import com.joyjoin.userservice.model.converter.TagsConverter;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import com.joyjoin.userservice.model.template.DefaultProperties;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -49,8 +47,8 @@ public class User extends DefaultProperties {
     @Convert(converter = TagsConverter.class)
     private List<InterestTag> interestTags;
 
-    @Convert(converter = ImageConverter.class)
-    private Image avatar;
+    @Convert(converter = ImageRefConverter.class)
+    private ImageRef avatar;
 
     private ProfileVisibility profileVisibility;
 

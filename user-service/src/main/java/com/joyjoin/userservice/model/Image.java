@@ -2,29 +2,27 @@ package com.joyjoin.userservice.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@EqualsAndHashCode
-public class Image {
-    private String bucket;
-    private String key;
-    private List<String> urls;
+public class Image extends ImageRef {
+
+    private List<ImageUrl> urls;
 
     public Image() {
-        this("", "", List.of());
+        super();
+        this.urls = List.of();
     }
 
-    @JsonProperty("uri")
-    public String getUri() {
-        if (bucket.isBlank()) {
-            return key;
-        } else if (key.isBlank()) {
-            return "";
-        }
-        return bucket + "/" + key;
+    public Image(@NotNull ImageRef ref, List<ImageUrl> urls) {
+        this(ref.getBucket(), ref.getKey(), urls);
+    }
+
+    public Image(String bucket, String key, List<ImageUrl> urls) {
+        super(bucket, key);
+        this.urls = urls;
     }
 }

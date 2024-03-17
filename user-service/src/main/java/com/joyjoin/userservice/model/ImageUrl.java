@@ -1,4 +1,4 @@
-package com.joyjoin.userservice.dto;
+package com.joyjoin.userservice.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,12 +7,11 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class GetAvatarUploadUrlResponse {
-    String url;
-    LocalDateTime expireTime;
+@NoArgsConstructor
+public class ImageUrl {
+    private String url;
+    private LocalDateTime expireTime;
 }
