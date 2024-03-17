@@ -12,6 +12,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -24,13 +25,16 @@ public class UserService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final PostApiClient postApiClient;
-//    private final PasswordEncoder passwordEncoder;
+    // private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, ModelMapper modelMapper, PostApiClient postApiClient) {
+    private final ImageService imageService;
+
+    public UserService(UserRepository userRepository, ModelMapper modelMapper, PostApiClient postApiClient, ImageService imageService) {
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
         this.postApiClient = postApiClient;
 //        this.passwordEncoder = passwordEncoder;
+        this.imageService = imageService;
     }
 
     public UserDto saveUser(User user) {
@@ -78,5 +82,11 @@ public class UserService {
             throw new ResourceNotFoundException("User", "email", email);
         }
         return modelMapper.map(user, UserDto.class);
+    }
+
+    public String getAvatarUploadUrl(UUID uuid, LocalDateTime expireTime) {
+        String key = uuid.toString() + "--" + UUID.randomUUID();
+        LocalDateTime now = LocalDateTime.now();
+        return imageService.getPreSignedUrlForUpload("avatar", key, Duration.between(now, expireTime));
     }
 }

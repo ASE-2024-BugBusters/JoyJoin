@@ -1,18 +1,19 @@
 package com.joyjoin.userservice.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.joyjoin.userservice.dto.GetAvatarUploadUrlResponse;
 import com.joyjoin.userservice.dto.UpdateUserRequest;
 import com.joyjoin.userservice.model.User;
 import com.joyjoin.userservice.modelDto.UserDto;
+import com.joyjoin.userservice.service.ImageService;
 import com.joyjoin.userservice.service.UserService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.ModelMap;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,11 +24,14 @@ public class UserController {
 
     private final UserService userService;
 
+    private final ImageService imageService;
+
     private final ModelMapper modelMapper;
 
     @Autowired
-    public UserController(UserService userService, ModelMapper modelMapper) {
+    public UserController(UserService userService, ImageService imageService, ModelMapper modelMapper) {
         this.userService = userService;
+        this.imageService = imageService;
         this.modelMapper = modelMapper;
     }
 
@@ -56,6 +60,12 @@ public class UserController {
         User user = modelMapper.map(request, User.class);
         user.setId(uuid);
         return userService.updateUser(user);
+    }
+
+    @GetMapping("/{uuid}/upload_avatar")
+    public GetAvatarUploadUrlResponse getAvatarUploadUrl(@PathVariable UUID uuid) {
+        var expireTime = LocalDateTime.now().plusMinutes(30);
+        return new GetAvatarUploadUrlResponse(userService.getAvatarUploadUrl(uuid, expireTime), expireTime);
     }
 
     @GetMapping("/{uuid}")
