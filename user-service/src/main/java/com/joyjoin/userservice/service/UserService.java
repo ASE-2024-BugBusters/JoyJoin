@@ -12,8 +12,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -39,17 +39,18 @@ public class UserService {
             throw new EmailAlreadyExistsException(ErrorCode.USER_EMAIL_ALREADY_EXISTS.getErrorCode());
         }
 //        user.setPassword(passwordEncoder.passwordEncoder().encode(user.getPassword()));
+        var now = LocalDateTime.now();
+        user.setCreatedOn(now);
+        user.setLastEdited(now);
         User savedUser = userRepository.save(user);
         return modelMapper.map(savedUser, UserDto.class);
     }
 
-    public UserDto updateUser(UserDto user) {
-        Optional<User> optionalUser = userRepository.findById(user.getId());
-        if (optionalUser.isEmpty()) {
-            throw new ResourceNotFoundException("user", "id", user.getId().toString());
-        }
-        User existedUser = optionalUser.get();
-
+    public UserDto updateUser(User partialUser) {
+        var existedUser = userRepository.findById(partialUser.getId()).orElseThrow(
+                () -> new ResourceNotFoundException("user", "id", partialUser.getId().toString()));
+        modelMapper.map(partialUser, existedUser);
+        existedUser.setLastEdited(LocalDateTime.now());
         User savedUser = userRepository.save(existedUser);
         return modelMapper.map(savedUser, UserDto.class);
     }

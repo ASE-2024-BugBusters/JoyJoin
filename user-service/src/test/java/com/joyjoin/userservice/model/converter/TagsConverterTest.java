@@ -20,13 +20,16 @@ public class TagsConverterTest {
 
     @ParameterizedTest
     @MethodSource
-    void TestConvertToEntityAttribute(String from, List<InterestTag> expect) {
-        assertEquals(converter.convertToEntityAttribute(from), expect);
+    void TestConvertToEntityAttribute(String from, List<InterestTag> expected) {
+        assertEquals(expected, converter.convertToEntityAttribute(from));
     }
 
     static Stream<Arguments> TestConvertToEntityAttribute() {
         return Stream.of(
-                arguments("[]", new ArrayList<>()),
+                arguments(null, List.of()),
+                arguments("", List.of()),
+                arguments(" \t\r\n", List.of()),
+                arguments("[]", List.of()),
                 arguments("[\"VeganCuisine\"]", List.of(InterestTag.VeganCuisine)),
                 arguments("[\"Basketball\",\"HealthyEating\"]", List.of(InterestTag.Basketball, InterestTag.HealthyEating))
         );
@@ -34,8 +37,8 @@ public class TagsConverterTest {
 
     @ParameterizedTest
     @MethodSource
-    void TestConvertToDatabaseColumn(List<InterestTag> from, String expect) {
-        assertEquals(converter.convertToDatabaseColumn(from), expect);
+    void TestConvertToDatabaseColumn(List<InterestTag> from, String expected) {
+        assertEquals(expected, converter.convertToDatabaseColumn(from));
     }
 
     static Stream<Arguments> TestConvertToDatabaseColumn() {

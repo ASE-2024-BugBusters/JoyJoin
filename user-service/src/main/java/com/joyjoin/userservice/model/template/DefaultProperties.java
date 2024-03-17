@@ -17,11 +17,12 @@ public class DefaultProperties {
     @GeneratedValue
     private UUID id;
 
-    private LocalDateTime createdOn = LocalDateTime.now();
+    @Setter
+    private LocalDateTime createdOn;
 
     @Setter
-    private LocalDateTime lastEdited = LocalDateTime.now();
+    private LocalDateTime lastEdited;
 
     @Setter
-    private boolean isDeleted = false;
+    private boolean isDeleted;
 }

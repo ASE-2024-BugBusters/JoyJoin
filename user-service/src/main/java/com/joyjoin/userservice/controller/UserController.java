@@ -1,10 +1,14 @@
 package com.joyjoin.userservice.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.joyjoin.userservice.dto.UpdateUserRequest;
 import com.joyjoin.userservice.model.User;
 import com.joyjoin.userservice.modelDto.UserDto;
 import com.joyjoin.userservice.service.UserService;
 import jakarta.validation.Valid;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,9 +23,12 @@ public class UserController {
 
     private final UserService userService;
 
+    private final ModelMapper modelMapper;
+
     @Autowired
-    public UserController(UserService userService){
+    public UserController(UserService userService, ModelMapper modelMapper) {
         this.userService = userService;
+        this.modelMapper = modelMapper;
     }
 
     @PostMapping()
@@ -31,6 +38,7 @@ public class UserController {
 
     /**
      * this can only be user for testing, in production needs to be deleted
+     *
      * @return
      */
     @GetMapping()
@@ -43,11 +51,12 @@ public class UserController {
         return userService.saveUser(user);
     }
 
-    @PatchMapping()
-    public UserDto updateUser(@RequestBody UserDto user) {
+    @PatchMapping("/{uuid}")
+    public UserDto updateUser(@PathVariable UUID uuid, @RequestBody UpdateUserRequest request) {
+        User user = modelMapper.map(request, User.class);
+        user.setId(uuid);
         return userService.updateUser(user);
     }
-
 
     @GetMapping("/{uuid}")
     public UserDto getUserByUUID(@PathVariable UUID uuid) {
@@ -61,6 +70,7 @@ public class UserController {
 
     /**
      * the request param is passed in the URL like this: http://localhost:8085/user/by-email?email=josip97@gmail.com
+     *
      * @param email
      * @return UserDto
      */

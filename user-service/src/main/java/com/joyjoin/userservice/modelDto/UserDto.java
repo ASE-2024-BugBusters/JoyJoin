@@ -16,7 +16,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-public class UserDto {
+public class UserDto extends DefaultProperties {
     private UUID id;
     private String firstName;
     private String lastName;

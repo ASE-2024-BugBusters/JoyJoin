@@ -1,5 +1,6 @@
 package com.joyjoin.userservice.model;
 
+import com.joyjoin.userservice.model.converter.ImageConverter;
 import com.joyjoin.userservice.model.converter.TagsConverter;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -23,22 +24,16 @@ public class User extends DefaultProperties {
     @GeneratedValue
     private UUID id;
 
-    private LocalDateTime createdOn = LocalDateTime.now();
-
-    private LocalDateTime lastEdited = LocalDateTime.now();
-
-    private boolean isDeleted = false;
-
     private String firstName;
 
     private String lastName;
 
     @Column(unique = true)
-    @NotBlank(message = "Email can't be empty")
+//    @NotBlank(message = "Email can't be empty")
     @Email(message = "Invalid Email format")
     private String email;
 
-    @NotBlank(message = "Password can't be empty")
+//    @NotBlank(message = "Password can't be empty")
     private String password;
 
     @Column(unique = true)
@@ -54,7 +49,8 @@ public class User extends DefaultProperties {
     @Convert(converter = TagsConverter.class)
     private List<InterestTag> interestTags;
 
-    private String avatar;
+    @Convert(converter = ImageConverter.class)
+    private Image avatar;
 
     private ProfileVisibility profileVisibility;
 
