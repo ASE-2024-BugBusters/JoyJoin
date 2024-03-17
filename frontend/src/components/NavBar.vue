@@ -21,6 +21,7 @@
         <router-link to="/" class="navbar-item">Home</router-link>
         <router-link to="/about" class="navbar-item">About</router-link>
         <router-link to="/profile" class="navbar-item">Profile</router-link>
+        <router-link to="/post" class="navbar-item">Create Post</router-link>
       </div>
       <div class="navbar-end">
         <div class="navbar-item">
