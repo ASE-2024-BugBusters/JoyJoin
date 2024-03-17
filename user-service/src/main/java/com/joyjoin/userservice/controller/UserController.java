@@ -1,6 +1,7 @@
 package com.joyjoin.userservice.controller;
 
 import com.joyjoin.userservice.model.User;
+import com.joyjoin.userservice.modelDto.TagDto;
 import com.joyjoin.userservice.modelDto.UserDto;
 import com.joyjoin.userservice.service.UserService;
 import jakarta.validation.Valid;
@@ -62,4 +63,10 @@ public class UserController {
     public UserDto getUserByEmail(@RequestParam String email) {
         return userService.getUserByEmail(email);
     }
+
+    @GetMapping("/tags")
+    public List<TagDto> getUserByTags() {
+        return userService.getAllTags();
+    }
+
 }

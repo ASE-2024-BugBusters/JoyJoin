@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import com.joyjoin.userservice.model.template.DefaultProperties;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
@@ -48,6 +49,8 @@ public class User extends DefaultProperties{
     private boolean loggedIn = false;
     private boolean deactivated = false;
     private String postTag;
+
+
 
 
     /**

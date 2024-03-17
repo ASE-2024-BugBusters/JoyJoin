@@ -4,6 +4,7 @@ import com.joyjoin.userservice.exception.EmailAlreadyExistsException;
 import com.joyjoin.userservice.exception.ErrorCode;
 import com.joyjoin.userservice.exception.ResourceNotFoundException;
 import com.joyjoin.userservice.model.User;
+import com.joyjoin.userservice.modelDto.TagDto;
 import com.joyjoin.userservice.modelDto.UserDto;
 import com.joyjoin.userservice.repository.UserRepository;
 import com.joyjoin.userservice.service.client.postServiceApi.PostApiClient;
@@ -65,5 +66,13 @@ public class UserService {
             throw new ResourceNotFoundException("User", "email", email);
         }
         return modelMapper.map(user, UserDto.class);
+    }
+
+    public List<TagDto> getAllTags() {
+        List<User> users = userRepository.findAll();
+        return users.stream().map(user -> {
+            TagDto tagDto = modelMapper.map(user, TagDto.class);
+            return tagDto;
+        }).collect(Collectors.toList());
     }
 }
