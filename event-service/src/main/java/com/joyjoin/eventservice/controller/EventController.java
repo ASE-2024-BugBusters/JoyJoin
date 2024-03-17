@@ -2,6 +2,7 @@ package com.joyjoin.eventservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joyjoin.eventservice.model.Event;
+import com.joyjoin.eventservice.model.Location;
 import com.joyjoin.eventservice.modelDTO.EventDTO;
 import com.joyjoin.eventservice.service.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequestMapping("/events")
@@ -61,9 +60,34 @@ public class EventController {
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+    @GetMapping("/{eventId}/details")
+    public ResponseEntity<?> getEventDetails(@PathVariable UUID eventId) {
+        Optional<Event> eventOptional = eventService.findById(eventId);
 
+        if (eventOptional.isPresent()) {
+            Event event = eventOptional.get();
 
+            // Create a map or a DTO to hold the event details you want to return
+            Map<String, Object> eventDetails = new HashMap<>();
+            eventDetails.put("title", event.getTitle());
+            eventDetails.put("time", event.getTime());
 
+            // Location details
+            Map<String, String> locationDetails = new HashMap<>();
+            Location location = event.getLocation();
+            locationDetails.put("street", location.getStreet());
+            locationDetails.put("number", location.getNumber());
+            locationDetails.put("city", location.getCity());
+            locationDetails.put("postalCode", location.getPostalCode());
+            locationDetails.put("country", location.getCountry());
+            eventDetails.put("location", locationDetails);
+            eventDetails.put("participationLimit", event.getParticipationLimit());
+            eventDetails.put("description", event.getDescription());
+            eventDetails.put("tags", event.getTags());
 
-
+            return new ResponseEntity<>(eventDetails, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Event not found", HttpStatus.NOT_FOUND);
+        }
+    }
 }
