@@ -1,15 +1,16 @@
 package com.joyjoin.userservice.model;
 
+import com.joyjoin.userservice.model.converter.ImageRefConverter;
+import com.joyjoin.userservice.model.converter.TagsConverter;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import com.joyjoin.userservice.model.template.DefaultProperties;
-import org.hibernate.mapping.List;
 
-import java.time.LocalDateTime;
-import java.util.Collections;
+
 import java.util.Date;
+
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -18,11 +19,14 @@ import java.util.UUID;
 @Setter
 @Table(name = "_user")
 @Entity
-public class User extends DefaultProperties{
 
-    @Setter
-    private boolean isDeleted = false;
+public class User extends DefaultProperties {
+    @Id
+    @GeneratedValue
+    private UUID id;
+
     private String firstName;
+
     private String lastName;
 
     @Column(unique = true)
@@ -38,6 +42,18 @@ public class User extends DefaultProperties{
 
     @Temporal(TemporalType.DATE)
     private Date birthDate;
+
+    private String nickname;
+
+    private String biography;
+
+//    @Convert(converter = TagsConverter.class)
+//    private List<InterestTag> interestTags;
+
+    @Convert(converter = ImageRefConverter.class)
+    private ImageRef avatar;
+
+    private ProfileVisibility profileVisibility;
 
     private boolean loggedIn = false;
     private boolean deactivated = false;

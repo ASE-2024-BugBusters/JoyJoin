@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import CreatePost from "../views/posts/CreatePost.vue";
+import PostTag from "../views/posts/PostTag.vue";
 
 const routes = [
   {
@@ -31,6 +33,16 @@ const routes = [
     path: "/register",
     name: "register",
     component: () => import('../views/RegisterView.vue')
+  },
+  {
+    path: "/post",
+    name: "post",
+    component: CreatePost
+  },
+  {
+    path: "/posttag",
+    name: "posttag",
+    component: PostTag
   }
 ]
 
