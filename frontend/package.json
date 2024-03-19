@@ -11,14 +11,9 @@
     "bootstrap": "^5.3.3",
     "bootstrap-vue": "^2.23.1",
     "bulma": "^0.9.4",
-<<<<<<< HEAD
     "vue": "^3.2.13",
     "vue-router": "^4.0.3",
     "vuejs-datepicker": "^1.6.2"
-=======
-    "vue": "^3.4.21",
-    "vue-router": "^4.0.3"
->>>>>>> 6261aa2fc39c9bb5c4701266026e7733553c079b
   },
   "devDependencies": {
     "@vue/cli-plugin-router": "~5.0.0",
