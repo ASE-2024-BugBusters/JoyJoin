@@ -19,6 +19,6 @@ public class UserDto extends DefaultProperties {
     private String firstName;
     private String lastName;
     private String email;
-    private String accountName;
+    private String userName;
     private List<PostDto> postDto;
 }

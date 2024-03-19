@@ -1,0 +1,11 @@
+<template>
+  <RegisterForm/>
+</template>
+
+<script setup>
+import RegisterForm from "@/components/RegisterForm.vue";
+</script>
+
+<style scoped lang="scss">
+
+</style>

@@ -5,8 +5,10 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import com.joyjoin.userservice.model.template.DefaultProperties;
+import org.hibernate.mapping.List;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Date;
 import java.util.UUID;
 
@@ -17,14 +19,6 @@ import java.util.UUID;
 @Table(name = "_user")
 @Entity
 public class User extends DefaultProperties{
-    @Id
-    @GeneratedValue
-    private UUID id;
-
-    private LocalDateTime createdOn = LocalDateTime.now();
-
-    @Setter
-    private LocalDateTime lastEdited = LocalDateTime.now();
 
     @Setter
     private boolean isDeleted = false;
@@ -40,14 +34,14 @@ public class User extends DefaultProperties{
     private String password;
 
     @Column(unique = true)
-    private String accountName;
+    private String userName;
 
     @Temporal(TemporalType.DATE)
     private Date birthDate;
 
     private boolean loggedIn = false;
     private boolean deactivated = false;
-    private String postTag;
+    private String tag;
 
 
     /**

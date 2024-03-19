@@ -10,7 +10,8 @@
     "axios": "^1.6.8",
     "bulma": "^0.9.4",
     "vue": "^3.2.13",
-    "vue-router": "^4.0.3"
+    "vue-router": "^4.0.3",
+    "vuejs-datepicker": "^1.6.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-router": "~5.0.0",

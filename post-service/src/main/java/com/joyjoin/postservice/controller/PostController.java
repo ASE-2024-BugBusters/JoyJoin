@@ -11,7 +11,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("post")
-@Validated
 public class PostController {
     private final PostService postService;
 

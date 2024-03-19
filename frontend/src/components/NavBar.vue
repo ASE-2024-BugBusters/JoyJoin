@@ -20,15 +20,15 @@
       <div class="navbar-start">
         <router-link to="/" class="navbar-item">Home</router-link>
         <router-link to="/about" class="navbar-item">About</router-link>
-        <router-link to="/profile" class="navbar-item">Profile</router-link>
+<!--        <router-link to="/profile" class="navbar-item">Profile</router-link>-->
       </div>
       <div class="navbar-end">
         <div class="navbar-item">
           <div class="buttons">
-            <a class="button is-dark">
+            <a class="button is-dark" @click="toRegisterPage">
               <strong>Sign In</strong>
             </a>
-            <a class="button is-dark" @click="getData">
+            <a class="button is-dark" @click="toLoginPage">
               <strong>Login</strong>
             </a>
           </div>
@@ -48,13 +48,19 @@ export default {
     }
   },
   methods: {
-    async getData() {
+    async toLoginPage() {
       try {
-        const response = await axios.get('http://localhost:9191/user-service/user');
-        this.responseData = response.data;
-        console.log(this.responseData)
+        await this.$router.push({path: "/login"});
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error navigating to login page:', error);
+      }
+    },
+
+    async toRegisterPage() {
+      try {
+        await this.$router.push({path: "/register"});
+      } catch (error) {
+        console.error('Error navigating to login page:', error);
       }
     }
   }

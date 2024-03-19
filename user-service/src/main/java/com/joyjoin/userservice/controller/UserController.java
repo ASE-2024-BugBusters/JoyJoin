@@ -1,8 +1,10 @@
 package com.joyjoin.userservice.controller;
 
+import com.joyjoin.userservice.model.Address;
 import com.joyjoin.userservice.model.User;
 import com.joyjoin.userservice.modelDto.UserDto;
 import com.joyjoin.userservice.service.UserService;
+import com.thoughtworks.xstream.mapper.Mapper;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -13,8 +15,8 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("user")
-@Validated
+@RequestMapping("api/user")
+@CrossOrigin(allowedHeaders = "*", originPatterns = "/**")
 public class UserController {
 
     private final UserService userService;
@@ -22,6 +24,11 @@ public class UserController {
     @Autowired
     public UserController(UserService userService){
         this.userService = userService;
+    }
+
+    @PostMapping("/test")
+    public String test() {
+        return "Test Post";
     }
 
     @PostMapping()
@@ -39,7 +46,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public UserDto registerUser(@Valid @RequestBody User user) {
+    public UserDto registerUser(@RequestBody User user) {
         return userService.saveUser(user);
     }
 
@@ -48,10 +55,11 @@ public class UserController {
         return userService.getUser(uuid);
     }
 
-    @GetMapping("/{uuid}/name")
-    public UserDto getUserByName(@PathVariable UUID uuid) {
-        return userService.getUser(uuid);
+    @PostMapping("/tests")
+    public Address getAddress(@RequestBody Address address) {
+        return new Address(address.getName());
     }
+
 
     /**
      * the request param is passed in the URL like this: http://localhost:8085/user/by-email?email=josip97@gmail.com
