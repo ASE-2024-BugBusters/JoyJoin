@@ -55,90 +55,91 @@ services:
 
 
 ### Micro Services ###
-  registry-service:
-    image: josip97/registry-service:latest
-    container_name: registry-service
-    pull_policy: always
-    ports:
-      - "8761:8761"
+#  registry-service:
+#    image: josip97/registry-service:latest
+#    container_name: registry-service
+#    pull_policy: always
+#    ports:
+#      - "8761:8761"
+#
+#  api-gateway:
+#    image: josip97/api-gateway:latest
+#    container_name: api-gateway
+#    pull_policy: always
+#    ports:
+#      - "9191:9191"
+#    expose:
+#      - "9191"
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=docker
+#      - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY=TRACE
+#    depends_on:
+#      registry-service:
+#        condition: service_started
+#
+#  event-service:
+#    image: josip97/event-service:latest
+#    container_name: event-service
+#    pull_policy: always
+#    ports:
+#      - "8084:8084"
+#    expose:
+#      - "8084"
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=docker
+#      - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY=TRACE
+#    depends_on:
+#      postgres-event:
+#        condition: service_started
+#      registry-service:
+#        condition: service_started
+#      api-gateway:
+#        condition: service_started
+#
+#  post-service:
+#    image: josip97/post-service:latest
+#    container_name: post-service
+#    pull_policy: always
+#    ports:
+#      - "8085:8085"
+#    expose:
+#      - "8085"
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=docker
+#      - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY=TRACE
+#    depends_on:
+#      postgres-post:
+#        condition: service_started
+#      registry-service:
+#        condition: service_started
+#      api-gateway:
+#        condition: service_started
+#
+#  user-service:
+#    image: josip97/user-service:latest
+#    container_name: user-service
+#    pull_policy: always
+#    ports:
+#      - "8086:8086"
+#    expose:
+#      - "8086"
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=docker
+#      - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY=TRACE
+#    depends_on:
+#      postgres-user:
+#        condition: service_started
+#      registry-service:
+#        condition: service_started
+#      api-gateway:
+#        condition: service_started
 
-  api-gateway:
-    image: josip97/api-gateway:latest
-    container_name: api-gateway
-    pull_policy: always
-    ports:
-      - "9191:9191"
-    expose:
-      - "9191"
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-      - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY=TRACE
-    depends_on:
-      registry-service:
-        condition: service_started
-
-  event-service:
-    image: josip97/event-service:latest
-    container_name: event-service
-    pull_policy: always
-    ports:
-      - "8084:8084"
-    expose:
-      - "8084"
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-      - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY=TRACE
-    depends_on:
-      postgres-post:
-        condition: service_started
-      registry-service:
-        condition: service_started
-      api-gateway:
-        condition: service_started
-
-  post-service:
-    image: josip97/post-service:latest
-    container_name: post-service
-    pull_policy: always
-    ports:
-      - "8085:8085"
-    expose:
-      - "8085"
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-      - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY=TRACE
-    depends_on:
-      postgres-post:
-        condition: service_started
-      registry-service:
-        condition: service_started
-      api-gateway:
-        condition: service_started
-
-  user-service:
-    image: josip97/user-service:latest
-    container_name: user-service
-    pull_policy: always
-    ports:
-      - "8086:8086"
-    expose:
-      - "8086"
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-      - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY=TRACE
-    depends_on:
-      postgres-user:
-        condition: service_started
-      registry-service:
-        condition: service_started
-      api-gateway:
-        condition: service_started
-
-  frontend:
-    image: josip97/frontend:latest
-    container_name: frontend
-    pull_policy: always
-    ports:
-      - "3000:3000"
-    expose:
-      - "3000"
+### Frontend ###
+#  frontend:
+#    image: josip97/frontend:latest
+#    container_name: frontend
+#    pull_policy: always
+#    ports:
+#      - "3005:3005"
+#    expose:
+#      - "3005"

@@ -1,5 +1,5 @@
 server:
-  port: 8082
+  port: 8085
   error:
     include-stacktrace: always
     include-message: always
@@ -8,7 +8,7 @@ spring:
   application:
     name: "POST-SERVICE"
   datasource:
-    url: "jdbc:postgresql://localhost:5432/postService"
+    url: "jdbc:postgresql://localhost:5435/postService"
     username: "postgres"
     password: "1234"
 

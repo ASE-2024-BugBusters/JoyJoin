@@ -1,5 +1,5 @@
 server:
-  port: 8085
+  port: 8086
   error:
     include-stacktrace: always
     include-message: always
@@ -52,5 +52,3 @@ eureka:
   client:
     serviceUrl:
       defaultZone: "http://registry-service:8761/eureka/"
-
-api.version: "v1"
