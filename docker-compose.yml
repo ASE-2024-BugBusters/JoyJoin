@@ -133,8 +133,8 @@ services:
 #        condition: service_started
 #      api-gateway:
 #        condition: service_started
-#
-#### Frontend ###
+
+### Frontend ###
 #  frontend:
 #    image: josip97/frontend:latest
 #    container_name: frontend
@@ -143,4 +143,3 @@ services:
 #      - "3005:3005"
 #    expose:
 #      - "3005"
-

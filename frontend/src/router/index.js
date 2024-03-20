@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import CreatePost from "../views/posts/CreatePost.vue";
+import PostTag from "../views/posts/PostTag.vue";
 
 const routes = [
   {
@@ -21,6 +23,26 @@ const routes = [
     path: "/event/:id",
     name: "eventSingle",
     component: () => import('../views/EventView.vue')
+  },
+  {
+    path: "/login",
+    name: "login",
+    component: () => import('../views/LoginView.vue')
+  },
+  {
+    path: "/register",
+    name: "register",
+    component: () => import('../views/RegisterView.vue')
+  },
+  {
+    path: "/post",
+    name: "post",
+    component: CreatePost
+  },
+  {
+    path: "/posttag",
+    name: "posttag",
+    component: PostTag
   }
 ]
 

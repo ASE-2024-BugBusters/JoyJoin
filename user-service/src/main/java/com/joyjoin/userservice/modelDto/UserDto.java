@@ -1,6 +1,10 @@
 package com.joyjoin.userservice.modelDto;
 
 
+import com.joyjoin.userservice.model.Image;
+import com.joyjoin.userservice.model.ProfileVisibility;
+import com.joyjoin.userservice.model.InterestTag;
+import com.joyjoin.userservice.model.User;
 import com.joyjoin.userservice.modelDto.userPostDto.PostDto;
 import com.joyjoin.userservice.model.template.DefaultProperties;
 import lombok.*;
@@ -20,5 +24,10 @@ public class UserDto extends DefaultProperties {
     private String lastName;
     private String email;
     private String accountName;
+    private String nickname;
+    private String biography;
+    private List<InterestTag> interestTags;
+    private Image avatar;
+    private ProfileVisibility profileVisibility;
     private List<PostDto> postDto;
 }
