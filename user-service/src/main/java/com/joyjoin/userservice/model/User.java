@@ -11,6 +11,7 @@ import com.joyjoin.userservice.model.template.DefaultProperties;
 
 import java.util.Date;
 
+import java.util.List;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -47,8 +48,8 @@ public class User extends DefaultProperties {
 
     private String biography;
 
-//    @Convert(converter = TagsConverter.class)
-//    private List<InterestTag> interestTags;
+    @Convert(converter = TagsConverter.class)
+    private List<InterestTag> interestTags;
 
     @Convert(converter = ImageRefConverter.class)
     private ImageRef avatar;
