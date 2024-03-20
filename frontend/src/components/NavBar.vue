@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar container" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
-      <a class="navbar-item" href="/">
+      <a class="navbar-item" href="/" style="text-decoration: none">
         <strong class="is-size-4">JoyJoin</strong>
       </a>
       <a
@@ -18,19 +18,19 @@
     </div>
     <div id="navbar" class="navbar-menu">
       <div class="navbar-start">
-        <router-link to="/" class="navbar-item">Home</router-link>
-        <router-link to="/about" class="navbar-item">About</router-link>
-        <router-link to="/profile" class="navbar-item">Profile</router-link>
-        <router-link to="/post" class="navbar-item">Create Post</router-link>
+        <router-link to="/" class="navbar-item" style="text-decoration: none">Home</router-link>
+        <router-link to="/about" class="navbar-item noTextDecoration" style="text-decoration: none">About</router-link>
+        <router-link to="/profile" class="navbar-item noTextDecoration" style="text-decoration: none">Profile</router-link>
+        <router-link to="/post" class="navbar-item noTextDecoration" style="text-decoration: none">Create Post</router-link>
 
       </div>
       <div class="navbar-end">
         <div class="navbar-item">
-          <div class="buttons">
-            <a class="button is-dark" @click="toRegisterPage">
+          <div class="buttons noTextDecoration">
+            <a class="button is-dark" style="text-decoration: none" @click="toRegisterPage">
               <strong>Sign In</strong>
             </a>
-            <a class="button is-dark" @click="toLoginPage">
+            <a class="button is-dark noTextDecoration" style="text-decoration: none" @click="toLoginPage">
               <strong>Login</strong>
             </a>
           </div>
@@ -82,4 +82,5 @@ nav {
     }
   }
 }
+
 </style>

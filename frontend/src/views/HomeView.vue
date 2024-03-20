@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import EventList from "@/components/EventList.vue";
+import EventList from "@/views/event/EventList.vue";
 
 export default {
   name: 'home',
