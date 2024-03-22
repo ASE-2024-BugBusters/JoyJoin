@@ -20,7 +20,7 @@ public class DefaultProperties {
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(updatable = false, nullable = false)
     private UUID id;
-
+    @Setter
     private LocalDateTime createdOn = LocalDateTime.now();
 
     @Setter

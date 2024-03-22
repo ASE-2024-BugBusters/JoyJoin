@@ -1,5 +1,6 @@
 package com.joyjoin.eventservice.model;
 
+import com.joyjoin.eventservice.model.converter.ImageRefConverter;
 import com.joyjoin.eventservice.model.template.DefaultProperties;
 import jakarta.persistence.*;
 import lombok.*;
@@ -25,12 +26,8 @@ public class Event extends DefaultProperties {
     @Column(length = 1000)
     private String description;
     @ElementCollection
-    private Set<String> tags;
-    @Lob
-    @Basic(fetch = FetchType.LAZY)
-    @Column(nullable = true)
-    private byte[] image;
-    @Column(nullable = true)
-    private String imageContentType; // Stores the MIME type of the image
+    private Set<Tag> tags;
 
+    @Convert(converter = ImageRefConverter.class)
+    private ImageRef img;
 }

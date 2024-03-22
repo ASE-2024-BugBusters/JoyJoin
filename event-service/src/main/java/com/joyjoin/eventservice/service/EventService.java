@@ -1,56 +1,48 @@
 package com.joyjoin.eventservice.service;
-
+import com.joyjoin.eventservice.controller.dto.UpdateEventRequest;
+import com.joyjoin.eventservice.model.Image;
 import com.joyjoin.eventservice.model.Event;
-import com.joyjoin.eventservice.model.Location;
-import com.joyjoin.eventservice.modelDTO.EventDTO;
+import com.joyjoin.eventservice.model.ImageUrl;
+import com.joyjoin.eventservice.modelDto.EventDto;
+import com.joyjoin.eventservice.packer.EventPacker;
 import com.joyjoin.eventservice.repository.EventRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.util.StreamUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ClassPathResource;
-
-
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class EventService {
 
     @Autowired
     private EventRepository eventRepository;
+    private final ImageService imageService;
+    private final EventPacker eventPacker;
 
-    public Event createEvent(EventDTO eventDto, MultipartFile image) throws IOException {
-        Event event = new Event();
-        event.setTitle(eventDto.getTitle());
-        event.setTime(eventDto.getTime());
-
-        // Map LocationDTO to Location entity
-        Location location = new Location(
-                eventDto.getLocation().getStreet(),
-                eventDto.getLocation().getNumber(),
-                eventDto.getLocation().getCity(),
-                eventDto.getLocation().getPostalCode(),
-                eventDto.getLocation().getCountry()
-        );
-        event.setLocation(location);
-
-        event.setParticipationLimit(eventDto.getParticipationLimit());
-        event.setDescription(eventDto.getDescription());
-        event.setTags(eventDto.getTags());
-        if (image != null && !image.isEmpty()) {
-            event.setImage(image.getBytes());
-            event.setImageContentType(image.getContentType());
-        } else {
-            // Set default image bytes if there is no image provided
-            event.setImage(loadDefaultImageBytes());
-            event.setImageContentType("image/jpeg");
-        }
-        return eventRepository.save(event);
+    public EventService(ImageService imageService, EventPacker eventPacker) {
+        this.imageService = imageService;
+        this.eventPacker = eventPacker;
     }
+
+    @Autowired
+    private ModelMapper modelMapper;
+
+    public EventDto createEvent(Event event) {
+        var now = LocalDateTime.now();
+        event.setCreatedOn(now);
+        event.setLastEdited(now);
+        Event savedEvent = eventRepository.save(event);
+        return eventPacker.packEvent(savedEvent);
+    }
+
     private byte[] loadDefaultImageBytes() {
         // Load your default image from the classpath, filesystem, or wherever it is stored
         // For example, if you have a default image in the resources folder:
@@ -62,10 +54,40 @@ public class EventService {
             throw new RuntimeException("Could not load default image", e);
         }
     }
-    public List<Event> getAllEvents() {
-        return eventRepository.findAll();
+    public List<EventDto> getAllEvents() {
+        List<Event> events = eventRepository.findAll();
+        if (events.isEmpty()) {
+            throw new RuntimeException("Event not found");
+        }
+        return events.stream().map(eventPacker::packEvent).collect(Collectors.toList());
     }
-    public Optional<Event> findById(UUID id) {
-        return eventRepository.findById(id);
+
+    public EventDto getEventById(UUID id) {
+        Event event = eventRepository.findById(id).orElseThrow(() -> new RuntimeException("Event not found"));
+        return eventPacker.packEvent(event);
+    }
+    public void deleteEvent(UUID id) {
+        Event event = eventRepository.findById(id).orElseThrow(() -> new RuntimeException("Event not found"));
+//        event.setIsDeleted(true);
+        eventRepository.save(event);
+    }
+
+
+    public EventDto updateEvent(UUID eventId, UpdateEventRequest updateEventRequest) {
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new RuntimeException("Event not found"));
+        modelMapper.map(updateEventRequest, event);
+        event.setLastEdited(LocalDateTime.now());
+        Event updatedEvent = eventRepository.save(event);
+        return eventPacker.packEvent(updatedEvent);
+    }
+
+
+    static final String AVATAR_BUCKET = "img";
+    public Image getImgUploadInformation(UUID uuid, LocalDateTime expireTime) {
+        String key = uuid.toString() + "--" + UUID.randomUUID();
+        LocalDateTime now = LocalDateTime.now();
+        String uploadUrl = imageService.getPreSignedUrlForUpload("img", key, Duration.between(now, expireTime));
+        ImageUrl imageUploadUrl = new ImageUrl(uploadUrl, expireTime);
+        return new Image(AVATAR_BUCKET, key, List.of(imageUploadUrl));
     }
 }

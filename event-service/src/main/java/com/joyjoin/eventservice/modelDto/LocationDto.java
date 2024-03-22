@@ -1,4 +1,4 @@
-package com.joyjoin.eventservice.modelDTO;
+package com.joyjoin.eventservice.modelDto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @Setter
 @NoArgsConstructor
-public class LocationDTO {
+public class LocationDto {
     @NotBlank(message = "Street is required")
     private String street;
 

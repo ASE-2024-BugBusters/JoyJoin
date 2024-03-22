@@ -1,5 +1,7 @@
-package com.joyjoin.eventservice.modelDTO;
+package com.joyjoin.eventservice.modelDto;
 
+import com.joyjoin.eventservice.model.Image;
+import com.joyjoin.eventservice.model.Tag;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,7 +13,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-public class EventDTO {
+public class EventDto {
     @NotBlank(message = "Title is required")
     private String title;
 
@@ -20,7 +22,7 @@ public class EventDTO {
     private LocalDateTime time;
 
     @NotNull(message = "Location is required")
-    private LocationDTO location;
+    private LocationDto location;
 
     @Min(value = 1, message = "Participation limit must be at least 1")
     private int participationLimit;
@@ -30,5 +32,6 @@ public class EventDTO {
     private String description;
 
     private Set<@NotBlank(message = "Tags must not be blank") String> tags;
-    private String imageUrl;
+    private Image img;
+//    private String imageUrl;
 }
