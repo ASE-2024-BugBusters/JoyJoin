@@ -13,6 +13,7 @@ import java.net.URI;
 public class AwsConfig {
 
     final URI endpoint = URI.create("https://s3.localhost.localstack.cloud:4566");
+//    final URI endpoint = URI.create("http://localhost:4566");
     final String ACCESS_KEY = "test";
     final String SECRET_KEY = "test";
     final StaticCredentialsProvider credentials = StaticCredentialsProvider.create(AwsBasicCredentials.create(ACCESS_KEY, SECRET_KEY));

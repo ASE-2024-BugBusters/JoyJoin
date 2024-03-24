@@ -30,41 +30,34 @@ public class EventController {
 
     /**
      * For testing purposes
-     * @param eventDto
      * @return Event
      */
-    @PostMapping()
-    public ResponseEntity<Event> createEvent(@Valid @RequestBody EventDto eventDto) {
-        Event event = modelMapper.map(eventDto, Event.class);
-        EventDto createdEventDto = eventService.createEvent(event);
-        return ResponseEntity.status(HttpStatus.CREATED).body(event);
-    }
+//    @PostMapping()
+//    public ResponseEntity<Event> createEvent(@Valid @RequestBody EventDto eventDto) {
+//        Event event = modelMapper.map(eventDto, Event.class);
+//        Event createdEventDto = eventService.createEvent(event);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(createdEventDto);
+//    }
 //    @GetMapping()
 //    public EventDto getAllEvents() {
 //        return EventDto eventService.getAllEvents();
 //    }
-    @GetMapping()
-    public ResponseEntity<List<EventDto>> getAllEvents() {
-        List<EventDto> eventDtos = eventService.getAllEvents();
-        return new ResponseEntity<>(eventDtos, HttpStatus.OK);
-    }
+//    @GetMapping()
+//    public ResponseEntity<List<EventDto>> getAllEvents() {
+//        List<EventDto> eventDtos = eventService.getAllEvents();
+//        return new ResponseEntity<>(eventDtos, HttpStatus.OK);
+//    }
+//    @PostMapping("/publish")
+//    public ResponseEntity<EventDto> publishEvent(@RequestBody Event event) {
+//        EventDto createdEventDto = eventService.createEvent(event);
+//        return new ResponseEntity<>(createdEventDto, HttpStatus.CREATED);
+//    }
 
-    private EventDto convertToDto(Event event) {
-        EventDto eventDto = new EventDto();
-        modelMapper.map(event, EventDto.class);
-        return eventDto;
-    }
-    @PostMapping("/publish")
-    public ResponseEntity<EventDto> publishEvent(@RequestBody Event event) {
-        EventDto createdEventDto = eventService.createEvent(event);
-        return new ResponseEntity<>(createdEventDto, HttpStatus.CREATED);
-    }
-
-    @PatchMapping("/{eventId}")
-    public EventDto updateEvent(@PathVariable UUID eventId, @RequestBody UpdateEventRequest request) {
-        eventService.updateEvent(eventId, request);
-        return null;
-    }
+//    @PatchMapping("/{eventId}")
+//    public EventDto updateEvent(@PathVariable UUID eventId, @RequestBody UpdateEventRequest request) {
+//        eventService.updateEvent(eventId, request);
+//        return null;
+//    }
 
 
     @GetMapping("/{eventId}/upload_image")
@@ -72,8 +65,8 @@ public class EventController {
         var expireTime = LocalDateTime.now().plusMinutes(30);
         return new GetImgUploadUrlResponse(eventService.getImgUploadInformation(eventId, expireTime));
     }
-    @GetMapping("/{eventId}")
-    public EventDto getEventByUUID(@PathVariable UUID eventId) {
-        return eventService.getEventById(eventId);
-    }
+//    @GetMapping("/{eventId}")
+//    public EventDto getEventByUUID(@PathVariable UUID eventId) {
+//        return eventService.getEventById(eventId);
+//    }
 }

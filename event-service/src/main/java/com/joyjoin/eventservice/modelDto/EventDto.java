@@ -32,6 +32,6 @@ public class EventDto {
     private String description;
 
     private Set<@NotBlank(message = "Tags must not be blank") String> tags;
-    private Image img;
+//    private Image img;
 //    private String imageUrl;
 }

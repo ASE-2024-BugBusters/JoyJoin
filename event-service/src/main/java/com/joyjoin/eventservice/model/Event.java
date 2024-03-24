@@ -28,6 +28,6 @@ public class Event extends DefaultProperties {
     @ElementCollection
     private Set<Tag> tags;
 
-    @Convert(converter = ImageRefConverter.class)
-    private ImageRef img;
+//    @Convert(converter = ImageRefConverter.class)
+//    private ImageRef img;
 }

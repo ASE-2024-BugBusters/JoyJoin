@@ -109,6 +109,20 @@
             <version>2.25.11</version>
             <scope>compile</scope>
         </dependency>
+        <!-- AWS Java SDK S3 module -->
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-s3</artifactId>
+            <version>1.12.686</version> <!-- 使用最新的版本或根据需要调整 -->
+        </dependency>
+
+        <!-- AWS SDK for Java Core module (required for S3 module) -->
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-core</artifactId>
+            <version>1.12.686</version> <!-- 使用最新的版本或根据需要调整 -->
+        </dependency>
+
     </dependencies>
     <dependencyManagement>
         <dependencies>
