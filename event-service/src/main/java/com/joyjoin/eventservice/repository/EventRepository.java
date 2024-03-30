@@ -12,4 +12,6 @@ import java.util.UUID;
 public interface EventRepository extends JpaRepository<Event, UUID> {
     // Custom database queries can be defined here if needed
     List<Event> findByIsDeletedFalse();
+
+    Event findEventByTitle(String title);
 }

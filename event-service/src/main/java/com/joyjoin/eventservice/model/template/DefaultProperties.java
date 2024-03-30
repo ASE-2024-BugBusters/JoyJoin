@@ -28,6 +28,4 @@ public class DefaultProperties {
 
     @Setter
     private boolean isDeleted = false;
-
-
 }

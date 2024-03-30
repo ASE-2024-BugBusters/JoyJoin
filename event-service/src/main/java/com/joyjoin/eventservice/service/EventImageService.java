@@ -1,26 +1,16 @@
 package com.joyjoin.eventservice.service;
-import com.joyjoin.eventservice.model.ImageUrl;
-import com.joyjoin.eventservice.service.ImageService;
-import com.joyjoin.eventservice.model.ImageRef;
 import com.joyjoin.eventservice.repository.EventRepository;
-import com.joyjoin.eventservice.repository.ImageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.awt.*;
-import java.time.LocalDateTime;
 
 @Service
 public class EventImageService {
 
-    private final ImageRepository imageRepository;
-    // 假设存在EventRepository来处理事件数据
     private final EventRepository eventRepository;
     private final ImageService imageService;
 
     @Autowired
-    public EventImageService(ImageRepository imageRepository, EventRepository eventRepository, ImageService imageService) {
-        this.imageRepository = imageRepository;
+    public EventImageService(EventRepository eventRepository, ImageService imageService) {
         this.eventRepository = eventRepository;
         this.imageService = imageService;
     }

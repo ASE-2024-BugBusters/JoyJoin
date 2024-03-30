@@ -1,13 +1,11 @@
 package com.joyjoin.eventservice.model;
-
-import com.joyjoin.eventservice.model.converter.ImageRefConverter;
+import com.joyjoin.eventservice.model.converter.ImageRefListConverter;
 import com.joyjoin.eventservice.model.template.DefaultProperties;
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
-
 @Entity
 @Getter
 @Setter
@@ -27,7 +25,7 @@ public class Event extends DefaultProperties {
     private String description;
     @ElementCollection
     private Set<Tag> tags;
+    @Convert(converter = ImageRefListConverter.class)
+    private List<ImageRef> images;
 
-//    @Convert(converter = ImageRefConverter.class)
-//    private ImageRef img;
 }

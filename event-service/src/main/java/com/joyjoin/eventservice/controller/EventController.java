@@ -1,20 +1,15 @@
 package com.joyjoin.eventservice.controller;
-
 import com.joyjoin.eventservice.controller.dto.GetImgUploadUrlResponse;
-import com.joyjoin.eventservice.controller.dto.UpdateEventRequest;
 import com.joyjoin.eventservice.model.Event;
 import com.joyjoin.eventservice.modelDto.EventDto;
 import com.joyjoin.eventservice.service.EventService;
-import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/events")
@@ -28,45 +23,30 @@ public class EventController {
         this.modelMapper = modelMapper;
     }
 
-    /**
-     * For testing purposes
-     * @return Event
-     */
-//    @PostMapping()
-//    public ResponseEntity<Event> createEvent(@Valid @RequestBody EventDto eventDto) {
-//        Event event = modelMapper.map(eventDto, Event.class);
-//        Event createdEventDto = eventService.createEvent(event);
-//        return ResponseEntity.status(HttpStatus.CREATED).body(createdEventDto);
-//    }
-//    @GetMapping()
-//    public EventDto getAllEvents() {
-//        return EventDto eventService.getAllEvents();
-//    }
-//    @GetMapping()
-//    public ResponseEntity<List<EventDto>> getAllEvents() {
-//        List<EventDto> eventDtos = eventService.getAllEvents();
-//        return new ResponseEntity<>(eventDtos, HttpStatus.OK);
-//    }
-//    @PostMapping("/publish")
-//    public ResponseEntity<EventDto> publishEvent(@RequestBody Event event) {
-//        EventDto createdEventDto = eventService.createEvent(event);
-//        return new ResponseEntity<>(createdEventDto, HttpStatus.CREATED);
-//    }
-
-//    @PatchMapping("/{eventId}")
-//    public EventDto updateEvent(@PathVariable UUID eventId, @RequestBody UpdateEventRequest request) {
-//        eventService.updateEvent(eventId, request);
-//        return null;
-//    }
-
-
-    @GetMapping("/{eventId}/upload_image")
-    public GetImgUploadUrlResponse getImgUploadUrl(@PathVariable UUID eventId) {
-        var expireTime = LocalDateTime.now().plusMinutes(30);
-        return new GetImgUploadUrlResponse(eventService.getImgUploadInformation(eventId, expireTime));
+    @PostMapping
+    public ResponseEntity<EventDto> createEvent(@RequestBody EventDto eventDto) {
+        Event event = modelMapper.map(eventDto, Event.class);
+        EventDto createdEvent = eventService.saveEvent(event);
+        return new ResponseEntity<>(createdEvent, HttpStatus.CREATED);
     }
-//    @GetMapping("/{eventId}")
-//    public EventDto getEventByUUID(@PathVariable UUID eventId) {
-//        return eventService.getEventById(eventId);
-//    }
+    @GetMapping("/upload_image")
+    public GetImgUploadUrlResponse getImgUploadUrl() {
+        var expireTime = LocalDateTime.now().plusMinutes(30);
+        return new GetImgUploadUrlResponse(eventService.getImgUploadInformation(expireTime));
+    }
+    @GetMapping
+    public ResponseEntity<List<EventDto>> getAllEvents() {
+        List<EventDto> events = eventService.getAllEvents();
+        return new ResponseEntity<>(events, HttpStatus.OK);
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<EventDto> getEventById(@PathVariable UUID id) {
+        EventDto event = eventService.getEventById(id);
+        return new ResponseEntity<>(event, HttpStatus.OK);
+    }
+    @PatchMapping("/{id}")
+    public ResponseEntity<EventDto> updateEvent(@PathVariable UUID id, @RequestBody EventDto eventDto) {
+        Event eventDetails = modelMapper.map(eventDto, Event.class);
+        return new ResponseEntity<>(eventService.updateEvent(id, eventDetails), HttpStatus.OK);
+    }
 }

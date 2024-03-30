@@ -1,6 +1,7 @@
 package com.joyjoin.eventservice.modelDto;
 
 import com.joyjoin.eventservice.model.Image;
+import com.joyjoin.eventservice.model.ImageRef;
 import com.joyjoin.eventservice.model.Tag;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,12 +9,15 @@ import lombok.Setter;
 
 import javax.validation.constraints.*;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Getter
 @Setter
 @NoArgsConstructor
 public class EventDto {
+    private UUID id;
     @NotBlank(message = "Title is required")
     private String title;
 
@@ -32,6 +36,5 @@ public class EventDto {
     private String description;
 
     private Set<@NotBlank(message = "Tags must not be blank") String> tags;
-//    private Image img;
-//    private String imageUrl;
+    private List<Image> images;
 }
