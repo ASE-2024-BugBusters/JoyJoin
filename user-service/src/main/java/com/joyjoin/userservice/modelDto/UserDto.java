@@ -4,12 +4,11 @@ package com.joyjoin.userservice.modelDto;
 import com.joyjoin.userservice.model.Image;
 import com.joyjoin.userservice.model.ProfileVisibility;
 import com.joyjoin.userservice.model.InterestTag;
-import com.joyjoin.userservice.model.User;
 import com.joyjoin.userservice.modelDto.userPostDto.PostDto;
-import com.joyjoin.userservice.model.template.DefaultProperties;
 import lombok.*;
 
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,7 +17,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-public class UserDto extends DefaultProperties {
+public class UserDto {
     private UUID id;
     private String firstName;
     private String lastName;
@@ -30,4 +29,6 @@ public class UserDto extends DefaultProperties {
     private Image avatar;
     private ProfileVisibility profileVisibility;
     private List<PostDto> postDto;
+    private LocalDateTime createdOn;
+    private LocalDateTime lastEdited;
 }

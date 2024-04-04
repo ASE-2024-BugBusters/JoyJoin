@@ -15,6 +15,10 @@ spring:
             allowedOrigins: "*"
             allowedMethods: "*"
             allowedHeaders: "*"
+      routes[0]:
+        id: user-service
+        uri: lb://user-service
+
 
 ## We could define the routes also like this, but the locator does this automatically and we don't need to deal with it
 #      routes:

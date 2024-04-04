@@ -3,18 +3,18 @@ package com.joyjoin.userservice.controller;
 
 import com.joyjoin.userservice.controller.dto.GetAvatarUploadUrlResponse;
 import com.joyjoin.userservice.controller.dto.UpdateUserRequest;
-import com.joyjoin.userservice.model.Image;
-import com.joyjoin.userservice.model.ImageUrl;
 
 import com.joyjoin.userservice.model.User;
 import com.joyjoin.userservice.modelDto.UserDto;
+import com.joyjoin.userservice.security.model.AuthenticationRequest;
+import com.joyjoin.userservice.security.model.AuthenticationResponse;
+import com.joyjoin.userservice.security.service.AuthService;
 import com.joyjoin.userservice.service.ImageService;
 import com.joyjoin.userservice.service.UserService;
-import com.thoughtworks.xstream.mapper.Mapper;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -27,6 +27,7 @@ import java.util.UUID;
 @CrossOrigin(allowedHeaders = "*", originPatterns = "/**")
 public class UserController {
 
+    private final AuthService authService;
     private final UserService userService;
 
     private final ImageService imageService;
@@ -34,20 +35,11 @@ public class UserController {
     private final ModelMapper modelMapper;
 
     @Autowired
-    public UserController(UserService userService, ImageService imageService, ModelMapper modelMapper) {
+    public UserController(AuthService authService, UserService userService, ImageService imageService, ModelMapper modelMapper) {
+        this.authService = authService;
         this.userService = userService;
         this.imageService = imageService;
         this.modelMapper = modelMapper;
-    }
-
-    @PostMapping("/test")
-    public String test() {
-        return "Test Post";
-    }
-
-    @PostMapping()
-    public UserDto createUser(@Valid @RequestBody User user) {
-        return userService.saveUser(user);
     }
 
     /**
@@ -61,8 +53,13 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public UserDto registerUser(@RequestBody User user) {
-        return userService.saveUser(user);
+    public AuthenticationResponse registerUser(@RequestBody User user) {
+        return authService.register(user);
+    }
+
+    @PostMapping("/login")
+    public AuthenticationResponse loginUser(@RequestBody AuthenticationRequest request) {
+        return authService.login(request);
     }
 
     @PatchMapping("/{uuid}")
