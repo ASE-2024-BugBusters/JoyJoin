@@ -70,7 +70,7 @@ public class UserService {
 //        List<PostDto> posts = postApiClient.getAllPosts();
         List<User> users = userRepository.findAll();
         return users.stream().map(user -> {
-            UserDto userDto = userPacker.packUser(user);
+            UserDto userDto = modelMapper.map(user, UserDto.class);
 
             // only to check if the API works: id does
 //            userDto.setPostDto(posts);

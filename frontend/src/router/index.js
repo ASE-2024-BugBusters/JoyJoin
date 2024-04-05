@@ -22,17 +22,17 @@ const routes = [
   {
     path: "/event/:id",
     name: "eventSingle",
-    component: () => import('../views/EventView.vue')
+    component: () => import('../views/event/EventView.vue')
   },
   {
     path: "/login",
     name: "login",
-    component: () => import('../views/LoginView.vue')
+    component: () => import('../views/login/LoginView.vue')
   },
   {
     path: "/register",
     name: "register",
-    component: () => import('../views/RegisterView.vue')
+    component: () => import('../views/register/RegisterView.vue')
   },
   {
     path: "/post",

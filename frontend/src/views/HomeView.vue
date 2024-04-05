@@ -8,45 +8,26 @@
             Discover Exciting Events Nearby!
           </h2>
           <div class="button-block">
-            <button class="button is-xl is-dark" @click="toggleModal">
+            <button class="button is-xl is-dark">
               Sign Up to browse and register for Events
             </button>
-            <!-- 添加发布按钮 -->
-            <button class="button is-xl is-info" @click="toggleModal">Publish Event</button>
           </div>
         </div>
       </div>
     </section>
     <EventList/>
-    <!-- 条件渲染 PublishEventModal 组件 -->
-    <PublishEventModal :isVisible="showModal" @close="toggleModal"/>
   </div>
 </template>
 
-
 <script>
-import EventList from "@/components/EventList.vue";
-import PublishEventModal from "@/components/PublishEventModal.vue"; // 确保路径正确
+import EventList from "@/views/event/EventList.vue";
 
 export default {
   name: 'home',
   components: {
-    EventList,
-    PublishEventModal
+    EventList
   },
-  data() {
-    return {
-      showModal: false // 用于控制模态显示的布尔值
-    };
-  },
-  methods: {
-    toggleModal() {
-      this.showModal = !this.showModal;
-      console.log("toggleModal called", this.showModal);
-    }
-  }
 };
-
 </script>
 <style lang="scss" scoped>
 
