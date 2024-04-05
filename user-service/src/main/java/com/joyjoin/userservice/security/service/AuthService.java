@@ -14,6 +14,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
 
 @Service
 @RequiredArgsConstructor
@@ -28,11 +30,13 @@ public class AuthService {
             throw new EmailAlreadyExistsException(ErrorCode.USER_EMAIL_ALREADY_EXISTS.getErrorCode());
         }
         LocalDateTime now = LocalDateTime.now();
+        Collection<Role> roles = new ArrayList<>();
+        roles.add(new Role("USER"));
         User userToSave = User.builder()
                 .firstName(user.getFirstName())
                 .email(user.getEmail())
                 .password(passwordEncoder.encode(user.getPassword()))
-                .role(Role.USER)
+                .roles(roles)
                 .createdOn(now)
                 .lastEdited(now)
                 .build();

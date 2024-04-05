@@ -5,10 +5,12 @@ import com.joyjoin.userservice.model.Image;
 import com.joyjoin.userservice.model.ProfileVisibility;
 import com.joyjoin.userservice.model.InterestTag;
 import com.joyjoin.userservice.modelDto.userPostDto.PostDto;
+import com.joyjoin.userservice.security.model.Role;
 import lombok.*;
 
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,6 +29,7 @@ public class UserDto {
     private String biography;
     private List<InterestTag> interestTags;
     private Image avatar;
+    private Collection<Role> roles;
     private ProfileVisibility profileVisibility;
     private List<PostDto> postDto;
     private LocalDateTime createdOn;

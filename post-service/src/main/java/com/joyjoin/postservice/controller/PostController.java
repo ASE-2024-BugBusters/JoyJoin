@@ -4,13 +4,12 @@ import com.joyjoin.postservice.model.Post;
 import com.joyjoin.postservice.modelDto.PostDto;
 import com.joyjoin.postservice.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("post")
+@RequestMapping("api/post")
 public class PostController {
     private final PostService postService;
 

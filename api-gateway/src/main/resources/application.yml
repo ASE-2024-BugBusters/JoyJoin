@@ -15,24 +15,41 @@ spring:
             allowedOrigins: "*"
             allowedMethods: "*"
             allowedHeaders: "*"
-      routes[0]:
-        id: user-service
-        uri: lb://user-service
+      routes:
+        - id: "POST-SERVICE"
+          uri:
+            "lb://POST-SERVICE"
+          predicates:
+            - "Path=/post-service/api/post/**"
+            - "Header=Authorization, Bearer (.*)"
+          filters:
+            - "RemoveRequestHeader=Cookie"
+            - "UserServiceAuthorizationHeaderFilter"
+
+        - id: "user-service-login"
+          uri:
+            "lb://USER-SERVICE"
+          predicates:
+            - "Path=/user-service/api/user/login"
+            - "Path=/user-service/api/user/register"
+            - "Path=/user-service/api/user/test"
+          filters:
+            - "RemoveRequestHeader=Cookie"
+
+        - id: "user-service-non-authentication"
+          uri:
+            "lb://USER-SERVICE"
+          predicates:
+            - "Path=/user-service/api/user/**"
+          filters:
+            - "RemoveRequestHeader=Cookie"
+            - "UserServiceAuthorizationHeaderFilter"
+
+
 
 
 ## We could define the routes also like this, but the locator does this automatically and we don't need to deal with it
-#      routes:
-#        - id: "POST-SERVICE"
-#          uri:
-#            "lb://POST-SERVICE"
-#          predicates:
-#            - "Path=/post/**"
-#
-#        - id: "USER-SERVICE"
-#          uri:
-#            "lb://USER-SERVICE"
-#          predicates:
-#            - "Path=/user/**"
+
 
 # Access of Dashboard here: http://localhost:8761
 eureka:
@@ -59,3 +76,8 @@ logging:
           gateway:
             handler:
               org.springframework.cloud.gateway.handler.RoutePredicateHandlerMapping: DEBUG
+
+
+jwt:
+  token:
+    secret: "9abd22e669dcceb6feb83a9999a53f6328934b177790c9dbf219bdc3114389465b31470ef9d929ff82fb0c829321d74ac630a3d938a66274e16162576da10f06"

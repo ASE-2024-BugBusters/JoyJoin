@@ -80,6 +80,10 @@ public class UserController {
         return userService.getUser(uuid);
     }
 
+    @GetMapping("/test")
+    public String test() {
+        return "Test";
+    }
 
     /**
      * the request param is passed in the URL like this: http://localhost:8085/user/by-email?email=josip97@gmail.com

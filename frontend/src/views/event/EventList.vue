@@ -12,7 +12,7 @@
   </div>
 </template>
 <script>
-import EventCard from '@/components/EventCard';
+import EventCard from '@/views/event/EventCard.vue';
 export default {
   name: 'EventsList',
   components: {
