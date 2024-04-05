@@ -7,6 +7,7 @@ import com.joyjoin.eventservice.model.ImageUrl;
 import com.joyjoin.eventservice.modelDto.EventDto;
 import com.joyjoin.eventservice.packer.EventPacker;
 import com.joyjoin.eventservice.repository.EventRepository;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -61,8 +62,12 @@ public class EventService {
         List<Event> events = eventRepository.findAll();
         return events.stream().map(eventPacker::packEvent).collect(Collectors.toList());
     }
+    @Transactional
     public EventDto getEventById(UUID id) {
         Event event = eventRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Event", "id", id.toString()));
+        System.out.println(event.getTitle());
+        System.out.println(event.getId());
+        System.out.println(event.getImages());
         return eventPacker.packEvent(event);
     }
     public EventDto updateEvent(UUID id, Event eventDetails) {
@@ -72,5 +77,4 @@ public class EventService {
         Event savedEvent = eventRepository.save(existedEvent);
         return eventPacker.packEvent(savedEvent);
     }
-
 }

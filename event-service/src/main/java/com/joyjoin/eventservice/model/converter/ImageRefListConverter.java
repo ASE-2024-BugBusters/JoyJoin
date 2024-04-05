@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joyjoin.eventservice.model.ImageRef;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.List;
 @Converter
 public class ImageRefListConverter implements AttributeConverter<List<ImageRef>, String> {
 
+    private static final Logger log = LoggerFactory.getLogger(ImageRefListConverter.class);
     private static final ObjectMapper mapper = new ObjectMapper();
 
     @Override
@@ -23,6 +26,7 @@ public class ImageRefListConverter implements AttributeConverter<List<ImageRef>,
         try {
             return mapper.writeValueAsString(imageRefList);
         } catch (JsonProcessingException e) {
+            log.error("JSON writing error", e);
             return "[]";
         }
     }
@@ -35,6 +39,7 @@ public class ImageRefListConverter implements AttributeConverter<List<ImageRef>,
         try {
             return mapper.readValue(json, new TypeReference<List<ImageRef>>() {});
         } catch (JsonProcessingException e) {
+            log.error("JSON reading error", e);
             return Collections.emptyList();
         }
     }
