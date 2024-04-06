@@ -77,6 +77,7 @@
             <div class="field">
               <label class="label">Images</label>
               <input type="file" id="filepond" name="filepond" class="filepond" />
+              <input type="hidden" v-model="uploadedImages" />
             </div>
             <div class="field">
               <div class="control">
@@ -109,6 +110,9 @@ export default {
     const participationLimit = ref("");
     const description = ref("");
     const multiValue = ref([]); // MultiSelect v-model
+    const imageKeys = ref([]);
+    const uploadedImages = ref([]);
+
     const source = ref([
         { value: 'VEGAN_CUISINE', label: 'Vegan Cuisine' },
         { value: 'NIGHTLIFE', label: 'Nightlife' },
@@ -167,7 +171,9 @@ export default {
             },
             participationLimit: parseInt(participationLimit.value),
             description: description.value,
-            tags: multiValue.value
+            tags: multiValue.value,
+            images: uploadedImages.value
+
       };
   
   console.log("Data to be sent:", data);
@@ -183,12 +189,67 @@ export default {
     console.error("Error: ", error);
   }
   };
+
   onMounted(() => {
-      // 初始化 FilePond
-      FilePond.create(document.querySelector('.filepond'), {
-        server: '您的文件上传处理服务器端点'
+      const pond = FilePond.create(document.querySelector('.filepond'), {
+        instantUpload: false,
+        allowMultiple: true,
+        maxFiles: 9,
+        server: {
+          process: (fieldName, file, metadata, load, error, progress, abort) => {
+            // Call the function to get upload URL
+            getUploadUrl()
+              .then((response) => {
+                const uploadUrl = response.url;
+                const key = response.key;
+
+                // Use axios or another HTTP client to upload the file
+                axios.put(uploadUrl, file, {
+                  onUploadProgress: (e) => {
+                    progress(e.lengthComputable, e.loaded, e.total);
+                  },
+                })
+                .then(() => {
+                  // 将已上传的图片信息保存到 uploadedImages 中
+                  uploadedImages.value.push({ "bucket": "img", "key": key });
+                  load(key);
+                })
+                .catch((uploadError) => {
+                  error('Upload error');
+                  console.error(uploadError);
+                });
+              })
+              .catch((getUrlError) => {
+                error('Could not get upload URL');
+                console.error(getUrlError);
+              });
+
+            // Should expose an abort method so the request can be cancelled
+            return {
+              abort: () => {
+                // This function is entered if the user cancels the upload
+                abort();
+              }
+            };
+          }
+        }
       });
     });
+
+
+    const getUploadUrl = async () => {
+      try {
+        const response = await axios.get("http://localhost:9191/event-service/events/upload_image");
+        return {
+          url: response.data.image.urls[0].url,
+          key: response.data.image.key
+        };
+      } catch (error) {
+        console.error("Error fetching upload URL:", error);
+        throw error;
+      }
+    };
+
 
     return {
       title, time, location, participationLimit, description, publish, multiValue, source
