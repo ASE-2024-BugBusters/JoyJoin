@@ -3,10 +3,34 @@ spring:
     name: "API-GATEWAY"
   cloud:
     gateway:
-      discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+      routes:
+        - id: 'user-service-auth'
+          uri:
+            'lb://USER-SERVICE'
+          predicates:
+            - 'Path=/user-service/api/auth/**'
+          filters:
+            - 'RemoveRequestHeader=Cookie'
+            - 'RewritePath=/user-service/(?<segment>.*), /$\{segment}'
+
+        - id: 'user-service-general'
+          uri:
+            'lb://USER-SERVICE'
+          predicates:
+            - 'Path=/user-service/api/user/**'
+            - 'Header=Authorization, Bearer (.*)'
+          filters:
+            - 'RemoveRequestHeader=Cookie'
+            - 'RewritePath=/user-service/(?<segment>.*), /$\{segment}'
+            - 'UserServiceAuthorizationHeaderFilter'
 
 
 eureka:

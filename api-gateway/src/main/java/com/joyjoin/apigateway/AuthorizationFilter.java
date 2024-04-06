@@ -19,12 +19,12 @@ import java.util.List;
 import java.util.Objects;
 
 @Component
-public class UserServiceAuthorizationHeaderFilter extends AbstractGatewayFilterFactory<UserServiceAuthorizationHeaderFilter.Config> {
+public class AuthorizationFilter extends AbstractGatewayFilterFactory<AuthorizationFilter.Config> {
     @Autowired
     Environment env;
     private final String TOKEN_PREFIX = "Bearer ";
 
-    public UserServiceAuthorizationHeaderFilter() {
+    public AuthorizationFilter() {
         super(Config.class);
     }
 

@@ -30,7 +30,18 @@ spring:
           filters:
             - 'RemoveRequestHeader=Cookie'
             - 'RewritePath=/user-service/(?<segment>.*), /$\{segment}'
-            - 'UserServiceAuthorizationHeaderFilter'
+            - 'AuthorizationFilter'
+
+        - id: 'post-service-general'
+          uri:
+            'lb://POST-SERVICE'
+          predicates:
+            - 'Path=/post-service/api/post/**'
+            - 'Header=Authorization, Bearer (.*)'
+          filters:
+            - 'RemoveRequestHeader=Cookie'
+            - 'RewritePath=/user-service/(?<segment>.*), /$\{segment}'
+            - 'AuthorizationFilter'
 
 
 
