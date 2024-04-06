@@ -1,37 +1,28 @@
 <template>
-  <h2 class="page-header">New post</h2>
+  <h1 class="page-header">New post</h1>
   <div class="create-post">
     <!--Images-->
     <div class="image-upload">
-      <ImagePreview ref="imagePreview" :images="images"/>
-      <!-- <div v-if="!images_valid" class="error-msg image-error-msg">Please upload image.</div> -->
+      <DisplayImages />
     </div>
 
     <!--Caption-->
     <div class="create-post-div">
-      <div class="caption-wrapper">
-        <textarea v-on:keyup="caption.length>0 ? caption_valid=true : caption_valid=false" class="post-caption" v-model="caption" placeholder="Write a caption..." required></textarea>
-        <div v-if="!caption_valid" class="error-msg">Please write a caption.</div>
-      </div>
+      <textarea class="post-caption" v-model="caption" placeholder="Write a caption..."></textarea>
     </div>
 
     <!--Tag people-->
-    <!-- <router-link to="/posttag"> -->
-    <div class="create-post-div" @click="openPostTagModal">
-      <div class="left-content">
-        <img class="post-icon" alt="Post Tag" src="../../assets/post-tag.png">
-        <div class="user-info">
-          <div>Tag people</div>
-          <div class="post-info">
-            <span v-if="taggedpeople.length">{{ taggedusername }}</span>
-          </div>
+    <router-link to="/posttag">
+      <div class="create-post-div">
+        <div class="left-content">
+          <img class="post-icon" alt="Post Tag" src="../../assets/post-tag.png">
+          Tag people
+        </div>
+        <div class="right-content">
+          <img class="post-icon post-icon-right" src="../../assets/right-arrow.png">
         </div>
       </div>
-      <div class="right-content">
-        <font-awesome-icon :icon="['fas', 'chevron-right']" class="post-icon post-icon-right"></font-awesome-icon>
-      </div>
-    </div>
-    <!-- </router-link> -->
+    </router-link>
 
     <!--Add event-->
     <router-link to="/postevent">
@@ -41,100 +32,49 @@
           Add event
         </div>
         <div class="right-content">
-          <font-awesome-icon :icon="['fas', 'chevron-right']" class="post-icon post-icon-right"></font-awesome-icon>
+          <img class="post-icon post-icon-right" src="../../assets/right-arrow.png">
         </div>
       </div>
     </router-link>
 
     <br>
     <!--Submit Button-->
-    <div class="submit" @click="createNewPost" :disabled="!caption">Share</div>
+    <div class="submit" @click="post">Share</div>
   </div>
-  <PostTag ref="postTagModal" @saveTags="savedTags"></PostTag>
-  <PopupContent ref="successDialogue"></PopupContent>
 </template>
 
 <script>
-import ImagePreview from '../../components/Images/ImagePreview.vue'
-import PopupContent from '@/components/Popup/PopupContent.vue';
-import PostTag from './PostTag.vue';
-import {toRaw} from "vue";
+import DisplayImages from './DisplayImages.vue'
+
 export default {
-  components: {ImagePreview, PostTag, PopupContent},
   data() {
     return {
       images: [],
-      caption: '',
-      // taggedpeople: [{username: 'seancheee'}, {username: 'kayannn'}],
-      taggedpeople: [],
-      images_valid: true,
-      caption_valid: true,
-      taggedPeopleDisplayMaxiLength: 60,
+      caption: ''
     };
   },
+  components: {DisplayImages},
   methods: {
-    validateFields(){
-      let err = 0;
-      let valid = true;
-      // (1) Validate Caption
-      if (!this.caption){
-        this.caption_valid = false;
-        err++;
+    handleFileChange(event) {
+      const files = event.target.files;
+      if (!files.length) return;
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+          this.images.push(e.target.result);
+        };
+
+        reader.readAsDataURL(file);
       }
-      // (2) Validate Images
-      if (!this.$refs.imagePreview.validateImages()){
-        err++;
-      }
-      //Summarize validity
-      if (err > 0){
-        valid = false;
-      }
-      return valid;
     },
-    createNewPost() {
+    post() {
       // Logic to post the data
-      const valid = this.validateFields();
-      if (valid){
-        //Post API send to database
-        //...
-        //Return back to homepage
-        setTimeout(() => {
-          // Show success message modal
-          this.$refs.successDialogue.show({
-            title: 'Succesfully Create Post',
-            message: 'You have successfully create the post! You will be navigate back to your post-profile.',
-            messageIcon: ['fas', 'check-circle'],
-            messageIconColor: 'green',
-          });
-          // Automatically close success message modal after 3 seconds
-          setTimeout(() => {
-            this.$refs.successDialogue._cancel();
-            this.$router.push({name: 'home'})
-          }, 2000);
-        }, 0)
-      }
-
-    },
-    async openPostTagModal(){
-      await this.$refs.postTagModal.show({taggedpeople: this.taggedpeople});
-    },
-    savedTags(temp_taggedpeople){
-      if(temp_taggedpeople){
-        this.taggedpeople = structuredClone(toRaw(temp_taggedpeople))
-      }
-      this.$refs.postTagModal._cancel()
+      console.log('Posting...', this.caption, this.images);
     }
-
-  },
-  computed: {
-    taggedusername() {
-      let username_list = this.taggedpeople.map(taggedperson => taggedperson.username).join(", ")
-      if (username_list.length >= this.taggedPeopleDisplayMaxiLength){
-        username_list = username_list.substring(0, this.taggedPeopleDisplayMaxiLength) + "...";
-      }
-      return username_list
-    }
-  },
+  }
 }
 </script>
 
@@ -152,6 +92,22 @@ export default {
   max-width: 1000px;
   margin: auto;
 }
+
+/* .image-upload {
+margin-bottom: 20px;
+}
+
+.preview {
+display: flex;
+flex-wrap: wrap;
+}
+
+.preview img {
+max-width: 120px;
+max-height: 120px;
+margin-right: 10px;
+margin-bottom: 10px;
+} */
 
 .image-upload {
   margin: 10px auto;
@@ -215,18 +171,15 @@ export default {
 a{
   text-decoration: none;
 }
-.caption-wrapper{
-  position: relative;
-  width: 100%;
-}
+
 
 textarea {
   resize: none;
-  width: 100%;
+  width: 500px;
   height: 123px;
   border: none;
   outline: none;
-  display: block;
+
 }
 .submit{
   background: #24a0ed;
@@ -258,28 +211,8 @@ textarea {
   margin-right: 10px;
 }
 .post-icon-right{
-  font-size: 10px;
   margin-right:0px;
-  width: 20px;
-  height: 20px;
-  color: darkgrey;
 }
-.user-info {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-.post-info {
-  color: darkgray;
-  font-size: 13px;
-}
-.error-msg{
-  color:red;
-}
-.image-error-msg{
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  margin-top: -175px;
-}
+
+
 </style>

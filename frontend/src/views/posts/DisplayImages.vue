@@ -1,53 +1,34 @@
 <template>
   <div class="image-div">
-    <!-- <input id="file_input" type="file" multiple @change="handleFileChange" style="display: block" > -->
-    <input id="file_input" type="file" multiple @change="handleFileChange" style="display: none;" >
+    <input id="file_input" type="file" multiple @change="handleFileChange" style="display: none">
     <div class="container">
       <div v-if="images.length" class="slider-wrapper">
-        <!--Left Button-->
-        <div id="prev-slide" class="slide-button" @click="clickImageSliderBtn($event)">
-          <font-awesome-icon :icon="['fas', 'chevron-left']" class="left-right-btn"></font-awesome-icon>
-        </div>
-        <!--Image List-->
+        <button id="prev-slide" class="slide-button material-symbols-rounded" @click="clickImageSliderBtn($event)">chevron_left</button>
         <div class="image-list" @scroll="scrollImageList">
           <div class="image-container" v-for="(image, index) in images" :key="index">
-            <img :src="image" class="image-item" alt="Image">
-            <button type="button" class="remove-button btn-close" @click="removeImage(index)"></button>
-          </div>
-          <div class="image-container" key="add-image-btn" v-if="images.length < maximumImages" @click="open_file" style="cursor: pointer;">
-            <div class="image-item">
-              <font-awesome-icon :icon="['fas', 'circle-plus']" style="pointer-events: none; width: 100px; height: 100px;"/>
-            </div>
+            <img :src="image" class="image-item">
+            <button type="button" class=" remove-button btn-close" @click="removeImage(index)"></button>
           </div>
         </div>
-        <!--Right Button-->
-        <div id="next-slide" class="slide-button" @click="clickImageSliderBtn($event)">
-          <font-awesome-icon :icon="['fas', 'chevron-right']" class="left-right-btn"></font-awesome-icon>
-        </div>
+        <button id="next-slide" class="slide-button material-symbols-rounded" @click="clickImageSliderBtn($event)">chevron_right</button>
       </div>
       <div v-else>
         <div class="add-image-button" @click="open_file">
-          <font-awesome-icon :icon="['fas', 'images']" class="add-image-icon"/>
+          <img class="add-image-icon" alt="Post Tag" src="../../assets/image-upload-icon.png">
           Add images
         </div>
       </div>
-      <div class="error-msg">{{ error }}</div>
-      <div v-if="!img_valid" class="error-msg">Please upload image.</div>
     </div>
   </div>
 </template>
 
 
 <script>
-import { onUpdated, ref } from 'vue'
-export default{
-  props: ["images"],
+import { computed, onMounted, onUpdated, ref } from 'vue'
+export default {
   name: "DisplayImages",
-  setup(props) {
-    const images = ref(props.images)
-    const error = ref(null)
-    const maximumImages = ref(5);
-    const img_valid = ref(true);
+  setup() {
+    const images = ref([])
 
     const clickImageSliderBtn = (event) => {
       const imageList = document.querySelector(".slider-wrapper .image-list");
@@ -60,15 +41,13 @@ export default{
     const handleSlideButton = () => {
       const imageList = document.querySelector(".slider-wrapper .image-list");
       const slideButtons = document.querySelectorAll(".slider-wrapper .slide-button");
-      if (slideButtons.length){
-        if(images.value.length > 0){
-          const maxScrollLeft = imageList.scrollWidth - imageList.clientWidth;
-          slideButtons[0].style.display = imageList.scrollLeft <= 0 ? "none" : "flex";
-          slideButtons[1].style.display = imageList.scrollLeft >= maxScrollLeft ? "none" : "flex";
-        }else{
-          slideButtons[0].style.display = "none";
-          slideButtons[1].style.display = "none";
-        }
+      if(images.value.length > 0){
+        const maxScrollLeft = imageList.scrollWidth - imageList.clientWidth;
+        slideButtons[0].style.display = imageList.scrollLeft <= 0 ? "none" : "block";
+        slideButtons[1].style.display = imageList.scrollLeft >= maxScrollLeft ? "none" : "block";
+      }else{
+        slideButtons[0].style.display = "none";
+        slideButtons[1].style.display = "none";
       }
     }
 
@@ -93,18 +72,11 @@ export default{
     const removeImage = (image_index) => {
       images.value.splice(image_index, 1);
       removeFileFromFileList(image_index)
-      validateImages()
     }
 
     const handleFileChange = (event) => {
-      error.value = null;
       const files = event.target.files;
-
-      if (!(files.length && ((images.value.length + files.length) <= maximumImages.value))) {
-        img_valid.value = true
-        error.value = "You can insert maximum of 5 images."
-        return;
-      }
+      if (!files.length) return;
 
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
@@ -112,7 +84,6 @@ export default{
 
         reader.onload = (e) => {
           images.value.push(e.target.result);
-          img_valid.value = true;
         };
 
         reader.readAsDataURL(file);
@@ -123,26 +94,19 @@ export default{
       document.getElementById('file_input').click();
     }
 
-    const validateImages = () => {
-      let valid = true;
-      if (!images.value.length){
-        img_valid.value = false
-        valid = false;
-      }
-      return valid;
-    }
-
     onUpdated(() => {
       handleSlideButton();
     });
 
-    return {images, error, img_valid, maximumImages, clickImageSliderBtn, scrollImageList, removeImage, handleFileChange, open_file, validateImages}
+    return {images, clickImageSliderBtn, scrollImageList, removeImage, handleFileChange, open_file}
   },
 
 }
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@48,400,0,0');
+
 .image-div{
   display: flex;
   align-items: center;
@@ -170,9 +134,6 @@ export default{
   cursor: pointer;
   border-radius: 50%;
   transform: translateY(-50%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 .slider-wrapper .slide-button:hover{
   background: #444;
@@ -187,11 +148,6 @@ export default{
 .slider-wrapper .slide-button#next-slide{
   right: -20px;
   z-index:2;
-}
-.left-right-btn{
-  width: 20px;
-  height: 20px;
-  pointer-events: none;
 }
 
 .slider-wrapper .image-list {
@@ -217,11 +173,6 @@ export default{
   height: 345px;
   object-fit: cover;
   border: 1px solid lightgrey;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  max-width: none;
-
 }
 
 .image-container .remove-button{
@@ -239,27 +190,19 @@ export default{
 }
 
 .add-image-icon {
-  width: 25px;
-  height: 25px;
-  margin-right: 10px;
+  width: 30px;
+  height: 30px;
 }
 .add-image-button{
-  display: inline-flex;
+  display: inline-block;
   padding: 10px 15px 10px 15px;
   background-color: white;
   border-radius: 5px;
   transition-duration: 0.4s;
   cursor: pointer;
   border: 1px solid #e7e7e7;
-  justify-content: center;
-  align-content: center;
-  width: 155px;
-
 }
 .add-image-button:hover{
   background-color: #e7e7e7;
-}
-.error-msg{
-  color:red;
 }
 </style>
