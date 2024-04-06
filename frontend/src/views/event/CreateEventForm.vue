@@ -74,7 +74,10 @@
                 <textarea class="textarea" v-model="description" placeholder="Enter the description" rows="7"></textarea>
               </div>
             </div>
-            
+            <div class="field">
+              <label class="label">Images</label>
+              <input type="file" id="filepond" name="filepond" class="filepond" />
+            </div>
             <div class="field">
               <div class="control">
                 <button class="button is-primary">Publish</button>
@@ -91,10 +94,12 @@ import axios from "axios";
 import { ref, reactive } from 'vue';
 import Multiselect from '@vueform/multiselect';
 import { useRouter } from 'vue-router';
-
+import { onMounted } from 'vue';
+import * as FilePond from 'filepond';
 export default {
   components: {
-    Multiselect
+    Multiselect,
+    FilePond
   },
   setup() {
     const router = useRouter();
@@ -177,7 +182,13 @@ export default {
   } catch (error) {
     console.error("Error: ", error);
   }
-};
+  };
+  onMounted(() => {
+      // 初始化 FilePond
+      FilePond.create(document.querySelector('.filepond'), {
+        server: '您的文件上传处理服务器端点'
+      });
+    });
 
     return {
       title, time, location, participationLimit, description, publish, multiValue, source
@@ -188,7 +199,7 @@ export default {
 
 <style scoped>
 @import "@vueform/multiselect/themes/default.css";
-
+@import 'filepond/dist/filepond.min.css';
 .container {
   margin-top: 50px;
 }
