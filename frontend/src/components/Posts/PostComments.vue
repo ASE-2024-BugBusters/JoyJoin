@@ -46,4 +46,11 @@ height: 35px;
 .comment-font{
 font-size:13px;
 }
+.button-wrapper {
+  width: 25px;
+  display: flex;
+  justify-content: flex-end;
+  border: none;
+  background: none;
+}
 </style>

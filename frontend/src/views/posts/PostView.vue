@@ -97,47 +97,18 @@ export default {
         caption: "I love party!",
         likes: [
           {
-            "id": 5,
-            "username": "cercil",
-            "bios": "I love snacks",
-            "image": "require('@/assets/user_images/user1.jpg')"
-          },
-          {
-            "id": 6,
-            "username": "yuinywai",
-            "bios": "I wish to see boyboy",
-            "image": "require('@/assets/user_images/user1.jpg')"
-          },
-          {
-            "id": 7,
-            "username": "yishujia",
-            "bios": "I like puma",
-            "image": "require('@/assets/user_images/user1.jpg')"
-          },
-          {
             "id": 8,
             "username": "kaokahee",
-            "bios": "I am poor",
-            "image": "require('@/assets/user_images/user1.jpg')"
-          },
-          {
-            "id": 9,
-            "username": "leeziying",
-            "bios": "why so many people kao me. Tsun jin black magic queen. why so many people kao me. Tsun jin black magic queen.",
-            "image": "require('@/assets/user_images/user1.jpg')"
-          },
-          {
-            "id": 10,
-            "username": "cheee",
-            "bios": "okok",
+            "bios": "Loving my life",
             "image": "require('@/assets/user_images/user1.jpg')"
           }],
         // likes: [],
         comments: [
-          {cid: 1, username: "kayannn", comment: "Soo beautiful! Soo beautiful! Soo beautiful! Soo beautiful! Soo beautiful! Soo beautiful! Soo beautiful! Soo beautiful! Soo beautiful! Soo beautiful! Soo beautiful! "},
-          {cid: 2, username: "huiling", comment: "nice to meet you! I would like to meet you again in Kepong! You're so evil and I am really like your style! "},
-          {cid: 3, username: "kayannn", comment: "nice to meet you! I would like to meet you again in Kepong! You're so evil and I am really like your style! "},
-          {cid: 4, username: "kayannn", comment: "nice to meet you! I would like to meet you again in Kepong! You're so evil and I am really like your style! "}
+          {cid: 1, username: "kayannn", comment: "Soo beautiful! "},
+          {cid: 2, username: "huiling", comment: "I am living in Split, Croatia too! Maybe you can visit me next time!"},
+          {cid: 3, username: "kayannn", comment: "The sea is so clear and blue! What a paradise! "},
+          {cid: 4, username: "kayannn", comment: "I should really pay a visit to Croatia. "},
+          {cid: 5, username: "huiling", comment: "Enjoy your vacation. "}
         ]
       }
     }

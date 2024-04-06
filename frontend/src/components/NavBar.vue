@@ -22,11 +22,12 @@
         <router-link to="/about" class="navbar-item noTextDecoration" style="text-decoration: none">About</router-link>
         <router-link to="/profile" class="navbar-item noTextDecoration" style="text-decoration: none">Profile</router-link>
         <router-link to="/post" class="navbar-item noTextDecoration" style="text-decoration: none">Create Post</router-link>
-
+        <router-link to="/postview" class="navbar-item noTextDecoration" style="text-decoration: none">Specific Post</router-link>
       </div>
       <div class="navbar-end">
         <div class="navbar-item">
           <div class="buttons noTextDecoration">
+            <NotificationIcon></NotificationIcon>
             <a class="button is-dark" style="text-decoration: none" @click="toRegisterPage">
               <strong>Sign In</strong>
             </a>
@@ -41,9 +42,11 @@
 </template>
 <script>
 import axios from "axios";
+import NotificationIcon from "@/components/Notification/NotificationIcon.vue";
 
 export default {
   name: 'Nav',
+  components: {NotificationIcon},
   data() {
     return {
       responseData: null,
