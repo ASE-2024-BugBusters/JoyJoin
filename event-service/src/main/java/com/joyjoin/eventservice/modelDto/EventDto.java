@@ -29,12 +29,12 @@ public class EventDto {
     private LocationDto location;
 
     @Min(value = 1, message = "Participation limit must be at least 1")
-    private int participationLimit;
+    private Integer participationLimit;
 
     @NotBlank(message = "Description is required")
     @Size(max = 1000, message = "Description must be less than 1000 characters")
     private String description;
 
-    private Set<@NotBlank(message = "Tags must not be blank") String> tags;
+    private List<@NotBlank(message = "Tags must not be blank") String> tags;
     private List<Image> images;
 }

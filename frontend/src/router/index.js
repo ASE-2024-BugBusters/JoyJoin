@@ -43,6 +43,11 @@ const routes = [
     path: "/posttag",
     name: "posttag",
     component: PostTag
+  },
+  {
+    path: "/events/create",
+    name: "createEvent",
+    component: () => import('../views/event/CreateEvent.vue')
   }
 ]
 

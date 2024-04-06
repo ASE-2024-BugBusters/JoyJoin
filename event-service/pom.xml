@@ -113,17 +113,24 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-s3</artifactId>
-            <version>1.12.686</version> <!-- 使用最新的版本或根据需要调整 -->
+            <version>1.12.686</version>
         </dependency>
 
         <!-- AWS SDK for Java Core module (required for S3 module) -->
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-core</artifactId>
-            <version>1.12.686</version> <!-- 使用最新的版本或根据需要调整 -->
+            <version>1.12.686</version>
         </dependency>
-
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-resolver-dns-native-macos</artifactId>
+            <version>4.1.108.Final</version>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
+
+
     <dependencyManagement>
         <dependencies>
             <dependency>

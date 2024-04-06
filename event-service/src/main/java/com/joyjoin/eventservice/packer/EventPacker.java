@@ -1,13 +1,17 @@
 package com.joyjoin.eventservice.packer;
 
 import com.joyjoin.eventservice.model.Event;
-import com.joyjoin.eventservice.model.ImageRef;
 import com.joyjoin.eventservice.modelDto.EventDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.yaml.snakeyaml.tokens.Token.ID.Tag;
 
 @Component
 public class EventPacker {
@@ -22,7 +26,13 @@ public class EventPacker {
 
     public EventDto packEvent(Event event) {
         EventDto res = modelMapper.map(event, EventDto.class);
-        // This assumes EventDto can accept List<Image> as List<ImageRef>
+//        List<String> tagNames = Collections.emptyList();
+//        if (event.getTags() != null && !event.getTags().isEmpty()) {
+//            tagNames = event.getTags().stream()
+//                    .map(Enum::name)
+//                    .collect(Collectors.toList());
+//        }
+//        res.setTags(tagNames);
         res.setImages(imagePacker.packImage(event.getImages(), LocalDateTime.now().plusDays(1)));
         return res;
     }

@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 @Entity
 @Getter
 @Setter
@@ -20,11 +19,11 @@ public class Event extends DefaultProperties {
     @Embedded
     private Location location;
 
-    private int participationLimit;
+    private Integer participationLimit;
     @Column(length = 1000)
     private String description;
     @ElementCollection
-    private Set<Tag> tags;
+    private List<Tag> tags;
     @Convert(converter = ImageRefListConverter.class)
     private List<ImageRef> images;
 

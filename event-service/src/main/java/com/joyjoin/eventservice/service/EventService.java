@@ -52,6 +52,9 @@ public class EventService {
         if (event.getImages() == null) {
             event.setImages(new ArrayList<>()); // Ensure images is initialized
         }
+        if (event.getTags() == null) {
+            event.setTags(new ArrayList<>()); // Ensure tags is initialized
+        }
         var now = LocalDateTime.now();
         event.setCreatedOn(now);
         event.setLastEdited(now);
@@ -65,9 +68,6 @@ public class EventService {
     @Transactional
     public EventDto getEventById(UUID id) {
         Event event = eventRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Event", "id", id.toString()));
-        System.out.println(event.getTitle());
-        System.out.println(event.getId());
-        System.out.println(event.getImages());
         return eventPacker.packEvent(event);
     }
     public EventDto updateEvent(UUID id, Event eventDetails) {

@@ -1,7 +1,9 @@
 package com.joyjoin.eventservice.controller;
 import com.joyjoin.eventservice.controller.dto.GetImgUploadUrlResponse;
 import com.joyjoin.eventservice.model.Event;
+import com.joyjoin.eventservice.model.Tag;
 import com.joyjoin.eventservice.modelDto.EventDto;
+import com.joyjoin.eventservice.modelDto.UpdateEventRequest;
 import com.joyjoin.eventservice.service.EventService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +25,7 @@ public class EventController {
         this.modelMapper = modelMapper;
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<EventDto> createEvent(@RequestBody EventDto eventDto) {
         Event event = modelMapper.map(eventDto, Event.class);
         EventDto createdEvent = eventService.saveEvent(event);
@@ -45,8 +47,8 @@ public class EventController {
         return new ResponseEntity<>(event, HttpStatus.OK);
     }
     @PatchMapping("/{id}")
-    public ResponseEntity<EventDto> updateEvent(@PathVariable UUID id, @RequestBody EventDto eventDto) {
-        Event eventDetails = modelMapper.map(eventDto, Event.class);
-        return new ResponseEntity<>(eventService.updateEvent(id, eventDetails), HttpStatus.OK);
+    public ResponseEntity<EventDto> updateEvent(@PathVariable UUID id, @RequestBody UpdateEventRequest request) {
+        Event event = modelMapper.map(request, Event.class);
+        return new ResponseEntity<>(eventService.updateEvent(id, event), HttpStatus.OK);
     }
 }
