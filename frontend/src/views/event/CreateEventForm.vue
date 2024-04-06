@@ -172,7 +172,10 @@ export default {
             participationLimit: parseInt(participationLimit.value),
             description: description.value,
             tags: multiValue.value,
-            images: uploadedImages.value
+            // images: uploadedImages.value[0]
+            // images: uploadedImages.value.map(image => ({ bucket: image.bucket, key: image.key }))
+            images: uploadedImages.value.length > 0 ? uploadedImages.value.map(image => ({ bucket: image.bucket, key: image.key })) : null,
+
 
       };
   
@@ -191,63 +194,50 @@ export default {
   };
 
   onMounted(() => {
-      const pond = FilePond.create(document.querySelector('.filepond'), {
-        instantUpload: false,
-        allowMultiple: true,
-        maxFiles: 9,
-        server: {
-          process: (fieldName, file, metadata, load, error, progress, abort) => {
-            // Call the function to get upload URL
-            getUploadUrl()
-              .then((response) => {
-                const uploadUrl = response.url;
-                const key = response.key;
+        const pond = FilePond.create(document.querySelector('.filepond'), {
+            instantUpload: false,
+            allowMultiple: true,
+            maxFiles: 9,
+            server: {
+                process: async (fieldName, file, metadata, load, error, progress, abort) => {
+                    try {
+                        const { url, key } = await getUploadUrl(); // Get the URL for upload
 
-                // Use axios or another HTTP client to upload the file
-                axios.put(uploadUrl, file, {
-                  onUploadProgress: (e) => {
-                    progress(e.lengthComputable, e.loaded, e.total);
-                  },
-                })
-                .then(() => {
-                  // 将已上传的图片信息保存到 uploadedImages 中
-                  uploadedImages.value.push({ "bucket": "img", "key": key });
-                  load(key);
-                })
-                .catch((uploadError) => {
-                  error('Upload error');
-                  console.error(uploadError);
-                });
-              })
-              .catch((getUrlError) => {
-                error('Could not get upload URL');
-                console.error(getUrlError);
-              });
+                        // Upload the file using axios
+                        const response = await axios.put(url, file, {
+                            onUploadProgress: (e) => {
+                                progress(e.lengthComputable, e.loaded, e.total);
+                            },
+                            headers: {
+                                'Content-Type': 'multipart/form-data'
+                            },
+                        });
 
-            // Should expose an abort method so the request can be cancelled
-            return {
-              abort: () => {
-                // This function is entered if the user cancels the upload
-                abort();
-              }
-            };
-          }
-        }
-      });
+                        uploadedImages.value.push({ "bucket": "img", "key": key }); // Store the uploaded image info
+                        console.log(uploadedImages.value[0]);
+                        load(key); // Indicate successful upload
+                    } catch (uploadError) {
+                        console.error("Upload error:", uploadError);
+                        error('Upload error');
+                    }
+                }
+            }
+        });
     });
 
 
+    // Fetching upload URL
     const getUploadUrl = async () => {
-      try {
-        const response = await axios.get("http://localhost:9191/event-service/events/upload_image");
-        return {
-          url: response.data.image.urls[0].url,
-          key: response.data.image.key
-        };
-      } catch (error) {
-        console.error("Error fetching upload URL:", error);
-        throw error;
-      }
+        try {
+            const response = await axios.get("http://localhost:9191/event-service/events/upload_image");
+            return {
+                url: response.data.image.urls[0].url,
+                key: response.data.image.key
+            };
+        } catch (error) {
+            console.error("Error fetching upload URL:", error);
+            throw error;
+        }
     };
 
 
