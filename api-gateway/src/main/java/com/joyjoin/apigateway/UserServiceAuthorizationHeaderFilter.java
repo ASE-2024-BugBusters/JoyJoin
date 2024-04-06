@@ -19,15 +19,15 @@ import java.util.List;
 import java.util.Objects;
 
 @Component
-public class UserServiceAuthorizationHeaderFilter extends AbstractGatewayFilterFactory<UserServiceAuthorizationHeaderFilter.Config>{
+public class UserServiceAuthorizationHeaderFilter extends AbstractGatewayFilterFactory<UserServiceAuthorizationHeaderFilter.Config> {
     @Autowired
     Environment env;
-
     private final String TOKEN_PREFIX = "Bearer ";
 
     public UserServiceAuthorizationHeaderFilter() {
         super(Config.class);
     }
+
     public static class Config {}
 
     @Override
@@ -35,10 +35,11 @@ public class UserServiceAuthorizationHeaderFilter extends AbstractGatewayFilterF
         return (exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
 
+            // Use the URI to match different paths if they require certain roles
+            String requestURI = request.getURI().toString();
             if (!request.getHeaders().containsKey("Authorization")) {
                 return onError(exchange, "No authorization header", HttpStatus.UNAUTHORIZED);
             }
-
             String authHeader = Objects.requireNonNull(request.getHeaders().get("Authorization")).get(0);
             String jwt = authHeader.substring(TOKEN_PREFIX.length());
             if (!jwtIsValid(jwt)) {
@@ -48,12 +49,24 @@ public class UserServiceAuthorizationHeaderFilter extends AbstractGatewayFilterF
         };
     }
 
+    /**
+     *
+     * @param exchange
+     * @param error
+     * @param httpStatus
+     * @return Error message if an error occured
+     */
     private Mono<Void> onError(ServerWebExchange exchange, String error, HttpStatus httpStatus) {
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(httpStatus);
         return response.setComplete();
     }
 
+    /**
+     *
+     * @param jwt to check if it is valid
+     * @return Boolean if the token is valid
+     */
     private boolean jwtIsValid(String jwt) {
         boolean isValid = true;
         String subject = null;
@@ -61,20 +74,13 @@ public class UserServiceAuthorizationHeaderFilter extends AbstractGatewayFilterF
         String tokenSecret = env.getProperty("jwt.token.secret");
         byte[] keyBytes = Decoders.BASE64.decode(tokenSecret);
         Key signKey = Keys.hmacShaKeyFor(keyBytes);
-
         try {
             Claims claims = Jwts.parserBuilder().setSigningKey(signKey).build().parseClaimsJws(jwt).getBody();
             subject = claims.getSubject();
-
-            /**
-             * roles = claims.get("roles", List.class);
-             * System.out.println(roles.toString());
-             */
-
+            roles = claims.get("roles", List.class);
         } catch (Exception ex) {
             isValid = false;
         }
-
         if (subject == null || subject.isEmpty()) {
             isValid = false;
         }

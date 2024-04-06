@@ -3,10 +3,6 @@ spring:
     name: "API-GATEWAY"
   cloud:
     gateway:
-      discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
       globalcors:
@@ -16,34 +12,26 @@ spring:
             allowedMethods: "*"
             allowedHeaders: "*"
       routes:
-        - id: "POST-SERVICE"
+        - id: 'user-service-auth'
           uri:
-            "lb://POST-SERVICE"
+            'lb://USER-SERVICE'
           predicates:
-            - "Path=/post-service/api/post/**"
-            - "Header=Authorization, Bearer (.*)"
+            - 'Path=/user-service/api/auth/**'
           filters:
-            - "RemoveRequestHeader=Cookie"
-            - "UserServiceAuthorizationHeaderFilter"
+            - 'RemoveRequestHeader=Cookie'
+            - 'RewritePath=/user-service/(?<segment>.*), /$\{segment}'
 
-        - id: "user-service-login"
+        - id: 'user-service-general'
           uri:
-            "lb://USER-SERVICE"
+            'lb://USER-SERVICE'
           predicates:
-            - "Path=/user-service/api/user/login"
-            - "Path=/user-service/api/user/register"
-            - "Path=/user-service/api/user/test"
+            - 'Path=/user-service/api/user/**'
+            - 'Header=Authorization, Bearer (.*)'
           filters:
-            - "RemoveRequestHeader=Cookie"
+            - 'RemoveRequestHeader=Cookie'
+            - 'RewritePath=/user-service/(?<segment>.*), /$\{segment}'
+            - 'UserServiceAuthorizationHeaderFilter'
 
-        - id: "user-service-non-authentication"
-          uri:
-            "lb://USER-SERVICE"
-          predicates:
-            - "Path=/user-service/api/user/**"
-          filters:
-            - "RemoveRequestHeader=Cookie"
-            - "UserServiceAuthorizationHeaderFilter"
 
 
 

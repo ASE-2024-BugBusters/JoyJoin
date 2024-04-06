@@ -24,6 +24,12 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+
+    /**
+     *
+     * @param user which contains all the information to create a new one (firstName, lastName, birthDate, email, password)
+     * @return <b>AuthenticationResponse</b> which contains the JWT Token as a String
+     */
     public AuthenticationResponse register(User user){
         User optionalUser = repository.findUserByEmail(user.getEmail());
         if (optionalUser != null) {
@@ -45,6 +51,12 @@ public class AuthService {
         return AuthenticationResponse.builder().token(jwtToken).build();
     }
 
+
+    /**
+     *
+     * @param request <b>AuthenticationRequest</b> contains the user Credentials to create a valid JWT Token
+     * @return <b>AuthenticationResponse</b> which contains the JWT Token as a String
+     */
     public AuthenticationResponse login(AuthenticationRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())

@@ -27,7 +27,6 @@ import java.util.UUID;
 @CrossOrigin(allowedHeaders = "*", originPatterns = "/**")
 public class UserController {
 
-    private final AuthService authService;
     private final UserService userService;
 
     private final ImageService imageService;
@@ -35,8 +34,7 @@ public class UserController {
     private final ModelMapper modelMapper;
 
     @Autowired
-    public UserController(AuthService authService, UserService userService, ImageService imageService, ModelMapper modelMapper) {
-        this.authService = authService;
+    public UserController(UserService userService, ImageService imageService, ModelMapper modelMapper) {
         this.userService = userService;
         this.imageService = imageService;
         this.modelMapper = modelMapper;
@@ -50,16 +48,6 @@ public class UserController {
     @GetMapping()
     public List<UserDto> getAllUsers() {
         return userService.getAllUsers();
-    }
-
-    @PostMapping("/register")
-    public AuthenticationResponse registerUser(@RequestBody User user) {
-        return authService.register(user);
-    }
-
-    @PostMapping("/login")
-    public AuthenticationResponse loginUser(@RequestBody AuthenticationRequest request) {
-        return authService.login(request);
     }
 
     @PatchMapping("/{uuid}")

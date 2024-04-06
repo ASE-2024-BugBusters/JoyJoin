@@ -3,9 +3,10 @@ package com.joyjoin.userservice.security.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import lombok.Data;
 
 import java.util.UUID;
-
+@Data
 @Entity
 public class Role {
 
@@ -17,8 +18,4 @@ public class Role {
         this.name = name;
     }
     public Role() {}
-    public String getName() {return name;}
-    public void setName(String name) {
-        this.name = name;
-    }
 }
