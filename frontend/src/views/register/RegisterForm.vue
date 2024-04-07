@@ -97,6 +97,7 @@ export default {
     async register() {
       if (this.password === this.verifyPassword) {
         this.verifyPasswordError = false;
+
         const data = {
           firstName: this.firstName,
           lastName: this.lastName,
@@ -112,6 +113,7 @@ export default {
             "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJVU0VSIl0sInN1YiI6ImhhcmFtYmFzaWMuam9zNGlwOTdAZ3Rvby5jZnNkc2Fvc3NzcjVzbXRzdCIsImlhdCI6MTcxMjMxOTEwMSwiZXhwIjoxNzEyMzIwNTQxfQ.COCmlQeyK9toL3Sqpr5x3ZBQAgfINyUUHHJz1xT1hQY"
           }
         }).then(response => {
+
               console.log("Successfully registered:", response.data)
               this.$router.push({path: "/"});
             })
@@ -121,11 +123,6 @@ export default {
       } else {
         this.verifyPasswordError = true;
       }
-    },
-
-    async test() {
-      const a = await axios.get("http://localhost:9191/user-service/api/user/test");
-      console.log(a)
     }
 
   }
