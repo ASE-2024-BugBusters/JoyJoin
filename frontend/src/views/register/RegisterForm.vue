@@ -76,6 +76,7 @@
 
 <script>
 import axios from "axios";
+import {BASE_URL} from "../../../config/dev.env";
 
 export default {
   data() {
@@ -106,15 +107,10 @@ export default {
           password: this.password,
           birthDate: this.birthDate
         };
+        
+        await axios.post(BASE_URL + "user-service/api/auth/register", data).then(response => {
+              sessionStorage.setItem("jwtToken", response.data.token);
 
-        console.log(data)
-        await axios.post("http://localhost:9191/user-service/api/user/register", data, {
-          headers: {
-            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJVU0VSIl0sInN1YiI6ImhhcmFtYmFzaWMuam9zNGlwOTdAZ3Rvby5jZnNkc2Fvc3NzcjVzbXRzdCIsImlhdCI6MTcxMjMxOTEwMSwiZXhwIjoxNzEyMzIwNTQxfQ.COCmlQeyK9toL3Sqpr5x3ZBQAgfINyUUHHJz1xT1hQY"
-          }
-        }).then(response => {
-
-              console.log("Successfully registered:", response.data)
               this.$router.push({path: "/"});
             })
             .catch(error => {
