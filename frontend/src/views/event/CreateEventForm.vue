@@ -97,6 +97,7 @@ import Multiselect from '@vueform/multiselect';
 import { useRouter } from 'vue-router';
 import { onMounted } from 'vue';
 import * as FilePond from 'filepond';
+import BASE_URL from '../../../config/dev.env';
 export default {
   components: {
     Multiselect,
@@ -184,9 +185,12 @@ export default {
   
   console.log("Data to be sent:", data);
   try {
-    const response = await axios.post("http://localhost:9191/event-service/events/create", data, {
+    let url_create_event = "http://localhost:9191/event-service/api/event/create";
+    let url_create_event_my = "http://localhost:8084/api/event/create"
+    const response = await axios.post(url_create_event_my, data, {
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
       }
     });
     console.log("Successfully published:", response.data);
@@ -212,7 +216,7 @@ export default {
                                 progress(e.lengthComputable, e.loaded, e.total);
                             },
                             headers: {
-                                'Content-Type': 'multipart/form-data'
+                                'Content-Type': 'binary'
                             },
                         });
 
@@ -232,7 +236,14 @@ export default {
     // Fetching upload URL
     const getUploadUrl = async () => {
         try {
-            const response = await axios.get("http://localhost:9191/event-service/events/upload_image");
+            let url_get_upload = "http://localhost:9191/event-service/api/event/upload_image";
+            let url_get_upload_my = "http://localhost:8084/api/event/upload_image";
+
+            const response = await axios.get(url_get_upload_my,
+            {headers: {
+              'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
+            },
+            });
             return {
                 url: response.data.image.urls[0].url,
                 key: response.data.image.key
