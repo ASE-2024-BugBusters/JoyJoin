@@ -20,18 +20,27 @@
       <div class="navbar-start">
         <router-link to="/" class="navbar-item" style="text-decoration: none">Home</router-link>
         <router-link to="/about" class="navbar-item noTextDecoration" style="text-decoration: none">About</router-link>
-        <router-link to="/profile" class="navbar-item noTextDecoration" style="text-decoration: none">Profile</router-link>
-        <router-link to="/post" class="navbar-item noTextDecoration" style="text-decoration: none">Create Post</router-link>
+        <router-link to="/profile" class="navbar-item noTextDecoration" style="text-decoration: none">Profile
+        </router-link>
+        <router-link to="/post" class="navbar-item noTextDecoration" style="text-decoration: none">Create Post
+        </router-link>
 
       </div>
       <div class="navbar-end">
-        <div class="navbar-item">
+        <div v-if="!jwt" class="navbar-item">
           <div class="buttons noTextDecoration">
             <a class="button is-dark" style="text-decoration: none" @click="toRegisterPage">
-              <strong>Sign In</strong>
+              <strong>Register</strong>
             </a>
             <a class="button is-dark noTextDecoration" style="text-decoration: none" @click="toLoginPage">
               <strong>Login</strong>
+            </a>
+          </div>
+        </div>
+        <div v-else class="navbar-item">
+          <div class="buttons noTextDecoration">
+            <a class="button is-dark" style="text-decoration: none" @click="logout">
+              <strong>Logout</strong>
             </a>
           </div>
         </div>
@@ -41,14 +50,17 @@
 </template>
 <script>
 import axios from "axios";
+import {BASE_URL} from "../../config/dev.env";
 
 export default {
   name: 'Nav',
   data() {
     return {
       responseData: null,
+      jwt: false
     }
   },
+
   methods: {
     async toLoginPage() {
       try {
@@ -64,6 +76,29 @@ export default {
       } catch (error) {
         console.error('Error navigating to login page:', error);
       }
+    },
+
+    async logout() {
+      await axios.post(BASE_URL + "user-service/api/auth/logout", {}, {
+        headers: {
+          "Authorization": `Bearer ${sessionStorage.getItem("jwtToken")}`
+        }
+      }).then(response => {
+        sessionStorage.removeItem("jwtToken")
+        this.checkJwt();
+        this.$router.push({path: "/"});
+      }).catch(error => {
+            console.log("Error: ", error)
+      })
+    },
+
+    checkJwt() {
+      this.jwt = sessionStorage.getItem("jwtToken") !== null;
+    }
+  },
+  watch: {
+    $route() {
+      this.checkJwt();
     }
   }
 };

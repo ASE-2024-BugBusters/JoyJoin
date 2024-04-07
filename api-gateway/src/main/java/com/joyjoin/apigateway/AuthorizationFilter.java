@@ -88,5 +88,4 @@ public class AuthorizationFilter extends AbstractGatewayFilterFactory<Authorizat
         }
         return isValid;
     }
-
 }
