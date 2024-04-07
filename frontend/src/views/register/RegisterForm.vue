@@ -76,6 +76,7 @@
 
 <script>
 import axios from "axios";
+import {BASE_URL} from "../../../config/dev.env";
 
 export default {
   data() {
@@ -96,7 +97,8 @@ export default {
   methods: {
     async register() {
       if (this.password === this.verifyPassword) {
-        this.verifyPassword = false;
+        this.verifyPasswordError = false;
+
         const data = {
           firstName: this.firstName,
           lastName: this.lastName,
@@ -105,11 +107,10 @@ export default {
           password: this.password,
           birthDate: this.birthDate
         };
+        
+        await axios.post(BASE_URL + "user-service/api/auth/register", data).then(response => {
+              sessionStorage.setItem("jwtToken", response.data.token);
 
-        // TODO: check why CORS-Policy blocks post request with requestbody
-        await axios.post("http://localhost:9191/user-service/api/user", data)
-            .then(response => {
-              console.log("Successfully registered:", response.data)
               this.$router.push({path: "/"});
             })
             .catch(error => {
