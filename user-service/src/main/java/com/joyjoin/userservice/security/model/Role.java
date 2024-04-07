@@ -1,8 +1,6 @@
 package com.joyjoin.userservice.security.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.UUID;
@@ -13,9 +11,14 @@ public class Role {
     @Id
     @GeneratedValue
     private UUID id;
-    private String name;
-    public Role(String name){
+
+    @Enumerated(EnumType.STRING)
+    private RoleEnum name;
+
+    public Role(RoleEnum name){
         this.name = name;
     }
     public Role() {}
+
 }
+

@@ -2,28 +2,31 @@ package com.joyjoin.userservice.security.service;
 
 import com.joyjoin.userservice.exception.EmailAlreadyExistsException;
 import com.joyjoin.userservice.exception.ErrorCode;
-import com.joyjoin.userservice.security.model.Role;
+import com.joyjoin.userservice.security.model.*;
 import com.joyjoin.userservice.model.User;
 import com.joyjoin.userservice.repository.UserRepository;
-import com.joyjoin.userservice.security.model.AuthenticationRequest;
-import com.joyjoin.userservice.security.model.AuthenticationResponse;
+import com.joyjoin.userservice.security.repository.TokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class AuthService {
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final TokenRepository tokenRepository;
 
     /**
      *
@@ -37,7 +40,7 @@ public class AuthService {
         }
         LocalDateTime now = LocalDateTime.now();
         Collection<Role> roles = new ArrayList<>();
-        roles.add(new Role("USER"));
+        roles.add(new Role(RoleEnum.USER));
         User userToSave = User.builder()
                 .firstName(user.getFirstName())
                 .email(user.getEmail())
@@ -46,8 +49,10 @@ public class AuthService {
                 .createdOn(now)
                 .lastEdited(now)
                 .build();
-        repository.save(userToSave);
+        User savedUser = repository.save(userToSave);
         var jwtToken = jwtService.generateToken(userToSave);
+        deleteAllUserTokens(user);
+        saveUserToken(savedUser, jwtToken);
         return AuthenticationResponse.builder().token(jwtToken).build();
     }
 
@@ -63,8 +68,31 @@ public class AuthService {
         );
         var user = repository.findUserByEmail(request.getEmail());
         var jwtToken = jwtService.generateToken(user);
+        deleteAllUserTokens(user);
+        saveUserToken(user, jwtToken);
         return AuthenticationResponse.builder().token(jwtToken).build();
     }
 
+    private void saveUserToken(User user, String jwtToken) {
+        Token token = Token.builder()
+                .token(jwtToken)
+                .user(user)
+                .tokenType(TokenType.BEARER)
+                .expired(false)
+                .revoked(false)
+                .build();
+        tokenRepository.save(token);
+    }
 
+    /**
+     * Only one JWT is allowed to make requests, when it expires a new one needs to be created
+     * @param user
+     */
+    private void deleteAllUserTokens(User user) {
+        List<Token> validTokens = tokenRepository.findAllValidTokenByUserId(user.getId());
+        if (validTokens.isEmpty()) {
+            return;
+        }
+        tokenRepository.deleteAll();
+    }
 }

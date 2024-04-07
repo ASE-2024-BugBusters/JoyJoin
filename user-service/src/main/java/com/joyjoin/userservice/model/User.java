@@ -3,6 +3,7 @@ package com.joyjoin.userservice.model;
 import com.joyjoin.userservice.model.converter.ImageRefConverter;
 import com.joyjoin.userservice.model.converter.TagsConverter;
 import com.joyjoin.userservice.security.model.Role;
+import com.joyjoin.userservice.security.model.Token;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -70,6 +71,9 @@ public class User implements UserDetails {
     @Setter
     private boolean isDeleted;
 
+    @OneToMany(mappedBy = "user")
+    private List<Token> tokens;
+
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Collection<Role> roles = new ArrayList<>();
 
@@ -77,7 +81,7 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
         for (Role role : roles) {
-            authorities.add(new SimpleGrantedAuthority(role.getName()));
+            authorities.add(new SimpleGrantedAuthority(role.getName().name()));
         }
         return authorities;
     }

@@ -35,8 +35,8 @@ public class AuthorizationFilter extends AbstractGatewayFilterFactory<Authorizat
         return (exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
 
-            // Use the URI to match different paths if they require certain roles
-            String requestURI = request.getURI().toString();
+            // Use the RequestPath to match different paths if they require certain roles
+            String requestPath = exchange.getRequest().getPath().toString();
             if (!request.getHeaders().containsKey("Authorization")) {
                 return onError(exchange, "No authorization header", HttpStatus.UNAUTHORIZED);
             }
@@ -64,7 +64,7 @@ public class AuthorizationFilter extends AbstractGatewayFilterFactory<Authorizat
 
     /**
      *
-     * @param jwt to check if it is valid
+     * @param jwt JSON Web Token which needs to be validated
      * @return Boolean if the token is valid
      */
     private boolean jwtIsValid(String jwt) {
@@ -77,6 +77,8 @@ public class AuthorizationFilter extends AbstractGatewayFilterFactory<Authorizat
         try {
             Claims claims = Jwts.parserBuilder().setSigningKey(signKey).build().parseClaimsJws(jwt).getBody();
             subject = claims.getSubject();
+
+            // use roles to check which permissions are allowed
             roles = claims.get("roles", List.class);
         } catch (Exception ex) {
             isValid = false;
