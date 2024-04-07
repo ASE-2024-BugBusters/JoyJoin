@@ -20,10 +20,9 @@
       <div class="navbar-start">
         <router-link to="/" class="navbar-item" style="text-decoration: none">Home</router-link>
         <router-link to="/about" class="navbar-item noTextDecoration" style="text-decoration: none">About</router-link>
-        <router-link to="/profile" class="navbar-item noTextDecoration" style="text-decoration: none">Profile
-        </router-link>
-        <router-link to="/post" class="navbar-item noTextDecoration" style="text-decoration: none">Create Post
-        </router-link>
+        <router-link to="/profile" class="navbar-item noTextDecoration" style="text-decoration: none">Profile</router-link>
+        <router-link to="/post" class="navbar-item noTextDecoration" style="text-decoration: none">Create Post</router-link>
+        <router-link to="/events/create" class="navbar-item noTextDecoration" style="text-decoration: none">Publish Event</router-link>
 
       </div>
       <div class="navbar-end">

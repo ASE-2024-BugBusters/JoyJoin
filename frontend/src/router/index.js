@@ -43,6 +43,11 @@ const routes = [
     component: CreatePost
   },
   {
+    path: "/events/create",
+    name: "createEvent",
+    component: () => import('../views/event/CreateEvent.vue')
+  },
+  {
     path: "/notification",
     name: "notification",
     component: NotificationIcon
