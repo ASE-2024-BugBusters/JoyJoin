@@ -3,18 +3,18 @@ package com.joyjoin.userservice.controller;
 
 import com.joyjoin.userservice.controller.dto.GetAvatarUploadUrlResponse;
 import com.joyjoin.userservice.controller.dto.UpdateUserRequest;
-import com.joyjoin.userservice.model.Image;
-import com.joyjoin.userservice.model.ImageUrl;
 
 import com.joyjoin.userservice.model.User;
 import com.joyjoin.userservice.modelDto.UserDto;
+import com.joyjoin.userservice.security.model.AuthenticationRequest;
+import com.joyjoin.userservice.security.model.AuthenticationResponse;
+import com.joyjoin.userservice.security.service.AuthService;
 import com.joyjoin.userservice.service.ImageService;
 import com.joyjoin.userservice.service.UserService;
-import com.thoughtworks.xstream.mapper.Mapper;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -40,16 +40,6 @@ public class UserController {
         this.modelMapper = modelMapper;
     }
 
-    @PostMapping("/test")
-    public String test() {
-        return "Test Post";
-    }
-
-    @PostMapping()
-    public UserDto createUser(@Valid @RequestBody User user) {
-        return userService.saveUser(user);
-    }
-
     /**
      * this can only be user for testing, in production needs to be deleted
      *
@@ -58,11 +48,6 @@ public class UserController {
     @GetMapping()
     public List<UserDto> getAllUsers() {
         return userService.getAllUsers();
-    }
-
-    @PostMapping("/register")
-    public UserDto registerUser(@RequestBody User user) {
-        return userService.saveUser(user);
     }
 
     @PatchMapping("/{uuid}")
@@ -83,6 +68,10 @@ public class UserController {
         return userService.getUser(uuid);
     }
 
+    @GetMapping("/test")
+    public String test() {
+        return "Test";
+    }
 
     /**
      * the request param is passed in the URL like this: http://localhost:8085/user/by-email?email=josip97@gmail.com
