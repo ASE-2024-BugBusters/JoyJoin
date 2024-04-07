@@ -20,6 +20,9 @@ import java.util.stream.Collectors;
 public class JwtService {
     public static final String SECRET_KEY = "9abd22e669dcceb6feb83a9999a53f6328934b177790c9dbf219bdc3114389465b31470ef9d929ff82fb0c829321d74ac630a3d938a66274e16162576da10f06";
 
+    // Set to 1 day
+    private static final Date TOKEN_VALIDITY_DURATION = new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24);
+
     public String extractUserEmail(String jwtToken) {
         return extractClaim(jwtToken, Claims::getSubject);
     }
@@ -38,7 +41,7 @@ public class JwtService {
                 .claim("roles", userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
+                .setExpiration(TOKEN_VALIDITY_DURATION)
                 .signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
     }
 
@@ -69,7 +72,7 @@ public class JwtService {
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(userName)
-                .setIssuedAt(new Date(System.currentTimeMillis() + 1000 * 60 * 30))
+                .setIssuedAt(TOKEN_VALIDITY_DURATION)
                 .signWith(getSignKey(), SignatureAlgorithm.ES256).compact();
     }
     private Key getSignKey() {

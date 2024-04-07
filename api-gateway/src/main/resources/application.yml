@@ -40,7 +40,7 @@ spring:
             - 'Header=Authorization, Bearer (.*)'
           filters:
             - 'RemoveRequestHeader=Cookie'
-            - 'RewritePath=/user-service/(?<segment>.*), /$\{segment}'
+            - 'RewritePath=/post-service/(?<segment>.*), /$\{segment}'
             - 'AuthorizationFilter'
 
 
