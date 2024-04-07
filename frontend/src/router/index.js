@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import CreatePost from "../views/posts/CreatePost.vue";
-import PostTag from "../views/posts/PostTag.vue";
+import NotificationIcon from "@/components/Notification/NotificationIcon.vue";
+import PostView from "@/views/posts/PostView.vue";
 
 const routes = [
   {
@@ -40,9 +41,14 @@ const routes = [
     component: CreatePost
   },
   {
-    path: "/posttag",
-    name: "posttag",
-    component: PostTag
+    path: "/notification",
+    name: "notification",
+    component: NotificationIcon
+  },
+  {
+    path: "/postview",
+    name: "postview",
+    component: PostView
   }
 ]
 
