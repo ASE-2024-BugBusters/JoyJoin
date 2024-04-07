@@ -29,33 +29,29 @@ public class UserService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final PostApiClient postApiClient;
-    // private final PasswordEncoder passwordEncoder;
 
     private final ImageService imageService;
-
     private final UserPacker userPacker;
 
     public UserService(UserRepository userRepository, ModelMapper modelMapper, PostApiClient postApiClient, ImageService imageService, UserPacker userPacker) {
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
         this.postApiClient = postApiClient;
-//        this.passwordEncoder = passwordEncoder;
         this.imageService = imageService;
         this.userPacker = userPacker;
     }
 
-    public UserDto saveUser(User user) {
-        User optionalUser = userRepository.findUserByEmail(user.getEmail());
-        if (optionalUser != null) {
-            throw new EmailAlreadyExistsException(ErrorCode.USER_EMAIL_ALREADY_EXISTS.getErrorCode());
-        }
-        var now = LocalDateTime.now();
-        user.setCreatedOn(now);
-        user.setLastEdited(now);
-//        user.setPassword(passwordEncoder.passwordEncoder().encode(user.getPassword()));
-        User savedUser = userRepository.save(user);
-        return userPacker.packUser(savedUser);
-    }
+//    public UserDto saveUser(User user) {
+//        User optionalUser = userRepository.findUserByEmail(user.getEmail());
+//        if (optionalUser != null) {
+//            throw new EmailAlreadyExistsException(ErrorCode.USER_EMAIL_ALREADY_EXISTS.getErrorCode());
+//        }
+//        var now = LocalDateTime.now();
+//        user.setCreatedOn(now);
+//        user.setLastEdited(now);
+//        User savedUser = userRepository.save(user);
+//        return modelMapper.map(savedUser, UserDto.class);
+//    }
 
     public UserDto updateUser(User partialUser) {
         var existedUser = userRepository.findById(partialUser.getId()).orElseThrow(() -> new ResourceNotFoundException("user", "id", partialUser.getId().toString()));
@@ -92,14 +88,12 @@ public class UserService {
         return userPacker.packUser(user);
     }
 
-
-    static final String AVATAR_BUCKET = "avatar";
-
     public Image getAvatarUploadInformation(UUID uuid, LocalDateTime expireTime) {
         String key = uuid.toString() + "--" + UUID.randomUUID();
         LocalDateTime now = LocalDateTime.now();
         String uploadUrl = imageService.getPreSignedUrlForUpload("avatar", key, Duration.between(now, expireTime));
         ImageUrl imageUploadUrl = new ImageUrl(uploadUrl, expireTime);
+        String AVATAR_BUCKET = "avatar";
         return new Image(AVATAR_BUCKET, key, List.of(imageUploadUrl));
     }
 }

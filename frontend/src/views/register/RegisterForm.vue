@@ -96,7 +96,8 @@ export default {
   methods: {
     async register() {
       if (this.password === this.verifyPassword) {
-        this.verifyPassword = false;
+        this.verifyPasswordError = false;
+
         const data = {
           firstName: this.firstName,
           lastName: this.lastName,
@@ -106,9 +107,13 @@ export default {
           birthDate: this.birthDate
         };
 
-        // TODO: check why CORS-Policy blocks post request with requestbody
-        await axios.post("http://localhost:9191/user-service/api/user", data)
-            .then(response => {
+        console.log(data)
+        await axios.post("http://localhost:9191/user-service/api/user/register", data, {
+          headers: {
+            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJVU0VSIl0sInN1YiI6ImhhcmFtYmFzaWMuam9zNGlwOTdAZ3Rvby5jZnNkc2Fvc3NzcjVzbXRzdCIsImlhdCI6MTcxMjMxOTEwMSwiZXhwIjoxNzEyMzIwNTQxfQ.COCmlQeyK9toL3Sqpr5x3ZBQAgfINyUUHHJz1xT1hQY"
+          }
+        }).then(response => {
+
               console.log("Successfully registered:", response.data)
               this.$router.push({path: "/"});
             })
