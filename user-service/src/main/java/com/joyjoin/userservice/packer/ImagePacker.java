@@ -23,6 +23,9 @@ public class ImagePacker {
     }
 
     public Image packImage(ImageRef ref, LocalDateTime expireTime) {
+        if (ref == null) {
+            return null;
+        }
         LocalDateTime now = LocalDateTime.now();
         String url = imageService.getPreSignedUrlForDownload(ref.getBucket(), ref.getKey(), Duration.between(now, expireTime));
         return new Image(ref, List.of(new ImageUrl(url, expireTime)));

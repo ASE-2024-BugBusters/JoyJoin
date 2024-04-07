@@ -74,7 +74,7 @@ public class UserController {
     }
 
     /**
-     * the request param is passed in the URL like this: http://localhost:8085/user/by-email?email=josip97@gmail.com
+     * the request param is passed in the URL like this: http://localhost:8086/user/by-email?email=josip97@gmail.com
      *
      * @param email
      * @return UserDto
