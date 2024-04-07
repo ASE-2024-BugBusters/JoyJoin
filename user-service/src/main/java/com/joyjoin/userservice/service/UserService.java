@@ -7,6 +7,7 @@ import com.joyjoin.userservice.model.Image;
 import com.joyjoin.userservice.model.ImageUrl;
 import com.joyjoin.userservice.model.User;
 import com.joyjoin.userservice.modelDto.UserDto;
+import com.joyjoin.userservice.modelDto.UserTagDto;
 import com.joyjoin.userservice.packer.UserPacker;
 import com.joyjoin.userservice.repository.UserRepository;
 import com.joyjoin.userservice.service.client.postServiceApi.PostApiClient;
@@ -86,6 +87,14 @@ public class UserService {
             throw new ResourceNotFoundException("User", "email", email);
         }
         return userPacker.packUser(user);
+    }
+
+    public List<UserTagDto> getAllTags() {
+        List<User> users = userRepository.findAll();
+        return users.stream().map(user -> {
+            UserTagDto tagDto = modelMapper.map(user, UserTagDto.class);
+            return tagDto;
+        }).collect(Collectors.toList());
     }
 
     public Image getAvatarUploadInformation(UUID uuid, LocalDateTime expireTime) {

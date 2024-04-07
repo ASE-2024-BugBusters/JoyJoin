@@ -6,6 +6,7 @@ import com.joyjoin.userservice.controller.dto.UpdateUserRequest;
 
 import com.joyjoin.userservice.model.User;
 import com.joyjoin.userservice.modelDto.UserDto;
+import com.joyjoin.userservice.modelDto.UserTagDto;
 import com.joyjoin.userservice.security.model.AuthenticationRequest;
 import com.joyjoin.userservice.security.model.AuthenticationResponse;
 import com.joyjoin.userservice.security.service.AuthService;
@@ -82,5 +83,10 @@ public class UserController {
     @GetMapping("/by-email")
     public UserDto getUserByEmail(@RequestParam String email) {
         return userService.getUserByEmail(email);
+    }
+
+    @GetMapping("/tags")
+    public List<UserTagDto> getUserByTags() {
+        return userService.getAllTags();
     }
 }
