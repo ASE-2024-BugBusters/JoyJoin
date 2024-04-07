@@ -98,6 +98,7 @@ export default {
     async register() {
       if (this.password === this.verifyPassword) {
         this.verifyPasswordError = false;
+
         const data = {
           firstName: this.firstName,
           lastName: this.lastName,
@@ -106,9 +107,10 @@ export default {
           password: this.password,
           birthDate: this.birthDate
         };
-
+        
         await axios.post(BASE_URL + "user-service/api/auth/register", data).then(response => {
               sessionStorage.setItem("jwtToken", response.data.token);
+
               this.$router.push({path: "/"});
             })
             .catch(error => {
@@ -117,11 +119,6 @@ export default {
       } else {
         this.verifyPasswordError = true;
       }
-    },
-
-    async test() {
-      const a = await axios.get("http://localhost:9191/user-service/api/user/test");
-      console.log(a)
     }
 
   }
