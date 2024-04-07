@@ -110,7 +110,6 @@ export default {
     const participationLimit = ref("");
     const description = ref("");
     const multiValue = ref([]); // MultiSelect v-model
-    const imageKeys = ref([]);
     const uploadedImages = ref([]);
 
     const source = ref([
@@ -159,6 +158,11 @@ export default {
 
 
     const publish = async () => {
+        // 如果有上传的图片，则构造图片数据
+        const imagesPayload = uploadedImages.value.length > 0 ? uploadedImages.value.map(image => ({
+          bucket: image.bucket,
+          key: image.key
+        })) : undefined; // 没有上传的图片时，设置为undefined
         const data = {
             title: title.value,
             time: new Date(time.value).toISOString(),
@@ -172,12 +176,11 @@ export default {
             participationLimit: parseInt(participationLimit.value),
             description: description.value,
             tags: multiValue.value,
-            // images: uploadedImages.value[0]
-            // images: uploadedImages.value.map(image => ({ bucket: image.bucket, key: image.key }))
-            images: uploadedImages.value.length > 0 ? uploadedImages.value.map(image => ({ bucket: image.bucket, key: image.key })) : null,
-
 
       };
+      if (imagesPayload !== undefined) {
+            data.images = imagesPayload;
+            }
   
   console.log("Data to be sent:", data);
   try {

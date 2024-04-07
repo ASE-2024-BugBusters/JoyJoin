@@ -1,8 +1,8 @@
 package com.joyjoin.eventservice.controller;
 import com.joyjoin.eventservice.controller.dto.GetImgUploadUrlResponse;
 import com.joyjoin.eventservice.model.Event;
-import com.joyjoin.eventservice.model.Tag;
 import com.joyjoin.eventservice.modelDto.EventDto;
+import com.joyjoin.eventservice.modelDto.PostEventRequest;
 import com.joyjoin.eventservice.modelDto.UpdateEventRequest;
 import com.joyjoin.eventservice.service.EventService;
 import org.modelmapper.ModelMapper;
@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -26,8 +28,8 @@ public class EventController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<EventDto> createEvent(@RequestBody EventDto eventDto) {
-        Event event = modelMapper.map(eventDto, Event.class);
+    public ResponseEntity<EventDto> createEvent(@Valid @RequestBody PostEventRequest request) {
+        Event event = modelMapper.map(request, Event.class);
         EventDto createdEvent = eventService.saveEvent(event);
         return new ResponseEntity<>(createdEvent, HttpStatus.CREATED);
     }

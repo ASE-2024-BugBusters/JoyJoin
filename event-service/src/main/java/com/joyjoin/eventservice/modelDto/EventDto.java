@@ -18,23 +18,11 @@ import java.util.UUID;
 @NoArgsConstructor
 public class EventDto {
     private UUID id;
-    @NotBlank(message = "Title is required")
     private String title;
-
-    @NotNull(message = "Time is required")
-    @Future(message = "Time must be in the future")
     private LocalDateTime time;
-
-    @NotNull(message = "Location is required")
     private LocationDto location;
-
-    @Min(value = 1, message = "Participation limit must be at least 1")
     private Integer participationLimit;
-
-    @NotBlank(message = "Description is required")
-    @Size(max = 1000, message = "Description must be less than 1000 characters")
     private String description;
-
-    private List<@NotBlank(message = "Tags must not be blank") String> tags;
+    private List<String> tags;
     private List<Image> images;
 }

@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -17,7 +18,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class UpdateEventRequest {
     private String title;
-    private String time;
+    private LocalDateTime time;
     private LocationDto location;
     private Integer participationLimit;
     private String description;
