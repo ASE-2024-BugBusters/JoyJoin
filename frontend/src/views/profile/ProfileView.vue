@@ -15,13 +15,16 @@
         <h1>{{ userProfile.name }}</h1>
         <h2>{{ userProfile.nickname }}</h2>
         <p><strong>Bio:</strong> {{ userProfile.biography }}</p>
+        <p><strong>Tags:</strong> {{ userProfile.interestTags }}</p>
       </div>
+      <router-link :to="{ name: 'EditProfile' }" class="btn btn-primary">Edit</router-link>
     </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios'
+import {INTEREST_TAGS} from "../../../config/dev.env";
 
 export default {
   name: 'UserProfile',
@@ -50,6 +53,17 @@ export default {
         }
         if (response.data.firstName || response.data.lastName) {
           this.userProfile.name = response.data.firstName + ' ' + response.data.lastName
+        }
+        if (response.data.interestTags) {
+          let interestTags = []
+          for (const tag of response.data.interestTags) {
+            for (const pair of INTEREST_TAGS) {
+              if (tag === pair.value) {
+                interestTags.push(pair.label)
+              }
+            }
+          }
+          this.userProfile.interestTags = interestTags.join(', ')
         }
       } catch (e) {
         console.error(e)
