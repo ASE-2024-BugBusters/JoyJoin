@@ -1,54 +1,81 @@
 <template>
-  <div class="event-card">
-    <div class="card">
-      <div class="card-content">
-        <h2 class="is-size-4 has-text-weight-bold">Event name</h2>
-        <small class="event-date">Event date</small>
-        <span>Event location</span>
-      </div>
+  <div class="event-card" @click="$emit('click')">
+    <div class="card-image">
+      <img :src="imageUrl" alt="Event Image">
+    </div>
+    <div class="card-content">
+      <h2 class="event-title">{{ event.title }}</h2>
+      <p class="event-date-time">{{ formattedDateTime }}</p>
+      <p class="event-location">{{ event.location.street }} {{ event.location.number }}, {{ event.location.city }} {{ event.location.postalCode }}</p>
     </div>
   </div>
 </template>
-<script>
-export default {};
-</script>
-<style lang="scss" scoped>
 
-.card {
-  background-image: url('@/assets/Download.jpeg');
-  height: 200px;
-  background-position: center;
-  background-size: cover;
-  text-align: center;
+<script>
+export default {
+  props: ['event'],
+  computed: {
+    imageUrl() {
+      return this.event.images && this.event.images.length > 0
+        ? this.event.images[0].urls[0].url
+        : require('@/assets/defaultEventImg.jpeg');
+    },
+    formattedDateTime() {
+      const date = new Date(this.event.time);
+      const dateString = date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' });
+      const timeString = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+      return `${dateString} AT ${timeString}`;
+    },
+  }
+};
+</script>
+
+<style lang="scss" scoped>
+.event-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 25px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+  }
 }
-.card-content {
-  padding-top: 50px;
-  position: absolute;
-  color: #fff;
-  background-color: rgba(0, 0, 0, 0.35);
-  top: 0;
-  padding: 10px;
-  height: 200px;
+
+.card-image img {
   width: 100%;
-  span {
-    font-size: 18px;
-    text-align: center;
-    width: 100%;
-    position: absolute;
-    bottom: 10px;
-    right: 0;
-  }
-  h2 {
-    margin-top: 10px;
-  }
+  display: block;
+  height: 180px;
+  object-fit: cover;
 }
-.event-date {
-  background-color: #151515;
-  color: #fff;
-  font-size: 0.75em;
-  padding: 2px 10px;
-  position: absolute;
-  top: 0;
-  right: 0;
+
+.card-content {
+  padding: 15px;
+  background: #ffffff;
+  text-align: left;
+
+  .event-title {
+    font-size: 1.3em;
+    font-weight: 1000;
+    color: #333;
+    margin-bottom: 8px;
+  }
+
+  .event-date, .event-time, .event-location {
+    font-weight: 900;
+    font-size: 1.2em;
+    color: #555;
+    margin: 1px 0;
+  }
+
+  .event-location {
+    font-weight: 700;
+    font-size: 1.2em;
+    margin-top: 7px;
+  }
 }
 </style>
+
