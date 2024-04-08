@@ -7,7 +7,7 @@
           <div class="field">
             <label class="label">Username</label>
             <div class="control">
-              <input class="input" type="text" v-model="username" placeholder="Enter your username">
+              <input class="input" type="text" v-model="email" placeholder="Enter your username">
             </div>
           </div>
           <div class="field">
@@ -29,18 +29,30 @@
 
 <script>
 
+import {BASE_URL} from "../../../config/dev.env";
+import axios from "axios";
+
 export default {
   data() {
     return {
-      username: '',
+      email: '',
       password: ''
     };
   },
   methods: {
-    login() {
-      // Implement login logic here
-      console.log('Username:', this.username);
-      console.log('Password:', this.password);
+    async login() {
+      const data = {
+        email: this.email,
+        password: this.password,
+      }
+      console.log(data)
+      await axios.post(BASE_URL + "user-service/api/auth/login", data).then(response => {
+        sessionStorage.setItem("jwtToken", response.data.token);
+        this.$router.push({path: "/"});
+      })
+          .catch(error => {
+            console.log("Error: ", error)
+          })
     }
   }
 }

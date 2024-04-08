@@ -6,7 +6,7 @@ spring:
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
       globalcors:
-        corsConfigurations:
+        cors-configurations:
           '[/**]':
             allowedOrigins: "*"
             allowedMethods: "*"
@@ -41,6 +41,16 @@ spring:
           filters:
             - 'RemoveRequestHeader=Cookie'
             - 'RewritePath=/post-service/(?<segment>.*), /$\{segment}'
+            - 'AuthorizationFilter'
+        - id: 'event-service-general'
+          uri:
+            'lb://EVENT-SERVICE'
+          predicates:
+            - 'Path=/event-service/api/event/**'
+            - 'Header=Authorization, Bearer (.*)'
+          filters:
+            - 'RemoveRequestHeader=Cookie'
+            - 'RewritePath=/event-service/(?<segment>.*), /$\{segment}'
             - 'AuthorizationFilter'
 
 

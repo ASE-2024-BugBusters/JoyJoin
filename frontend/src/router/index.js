@@ -3,6 +3,8 @@ import HomeView from '../views/HomeView.vue'
 import CreatePost from "../views/posts/CreatePost.vue";
 import NotificationIcon from "@/components/Notification/NotificationIcon.vue";
 import PostView from "@/views/posts/PostView.vue";
+import ProfileView from "@/views/profile/ProfileView.vue";
+import EditProfileView from "@/views/profile/EditProfileView.vue";
 
 const routes = [
   {
@@ -20,9 +22,14 @@ const routes = [
       return import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
     }
   },
+  // {
+  //   path: '/',
+  //   name: 'EventsList',
+  //   component: EventsList
+  // },
   {
     path: "/event/:id",
-    name: "eventSingle",
+    name: "EventView",
     component: () => import('../views/event/EventView.vue')
   },
   {
@@ -41,6 +48,11 @@ const routes = [
     component: CreatePost
   },
   {
+    path: "/events/create",
+    name: "createEvent",
+    component: () => import('../views/event/CreateEvent.vue')
+  },
+  {
     path: "/notification",
     name: "notification",
     component: NotificationIcon
@@ -49,6 +61,16 @@ const routes = [
     path: "/postview",
     name: "postview",
     component: PostView
+  },
+  {
+    path: "/profile",
+    name: "profile",
+    component: ProfileView
+  },
+  {
+    path: "/profile/edit",
+    name: "EditProfile",
+    component: EditProfileView
   }
 ]
 
