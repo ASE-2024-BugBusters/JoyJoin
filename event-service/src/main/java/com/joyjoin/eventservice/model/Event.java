@@ -25,6 +25,7 @@ public class Event extends DefaultProperties {
     @ElementCollection
     private List<Tag> tags;
     @Convert(converter = ImageRefListConverter.class)
+    @Column(length = 10000)
     private List<ImageRef> images;
 
 }

@@ -28,7 +28,7 @@ export default {
   },
   methods: {
     fetchEvents() {
-      axios.get('http://localhost:8084/api/event')
+      axios.get('http://localhost:8084/api/events')
         .then(response => {
           this.events = response.data;
         })

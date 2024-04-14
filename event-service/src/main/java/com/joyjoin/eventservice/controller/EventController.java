@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
-@RequestMapping("api/event")
+@RequestMapping("api/events")
 public class EventController {
 
     @Autowired
@@ -33,7 +33,7 @@ public class EventController {
         EventDto createdEvent = eventService.saveEvent(event);
         return new ResponseEntity<>(createdEvent, HttpStatus.CREATED);
     }
-    @GetMapping("/upload_image")
+    @GetMapping("/get_upload_image_url")
     public GetImgUploadUrlResponse getImgUploadUrl() {
         var expireTime = LocalDateTime.now().plusMinutes(30);
         return new GetImgUploadUrlResponse(eventService.getImgUploadInformation(expireTime));

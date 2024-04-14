@@ -98,6 +98,7 @@ import { useRouter } from 'vue-router';
 import { onMounted } from 'vue';
 import * as FilePond from 'filepond';
 import BASE_URL from '../../../config/dev.env';
+import {TAGS} from "../../../config/dev.env";
 export default {
   components: {
     Multiselect,
@@ -110,60 +111,16 @@ export default {
     const location = reactive({ street: "", number: "", city: "", country: "", postalCode: "" });
     const participationLimit = ref("");
     const description = ref("");
-    const multiValue = ref([]); // MultiSelect v-model
+    const multiValue = ref([]);
     const uploadedImages = ref([]);
-
-    const source = ref([
-        { value: 'VEGAN_CUISINE', label: 'Vegan Cuisine' },
-        { value: 'NIGHTLIFE', label: 'Nightlife' },
-        { value: 'PUB_CRAWLS', label: 'Pub Crawls' },
-        { value: 'CONCERTS', label: 'Concerts' },
-        { value: 'BRUNCH', label: 'Brunch' },
-        { value: 'MOCKTAILS', label: 'Mocktails' },
-        { value: 'COCKTAILS', label: 'Cocktails' },
-        { value: 'VEGETARIANISM', label: 'Vegetarianism' },
-        { value: 'CRAFT_BEER', label: 'Craft Beer' },
-        { value: 'WINE_TASTING', label: 'Wine Tasting' },
-        { value: 'GASTRONOMY', label: 'Gastronomy' },
-        { value: 'EXERCISE', label: 'Exercise' },
-        { value: 'SOCCER', label: 'Soccer' },
-        { value: 'BASKETBALL', label: 'Basketball' },
-        { value: 'HEALTHY_EATING', label: 'Healthy Eating' },
-        { value: 'HIKING', label: 'Hiking' },
-        { value: 'YOGA', label: 'Yoga' },
-        { value: 'MEDITATION', label: 'Meditation' },
-        { value: 'PHOTOGRAPHY', label: 'Photography' },
-        { value: 'TRAVEL', label: 'Travel' },
-        { value: 'READING', label: 'Reading' },
-        { value: 'COOKING', label: 'Cooking' },
-        { value: 'GAMING', label: 'Gaming' },
-        { value: 'PAINTING', label: 'Painting' },
-        { value: 'MUSIC', label: 'Music' },
-        { value: 'DANCING', label: 'Dancing' },
-        { value: 'FASHION', label: 'Fashion' },
-        { value: 'WRITING', label: 'Writing' },
-        { value: 'GARDENING', label: 'Gardening' },
-        { value: 'FILM', label: 'Film' },
-        { value: 'THEATER', label: 'Theater' },
-        { value: 'ARCHITECTURE', label: 'Architecture' },
-        { value: 'HISTORY', label: 'History' },
-        { value: 'SCIENCE', label: 'Science' },
-        { value: 'TECHNOLOGY', label: 'Technology' },
-        { value: 'WILDLIFE', label: 'Wildlife' },
-        { value: 'CONSERVATION', label: 'Conservation' },
-        { value: 'SUSTAINABILITY', label: 'Sustainability' },
-        { value: 'ENTREPRENEURSHIP', label: 'Entrepreneurship' },
-        { value: 'VOLUNTEERING', label: 'Volunteering' },
-        { value: 'SURFING', label: 'Surfing' }
-    ]);
+    const source = ref(TAGS);
 
 
     const publish = async () => {
-        // 如果有上传的图片，则构造图片数据
         const imagesPayload = uploadedImages.value.length > 0 ? uploadedImages.value.map(image => ({
           bucket: image.bucket,
           key: image.key
-        })) : undefined; // 没有上传的图片时，设置为undefined
+        })) : undefined;
         const data = {
             title: title.value,
             time: new Date(time.value).toISOString(),
@@ -185,8 +142,8 @@ export default {
   
   console.log("Data to be sent:", data);
   try {
-    let url_create_event = "http://localhost:9191/event-service/api/event/create";
-    let url_create_event_my = "http://localhost:8084/api/event/create"
+    let url_create_event = "http://localhost:9191/event-service/api/events/create";
+    let url_create_event_my = "http://localhost:8084/api/events/create"
     const response = await axios.post(url_create_event_my, data, {
       headers: {
         'Content-Type': 'application/json',
@@ -236,8 +193,8 @@ export default {
     // Fetching upload URL
     const getUploadUrl = async () => {
         try {
-            let url_get_upload = "http://localhost:9191/event-service/api/event/upload_image";
-            let url_get_upload_my = "http://localhost:8084/api/event/upload_image";
+            let url_get_upload = "http://localhost:9191/event-service/api/events/get_upload_image_url";
+            let url_get_upload_my = "http://localhost:8084/api/events/get_upload_image_url";
 
             const response = await axios.get(url_get_upload_my,
             {headers: {
