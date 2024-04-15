@@ -144,7 +144,7 @@ export default {
   try {
     let url_create_event = "http://localhost:9191/event-service/api/events/create";
     let url_create_event_my = "http://localhost:8084/api/events/create"
-    const response = await axios.post(url_create_event_my, data, {
+    const response = await axios.post(url_create_event, data, {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
@@ -196,7 +196,7 @@ export default {
             let url_get_upload = "http://localhost:9191/event-service/api/events/get_upload_image_url";
             let url_get_upload_my = "http://localhost:8084/api/events/get_upload_image_url";
 
-            const response = await axios.get(url_get_upload_my,
+            const response = await axios.get(url_get_upload,
             {headers: {
               'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
             },
