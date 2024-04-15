@@ -142,3 +142,5 @@ services:
       - "3005:3005"
     expose:
       - "3005"
+    depends_on:
+      - user-service
