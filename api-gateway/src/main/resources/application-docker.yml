@@ -6,7 +6,7 @@ spring:
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
       globalcors:
-        corsConfigurations:
+        cors-configurations:
           '[/**]':
             allowedOrigins: "*"
             allowedMethods: "*"
@@ -30,14 +30,41 @@ spring:
           filters:
             - 'RemoveRequestHeader=Cookie'
             - 'RewritePath=/user-service/(?<segment>.*), /$\{segment}'
-            - 'UserServiceAuthorizationHeaderFilter'
+            - 'AuthorizationFilter'
+
+        - id: 'post-service-general'
+          uri:
+            'lb://POST-SERVICE'
+          predicates:
+            - 'Path=/post-service/api/post/**'
+            - 'Header=Authorization, Bearer (.*)'
+          filters:
+            - 'RemoveRequestHeader=Cookie'
+            - 'RewritePath=/post-service/(?<segment>.*), /$\{segment}'
+            - 'AuthorizationFilter'
+        - id: 'event-service-general'
+          uri:
+            'lb://EVENT-SERVICE'
+          predicates:
+            - 'Path=/event-service/api/event/**'
+            - 'Header=Authorization, Bearer (.*)'
+          filters:
+            - 'RemoveRequestHeader=Cookie'
+            - 'RewritePath=/event-service/(?<segment>.*), /$\{segment}'
+            - 'AuthorizationFilter'
 
 
+
+
+
+## We could define the routes also like this, but the locator does this automatically and we don't need to deal with it
+
+
+# Access of Dashboard here: http://localhost:8761
 eureka:
   client:
     serviceUrl:
       defaultZone: "http://registry-service:8761/eureka/"
-      # muss eventuel angepasst werdden mit http://eureka:password@registry-service:8761
 
 server:
   port: 9191
@@ -58,3 +85,8 @@ logging:
           gateway:
             handler:
               org.springframework.cloud.gateway.handler.RoutePredicateHandlerMapping: DEBUG
+
+
+jwt:
+  token:
+    secret: "9abd22e669dcceb6feb83a9999a53f6328934b177790c9dbf219bdc3114389465b31470ef9d929ff82fb0c829321d74ac630a3d938a66274e16162576da10f06"
