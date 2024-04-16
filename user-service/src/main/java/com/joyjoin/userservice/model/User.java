@@ -5,8 +5,7 @@ import com.joyjoin.userservice.model.converter.TagsConverter;
 import com.joyjoin.userservice.security.model.Role;
 import com.joyjoin.userservice.security.model.Token;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -28,16 +27,21 @@ public class User implements UserDetails {
     @GeneratedValue
     private UUID id;
 
+    @NotNull(message = "The Firstname can't be null")
+    @Size(min = 2, message = "The Firstname has to be a least 2 characters long")
     private String firstName;
 
+    @NotNull(message = "The Lastname can't be null")
+    @Size(min = 2, message = "The Lastname has to be a least 2 characters long")
     private String lastName;
 
     @Column(unique = true)
-    @NotBlank(message = "Email can't be empty")
+    @NotNull(message = "Email can't be null")
     @Email(message = "Invalid Email format")
     private String email;
 
-    @NotBlank(message = "Password can't be empty")
+    @NotNull(message = "Password can't be empty")
+    @Size(min = 8, max = 16, message = "The password must be min 8 characters and max 16 long")
     private String password;
 
     @Column(unique = true)

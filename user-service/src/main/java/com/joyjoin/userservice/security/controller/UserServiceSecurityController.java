@@ -4,6 +4,7 @@ import com.joyjoin.userservice.model.User;
 import com.joyjoin.userservice.security.model.AuthenticationRequest;
 import com.joyjoin.userservice.security.model.AuthenticationResponse;
 import com.joyjoin.userservice.security.service.AuthService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +21,7 @@ public class UserServiceSecurityController {
     }
 
     @PostMapping("/register")
-    public AuthenticationResponse registerUser(@RequestBody User user) {
+    public AuthenticationResponse registerUser(@Valid @RequestBody User user) {
         return authService.register(user);
     }
 

@@ -52,3 +52,8 @@ eureka:
   client:
     serviceUrl:
       defaultZone: "http://localhost:8761/eureka/"
+
+
+jwt:
+  token:
+    secret: "9abd22e669dcceb6feb83a9999a53f6328934b177790c9dbf219bdc3114389465b31470ef9d929ff82fb0c829321d74ac630a3d938a66274e16162576da10f06"
