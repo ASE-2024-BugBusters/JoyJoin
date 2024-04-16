@@ -1,10 +1,12 @@
 package com.joyjoin.userservice.security.service;
 
+import com.joyjoin.userservice.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.core.env.Environment;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.security.core.GrantedAuthority;
@@ -75,6 +77,7 @@ public class JwtService {
                 .setIssuedAt(TOKEN_VALIDITY_DURATION)
                 .signWith(getSignKey(), SignatureAlgorithm.ES256).compact();
     }
+
     private Key getSignKey() {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(keyBytes);
