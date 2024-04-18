@@ -53,7 +53,7 @@ public class AuthService {
         var jwtToken = jwtService.generateToken(userToSave);
         deleteAllUserTokens(user);
         saveUserToken(savedUser, jwtToken);
-        return AuthenticationResponse.builder().token(jwtToken).build();
+        return AuthenticationResponse.builder().userId(savedUser.getId()).token(jwtToken).build();
     }
 
 
@@ -70,7 +70,7 @@ public class AuthService {
         var jwtToken = jwtService.generateToken(user);
         deleteAllUserTokens(user);
         saveUserToken(user, jwtToken);
-        return AuthenticationResponse.builder().token(jwtToken).build();
+        return AuthenticationResponse.builder().userId(user.getId()).token(jwtToken).build();
     }
 
     private void saveUserToken(User user, String jwtToken) {
