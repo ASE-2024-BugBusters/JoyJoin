@@ -16,9 +16,6 @@
                 <div class="tags-container">
                   <i class="bi bi-tags-fill"></i>
                   <strong>Tags:</strong>
-<!--                  <div class="mb-3">-->
-<!--                    <span class="badge" v-for="label in tagLabels" :key="label">{{ label }}</span>-->
-<!--                  </div>-->
                   <div class="tag-badges">
                     <span class="badge" v-for="label in tagLabels" :key="label">{{ label }}</span>
                   </div>
@@ -38,12 +35,13 @@
 </template>
 <script>
 import axios from 'axios';
-import {TAGS} from "../../../config/dev.env";
+import {INTEREST_TAGS} from "../../../config/dev.env";
+import BASE_URL from '../../../config/dev.env';
 export default {
   data() {
     return {
       event: null,
-      source: TAGS,
+      source: INTEREST_TAGS,
     };
   },
   computed: {
@@ -69,7 +67,14 @@ export default {
   methods: {
     fetchEventData() {
       const eventId = this.$route.params.id;
-      axios.get(`http://localhost:8084/api/events/${eventId}`)
+      let url = BASE_URL + `event-service/api/events/${eventId}`
+      let url_my = `http://localhost:8084/api/events/${eventId}`
+      axios.get(url_my, {
+        headers: {
+          // 'Content-Type': 'application/json',
+          'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
+        }
+      })
           .then(response => {
             this.event = response.data;
           })
@@ -98,7 +103,7 @@ export default {
 }
 @media (max-width: 768px) {
   .container {
-    width: 95vw; // 在小屏幕设备上，容器宽度为100%
+    width: 95vw;
   }
 }
 .card-header {
