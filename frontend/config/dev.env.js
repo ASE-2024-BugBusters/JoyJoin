@@ -1,5 +1,6 @@
 module.exports = {
     BASE_URL: "http://localhost:9191/",
+    BASE_URL_POST: "http://localhost:9191/api",
     TOKEN_PREFIX: "Bearer ",
     INTEREST_TAGS: [
         {value: 'VeganCuisine', label: 'Vegan Cuisine'},

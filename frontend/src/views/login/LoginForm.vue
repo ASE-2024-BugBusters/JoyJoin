@@ -5,9 +5,9 @@
         <h1 class="title">Login</h1>
         <form @submit.prevent="login">
           <div class="field">
-            <label class="label">Username</label>
+            <label class="label">Email</label>
             <div class="control">
-              <input class="input" type="text" v-model="email" placeholder="Enter your username">
+              <input class="input" type="text" v-model="email" placeholder="Enter your email">
             </div>
           </div>
           <div class="field">

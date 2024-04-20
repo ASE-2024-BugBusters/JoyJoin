@@ -14,7 +14,7 @@ services:
     expose:
       - "5434"
     ports:
-      - "5434:5434"
+      - "127.0.0.1:5434:5434"
     command: -p 5434
     restart: unless-stopped
 
@@ -31,7 +31,7 @@ services:
     expose:
       - "5435"
     ports:
-      - "5435:5435"
+      - "127.0.0.1:5435:5435"
     command: -p 5435
     restart: unless-stopped
 
@@ -48,7 +48,7 @@ services:
     expose:
       - "5436"
     ports:
-      - "5436:5436"
+      - "127.0.0.1:5436:5436"
     command: -p 5436
     restart: unless-stopped
 
@@ -142,3 +142,5 @@ services:
 #      - "3005:3005"
 #    expose:
 #      - "3005"
+#    depends_on:
+#      - user-service

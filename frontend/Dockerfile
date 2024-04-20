@@ -16,8 +16,8 @@ COPY . .
 # Build the Vue.js application for production
 RUN yarn build
 
-# Expose port 80 to the outside world
-EXPOSE 80
+# Expose port 8081 to the outside world
+EXPOSE 3005
 
 # Command to run the application
 CMD ["yarn", "serve"]

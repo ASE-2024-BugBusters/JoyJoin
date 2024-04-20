@@ -75,6 +75,7 @@ public class JwtService {
                 .setIssuedAt(TOKEN_VALIDITY_DURATION)
                 .signWith(getSignKey(), SignatureAlgorithm.ES256).compact();
     }
+
     private Key getSignKey() {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(keyBytes);

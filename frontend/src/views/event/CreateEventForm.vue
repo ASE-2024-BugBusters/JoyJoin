@@ -1,103 +1,104 @@
 <template>
-    <div class="container">
-      <div class="columns is-centered">
-        <div class="column is-half">
-          <h1 class="title">Publish Event</h1>
-          <form @submit.prevent="publish">
-            <div class="field">
-              <label class="label">Title</label>
-              <div class="control">
-                <input class="input" type="text" v-model="title" placeholder="Enter the event title">
-              </div>
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-half">
+        <h1 class="title">Publish Event</h1>
+        <form @submit.prevent="publish">
+          <div class="field">
+            <label class="label">Title</label>
+            <div class="control">
+              <input class="input" type="text" v-model="title" placeholder="Enter the event title" required>
             </div>
-            <div class="field">
-              <label class="label">Time</label>
-              <div class="control">
-                <input class="input" type="datetime-local" v-model="time">
-              </div>
+          </div>
+          <div class="field">
+            <label class="label">Time</label>
+            <div class="control">
+              <input class="input" type="datetime-local" v-model="time" :min="minDateTime" required>
             </div>
+          </div>
+          <div class="flex-row">
             <div class="field">
               <label class="label">Street</label>
               <div class="control">
-                <input class="input" type="text" v-model="location.street" placeholder="Enter the street name">
+                <input class="input" type="text" v-model="location.street" placeholder="Enter the street name" required>
               </div>
             </div>
             <div class="field">
               <label class="label">Number</label>
               <div class="control">
-                <input class="input" type="number" v-model="location.number" placeholder="Enter the number">
+                <input class="input" type="number" v-model="location.number" placeholder="Enter the number" required>
               </div>
             </div>
             <div class="field">
               <label class="label">City</label>
               <div class="control">
-                <input class="input" type="text" v-model="location.city" placeholder="Enter the city">
+                <input class="input" type="text" v-model="location.city" placeholder="Enter the city" required>
               </div>
             </div>
             <div class="field">
               <label class="label">Country</label>
               <div class="control">
-                <input class="input" type="text" v-model="location.country" placeholder="Enter the country">
+                <input class="input" type="text" v-model="location.country" placeholder="Enter the country" required>
               </div>
             </div>
-            <div class="field">
-              <label class="label">Postal Code</label>
-              <div class="control">
-                <input class="input" type="number" v-model="location.postalCode" placeholder="Enter the postal code">
-              </div>
+          </div>
+
+          <div class="field">
+            <label class="label">Participation Limit</label>
+            <div class="control">
+              <input class="input" type="number" v-model="participationLimit" placeholder="Enter the participation limit" required>
             </div>
-            <div class="field">
-              <label class="label">Participation Limit</label>
-              <div class="control">
-                <input class="input" type="number" v-model="participationLimit" placeholder="Enter the participation limit">
-              </div>
-            </div>
-            <div class="field">
-              <label class="label">Tags</label>
-              <div class="control">
-                <Multiselect
+          </div>
+          <div class="field">
+            <label class="label">Tags</label>
+            <div class="control">
+              <Multiselect
                   v-model="multiValue"
                   mode="tags"
                   :close-on-select="false"
                   :searchable="true"
-                  :create-option="true"
+                  :create-option="false"
                   :options="source"
                   option-label="label"
                   option-value="value"
                   placeholder="Pick some tags to describe the event"
-                />
-              </div>
+                  required
+              />
+            </div>
           </div>
-            <div class="field">
-              <label class="label">Description</label>
-              <div class="control">
-                <textarea class="textarea" v-model="description" placeholder="Enter the description" rows="7"></textarea>
-              </div>
+
+          <div class="field">
+            <label class="label">Description</label>
+            <div class="control">
+              <textarea class="textarea" v-model="description" placeholder="Enter the description" rows="7"></textarea>
             </div>
-            <div class="field">
-              <label class="label">Images</label>
-              <input type="file" id="filepond" name="filepond" class="filepond" />
-              <input type="hidden" v-model="uploadedImages" />
+          </div>
+
+          <div class="field">
+            <label class="label">Images</label>
+            <input type="file" id="filepond" name="filepond" class="filepond" />
+            <input type="hidden" v-model="uploadedImages" />
+          </div>
+          <div class="field">
+            <div class="control">
+              <button class="button is-primary">Publish</button>
             </div>
-            <div class="field">
-              <div class="control">
-                <button class="button is-primary">Publish</button>
-              </div>
-            </div>
-          </form>
-        </div>
+          </div>
+        </form>
       </div>
     </div>
+  </div>
 </template>
 
 <script>
 import axios from "axios";
-import { ref, reactive } from 'vue';
+import { computed, ref, reactive } from 'vue';
 import Multiselect from '@vueform/multiselect';
 import { useRouter } from 'vue-router';
 import { onMounted } from 'vue';
 import * as FilePond from 'filepond';
 import BASE_URL from '../../../config/dev.env';
+import {INTEREST_TAGS} from "../../../config/dev.env";
 export default {
   components: {
     Multiselect,
@@ -110,60 +111,18 @@ export default {
     const location = reactive({ street: "", number: "", city: "", country: "", postalCode: "" });
     const participationLimit = ref("");
     const description = ref("");
-    const multiValue = ref([]); // MultiSelect v-model
+    const multiValue = ref([]);
     const uploadedImages = ref([]);
-
-    const source = ref([
-        { value: 'VEGAN_CUISINE', label: 'Vegan Cuisine' },
-        { value: 'NIGHTLIFE', label: 'Nightlife' },
-        { value: 'PUB_CRAWLS', label: 'Pub Crawls' },
-        { value: 'CONCERTS', label: 'Concerts' },
-        { value: 'BRUNCH', label: 'Brunch' },
-        { value: 'MOCKTAILS', label: 'Mocktails' },
-        { value: 'COCKTAILS', label: 'Cocktails' },
-        { value: 'VEGETARIANISM', label: 'Vegetarianism' },
-        { value: 'CRAFT_BEER', label: 'Craft Beer' },
-        { value: 'WINE_TASTING', label: 'Wine Tasting' },
-        { value: 'GASTRONOMY', label: 'Gastronomy' },
-        { value: 'EXERCISE', label: 'Exercise' },
-        { value: 'SOCCER', label: 'Soccer' },
-        { value: 'BASKETBALL', label: 'Basketball' },
-        { value: 'HEALTHY_EATING', label: 'Healthy Eating' },
-        { value: 'HIKING', label: 'Hiking' },
-        { value: 'YOGA', label: 'Yoga' },
-        { value: 'MEDITATION', label: 'Meditation' },
-        { value: 'PHOTOGRAPHY', label: 'Photography' },
-        { value: 'TRAVEL', label: 'Travel' },
-        { value: 'READING', label: 'Reading' },
-        { value: 'COOKING', label: 'Cooking' },
-        { value: 'GAMING', label: 'Gaming' },
-        { value: 'PAINTING', label: 'Painting' },
-        { value: 'MUSIC', label: 'Music' },
-        { value: 'DANCING', label: 'Dancing' },
-        { value: 'FASHION', label: 'Fashion' },
-        { value: 'WRITING', label: 'Writing' },
-        { value: 'GARDENING', label: 'Gardening' },
-        { value: 'FILM', label: 'Film' },
-        { value: 'THEATER', label: 'Theater' },
-        { value: 'ARCHITECTURE', label: 'Architecture' },
-        { value: 'HISTORY', label: 'History' },
-        { value: 'SCIENCE', label: 'Science' },
-        { value: 'TECHNOLOGY', label: 'Technology' },
-        { value: 'WILDLIFE', label: 'Wildlife' },
-        { value: 'CONSERVATION', label: 'Conservation' },
-        { value: 'SUSTAINABILITY', label: 'Sustainability' },
-        { value: 'ENTREPRENEURSHIP', label: 'Entrepreneurship' },
-        { value: 'VOLUNTEERING', label: 'Volunteering' },
-        { value: 'SURFING', label: 'Surfing' }
-    ]);
-
-
+    const source = ref(INTEREST_TAGS);
+    const minDateTime = computed(() => {
+      let now = new Date();
+      return now.toISOString().substring(0, 16); // YYYY-MM-DDTHH:MM format
+    });
     const publish = async () => {
-        // 如果有上传的图片，则构造图片数据
         const imagesPayload = uploadedImages.value.length > 0 ? uploadedImages.value.map(image => ({
           bucket: image.bucket,
           key: image.key
-        })) : undefined; // 没有上传的图片时，设置为undefined
+        })) : undefined;
         const data = {
             title: title.value,
             time: new Date(time.value).toISOString(),
@@ -179,17 +138,25 @@ export default {
             tags: multiValue.value,
 
       };
+      if (!title.value.trim() || !time.value || !multiValue.value.length ||
+          !location.street.trim() || !location.number || !location.city.trim() ||
+          !location.country.trim() || !participationLimit.value) {
+        alert('Please fill all the required fields.');
+        return;
+      }
       if (imagesPayload !== undefined) {
             data.images = imagesPayload;
             }
   
   console.log("Data to be sent:", data);
   try {
-    let url_create_event = "http://localhost:9191/event-service/api/event/create";
-    let url_create_event_my = "http://localhost:8084/api/event/create"
-    const response = await axios.post(url_create_event_my, data, {
+    let url_create_event = "http://localhost:9191/event-service/api/events/create";
+    let url_create_event_my = "http://localhost:8084/api/events/create"
+    console.log(url_create_event);
+    console.log(url_create_event_my);
+    const response = await axios.post(url_create_event, data, {
       headers: {
-        'Content-Type': 'application/json',
+        // 'Content-Type': 'application/json',
         'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
       }
     });
@@ -236,10 +203,10 @@ export default {
     // Fetching upload URL
     const getUploadUrl = async () => {
         try {
-            let url_get_upload = "http://localhost:9191/event-service/api/event/upload_image";
-            let url_get_upload_my = "http://localhost:8084/api/event/upload_image";
+            let url_get_upload = "http://localhost:9191/event-service/api/events/get_upload_image_url";
+            let url_get_upload_my = "http://localhost:8084/api/events/get_upload_image_url";
 
-            const response = await axios.get(url_get_upload_my,
+            const response = await axios.get(url_get_upload,
             {headers: {
               'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
             },
@@ -256,7 +223,7 @@ export default {
 
 
     return {
-      title, time, location, participationLimit, description, publish, multiValue, source
+      title, time, location, participationLimit, description, publish, multiValue, source,minDateTime
     };
   }
 }
@@ -268,8 +235,21 @@ export default {
 .container {
   margin-top: 50px;
 }
+.subtitle {
+  font-weight: bold;
+}
 .textarea {
   min-height: 150px;
   width: 100%;
+}
+.flex-row {
+  display: flex;
+  flex-wrap: wrap; /* 允许元素在需要时换行 */
+  gap: 10px; /* 设置元素之间的间距 */
+}
+
+.field {
+  flex-grow: 1; /* 允许每个字段根据需要占据可用空间 */
+  min-width: 300px; /* 设置最小宽度防止元素过小 */
 }
 </style>
