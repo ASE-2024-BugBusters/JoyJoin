@@ -12,7 +12,7 @@
 <script>
 import axios from 'axios';
 import EventCard from '@/views/event/EventCard.vue';
-
+import {BASE_URL_EVENT_SERVICE} from "../../../config/dev.env";
 export default {
   name: 'EventsList',
   components: {
@@ -28,7 +28,13 @@ export default {
   },
   methods: {
     fetchEvents() {
-      axios.get('http://localhost:8084/api/events')
+      const getAllEventsUrl = BASE_URL_EVENT_SERVICE + "/events"
+      axios.get(getAllEventsUrl, {
+        headers: {
+          // 'Content-Type': 'application/json',
+          'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
+        }
+      })
         .then(response => {
           this.events = response.data;
         })

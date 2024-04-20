@@ -35,8 +35,7 @@
 </template>
 <script>
 import axios from 'axios';
-import {INTEREST_TAGS} from "../../../config/dev.env";
-import BASE_URL from '../../../config/dev.env';
+import {INTEREST_TAGS, BASE_URL_EVENT_SERVICE} from "../../../config/dev.env";
 export default {
   data() {
     return {
@@ -67,9 +66,9 @@ export default {
   methods: {
     fetchEventData() {
       const eventId = this.$route.params.id;
-      let url = BASE_URL + `event-service/api/events/${eventId}`
+      const getEventUrl = BASE_URL_EVENT_SERVICE + `/events/${eventId}`
       let url_my = `http://localhost:8084/api/events/${eventId}`
-      axios.get(url_my, {
+      axios.get(getEventUrl, {
         headers: {
           // 'Content-Type': 'application/json',
           'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`

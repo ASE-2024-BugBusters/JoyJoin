@@ -22,15 +22,12 @@ const routes = [
       return import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
     }
   },
-  // {
-  //   path: '/',
-  //   name: 'EventsList',
-  //   component: EventsList
-  // },
   {
     path: "/event/:id",
     name: "EventView",
-    component: () => import('../views/event/EventView.vue')
+    component: function () {
+      return import('../views/event/EventView.vue')
+    }
   },
   {
     path: "/login",

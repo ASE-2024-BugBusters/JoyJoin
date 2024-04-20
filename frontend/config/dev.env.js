@@ -2,7 +2,7 @@
 const API_VERSION = "/api"
 const BASE_URL =  "http://localhost:9191/";
 const BASE_URL_USER_SERVICE =  BASE_URL + "user-service" + API_VERSION;
-const BASE_URL_EVENT_SERVICE = BASE_URL + "events-service" + API_VERSION;
+const BASE_URL_EVENT_SERVICE = BASE_URL + "event-service" + API_VERSION;
 const BASE_URL_POST_SERVICE =  BASE_URL + "post-service" + API_VERSION;
 
 /**
