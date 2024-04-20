@@ -1,7 +1,7 @@
 package com.joyjoin.userservice.security.service;
 
 import com.joyjoin.userservice.exception.EmailAlreadyExistsException;
-import com.joyjoin.userservice.exception.ErrorCode;
+import com.joyjoin.userservice.exception.ErrorMessages;
 import com.joyjoin.userservice.security.model.*;
 import com.joyjoin.userservice.model.User;
 import com.joyjoin.userservice.repository.UserRepository;
@@ -33,10 +33,10 @@ public class AuthService {
      * @param user which contains all the information to create a new one (firstName, lastName, birthDate, email, password)
      * @return <b>AuthenticationResponse</b> which contains the JWT Token as a String
      */
-    public AuthenticationResponse register(User user){
+    public AuthenticationResponse register(User user) throws EmailAlreadyExistsException{
         User optionalUser = repository.findUserByEmail(user.getEmail());
         if (optionalUser != null) {
-            throw new EmailAlreadyExistsException(ErrorCode.USER_EMAIL_ALREADY_EXISTS.getErrorCode());
+            throw new EmailAlreadyExistsException(ErrorMessages.USER_EMAIL_ALREADY_EXISTS.getErrorMessage());
         }
         LocalDateTime now = LocalDateTime.now();
         Collection<Role> roles = new ArrayList<>();
