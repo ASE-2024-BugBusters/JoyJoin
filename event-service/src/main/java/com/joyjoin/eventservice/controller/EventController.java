@@ -17,6 +17,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("api/event")
+@CrossOrigin(allowedHeaders = "*", originPatterns = "/**")
 public class EventController {
 
     @Autowired
@@ -52,5 +53,10 @@ public class EventController {
     public ResponseEntity<EventDto> updateEvent(@PathVariable UUID id, @RequestBody UpdateEventRequest request) {
         Event event = modelMapper.map(request, Event.class);
         return new ResponseEntity<>(eventService.updateEvent(id, event), HttpStatus.OK);
+    }
+
+    @GetMapping("/test")
+    public String test() {
+        return "test";
     }
 }
