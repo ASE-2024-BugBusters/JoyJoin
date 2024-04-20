@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
+@CrossOrigin(allowedHeaders = "*", originPatterns = "/**")
 @RequestMapping("api/events")
 public class EventController {
 
@@ -52,5 +53,10 @@ public class EventController {
     public ResponseEntity<EventDto> updateEvent(@PathVariable UUID id, @RequestBody UpdateEventRequest request) {
         Event event = modelMapper.map(request, Event.class);
         return new ResponseEntity<>(eventService.updateEvent(id, event), HttpStatus.OK);
+    }
+
+    @GetMapping("/test")
+    public String test() {
+        return "test";
     }
 }

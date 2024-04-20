@@ -5,6 +5,7 @@ spring:
     gateway:
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+        - AddResponseHeader=Access-Control-Allow-Origin, *
       globalcors:
         cors-configurations:
           '[/**]':
@@ -64,7 +65,7 @@ spring:
 eureka:
   client:
     serviceUrl:
-      defaultZone: "http://localhost:8761/eureka/"
+      defaultZone: "http://CftYQ29IIX76lbg5:q0XdGl8iEygR311T@localhost:8761/eureka/"
 
 server:
   port: 9191
