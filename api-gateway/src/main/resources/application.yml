@@ -47,7 +47,7 @@ spring:
           uri:
             'lb://EVENT-SERVICE'
           predicates:
-            - 'Path=/event-service/api/event/**'
+            - 'Path=/event-service/api/events/**'
             - 'Header=Authorization, Bearer (.*)'
           filters:
             - 'RemoveRequestHeader=Cookie'
