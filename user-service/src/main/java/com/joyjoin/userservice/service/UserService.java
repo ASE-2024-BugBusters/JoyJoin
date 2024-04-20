@@ -1,7 +1,5 @@
 package com.joyjoin.userservice.service;
 
-import com.joyjoin.userservice.exception.EmailAlreadyExistsException;
-import com.joyjoin.userservice.exception.ErrorCode;
 import com.joyjoin.userservice.exception.ResourceNotFoundException;
 import com.joyjoin.userservice.model.Image;
 import com.joyjoin.userservice.model.ImageUrl;
@@ -16,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;

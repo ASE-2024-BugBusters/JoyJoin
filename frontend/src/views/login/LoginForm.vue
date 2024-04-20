@@ -29,7 +29,7 @@
 
 <script>
 
-import {BASE_URL} from "../../../config/dev.env";
+import {BASE_URL_USER_SERVICE} from "../../../config/dev.env";
 import axios from "axios";
 
 export default {
@@ -45,8 +45,7 @@ export default {
         email: this.email,
         password: this.password,
       }
-      console.log(data)
-      await axios.post(BASE_URL + "user-service/api/auth/login", data).then(response => {
+      await axios.post( BASE_URL_USER_SERVICE + "/auth/login", data).then(response => {
         sessionStorage.setItem("jwtToken", response.data.token);
         this.$router.push({path: "/"});
       })
