@@ -10,7 +10,7 @@ spring:
   datasource:
     url: "jdbc:postgresql://postgres-user:5436/userService"
     username: "postgres"
-    password: "1234"
+    password: "aHauYoTm56oG7X6u"
 
   jpa:
     show-sql: false

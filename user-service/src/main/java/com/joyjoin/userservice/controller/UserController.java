@@ -6,15 +6,10 @@ import com.joyjoin.userservice.controller.dto.UpdateUserRequest;
 
 import com.joyjoin.userservice.model.User;
 import com.joyjoin.userservice.modelDto.UserDto;
-import com.joyjoin.userservice.security.model.AuthenticationRequest;
-import com.joyjoin.userservice.security.model.AuthenticationResponse;
-import com.joyjoin.userservice.security.service.AuthService;
 import com.joyjoin.userservice.service.ImageService;
 import com.joyjoin.userservice.service.UserService;
-import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -41,7 +36,7 @@ public class UserController {
     }
 
     /**
-     * this can only be user for testing, in production needs to be deleted
+     * TODO this can only be user for testing, in production needs to be deleted
      *
      * @return
      */
