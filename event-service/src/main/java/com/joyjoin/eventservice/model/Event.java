@@ -3,6 +3,8 @@ import com.joyjoin.eventservice.model.converter.ImageRefListConverter;
 import com.joyjoin.eventservice.model.template.DefaultProperties;
 import jakarta.persistence.*;
 import lombok.*;
+
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.List;
 @Entity
@@ -13,12 +15,11 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class Event extends DefaultProperties {
+    @NotBlank
     private String title;
     private LocalDateTime time;
-
     @Embedded
     private Location location;
-
     private Integer participationLimit;
     @Column(length = 1000)
     private String description;

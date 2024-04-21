@@ -1,7 +1,6 @@
 package com.joyjoin.eventservice.modelDto;
 
 import com.joyjoin.eventservice.model.ImageRef;
-import com.joyjoin.eventservice.model.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

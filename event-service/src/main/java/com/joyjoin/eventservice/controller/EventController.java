@@ -6,7 +6,6 @@ import com.joyjoin.eventservice.modelDto.PostEventRequest;
 import com.joyjoin.eventservice.modelDto.UpdateEventRequest;
 import com.joyjoin.eventservice.service.EventService;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,20 +18,20 @@ import java.util.*;
 @CrossOrigin(allowedHeaders = "*", originPatterns = "/**")
 @RequestMapping("api/events")
 public class EventController {
-
-    @Autowired
-    private EventService eventService;
+    private final EventService eventService;
     private final ModelMapper modelMapper;
 
-    public EventController(ModelMapper modelMapper) {
+    public EventController(EventService eventService, ModelMapper modelMapper) {
+        this.eventService = eventService;
         this.modelMapper = modelMapper;
     }
 
     @PostMapping("/create")
-    public ResponseEntity<EventDto> createEvent(@Valid @RequestBody PostEventRequest request) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public EventDto createEvent(@Valid @RequestBody PostEventRequest request) {
         Event event = modelMapper.map(request, Event.class);
         EventDto createdEvent = eventService.saveEvent(event);
-        return new ResponseEntity<>(createdEvent, HttpStatus.CREATED);
+        return createdEvent;
     }
     @GetMapping("/get_upload_image_url")
     public GetImgUploadUrlResponse getImgUploadUrl() {
@@ -54,7 +53,11 @@ public class EventController {
         Event event = modelMapper.map(request, Event.class);
         return new ResponseEntity<>(eventService.updateEvent(id, event), HttpStatus.OK);
     }
-
+    @DeleteMapping("/{id}")
+    public ResponseEntity<EventDto> deleteEvent(@PathVariable UUID id) {
+        EventDto deletedEvent = eventService.deleteEvent(id);
+        return new ResponseEntity<>(deletedEvent, HttpStatus.OK);
+    }
     @GetMapping("/test")
     public String test() {
         return "test";

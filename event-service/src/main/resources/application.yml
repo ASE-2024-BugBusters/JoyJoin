@@ -1,5 +1,5 @@
 server:
-  port: 0
+  port: 8084
   error:
     include-stacktrace: always
     include-message: always
@@ -23,13 +23,6 @@ spring:
 
   aop:
     proxy-target-class: true
-
-#  http:
-#    cors:
-#      allowed-origins: "http://localhost:8080/"
-#      allowed-methods: "GET,POST,PUT,DELETE"
-#      allowed-headers: "Authorization,Content-Type"
-#      allow-credentials: true
 
   http:
     cors:
