@@ -45,6 +45,8 @@ public class EventController {
     }
     @GetMapping("/{id}")
     public ResponseEntity<EventDto> getEventById(@PathVariable UUID id) {
+        System.out.println("here is the id in controller");
+        System.out.println(id);
         EventDto event = eventService.getEventById(id);
         return new ResponseEntity<>(event, HttpStatus.OK);
     }

@@ -1,5 +1,5 @@
 server:
-  port: 8084
+  port: 0
   error:
     include-stacktrace: always
     include-message: always
@@ -13,9 +13,10 @@ spring:
     password: "1234"
 
   jpa:
-    show-sql: false
+    show-sql: true
     hibernate:
       ddl-auto: update
+      format_sql: true
 
     properties:
       hibernate:

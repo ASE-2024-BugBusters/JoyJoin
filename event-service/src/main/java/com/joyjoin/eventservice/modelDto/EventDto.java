@@ -11,7 +11,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 public class EventDto {
-    private UUID id;
+    private UUID eventId;
     private String title;
     private LocalDateTime time;
     private LocationDto location;
@@ -19,4 +19,6 @@ public class EventDto {
     private String description;
     private List<String> tags;
     private List<Image> images;
+    private LocalDateTime createdOn;
+    private LocalDateTime lastEdited;
 }

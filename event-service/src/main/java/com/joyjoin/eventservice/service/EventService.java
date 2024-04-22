@@ -57,25 +57,27 @@ public class EventService {
         return events.stream().map(eventPacker::packEvent).collect(Collectors.toList());
     }
     @Transactional
-    public EventDto getEventById(UUID id) {
-        Event event = eventRepository.findByIdAndIsDeletedFalse(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Event", "id", id.toString(),
+    public EventDto getEventById(UUID eventId) {
+        System.out.println("here is the id in service");
+        System.out.println(eventId);
+        Event event = eventRepository.findByEventIdAndIsDeletedFalse(eventId)
+                .orElseThrow(() -> new ResourceNotFoundException("Event", "eventId", eventId.toString(),
                         Collections.singletonList("This event may have been deleted or does not exist.")));
         return eventPacker.packEvent(event);
     }
     @Transactional
-    public EventDto updateEvent(UUID id, Event eventDetails) {
-        var existedEvent = eventRepository.findByIdAndIsDeletedFalse(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Event", "id", id.toString(),
+    public EventDto updateEvent(UUID eventId, Event eventDetails) {
+        var existedEvent = eventRepository.findByEventIdAndIsDeletedFalse(eventId)
+                .orElseThrow(() -> new ResourceNotFoundException("Event", "eventId", eventId.toString(),
                         Collections.singletonList("This event may have been deleted or does not exist.")));
         modelMapper.map(eventDetails, existedEvent);
         Event savedEvent = eventRepository.save(existedEvent);
         return eventPacker.packEvent(savedEvent);
     }
     @Transactional
-    public EventDto deleteEvent(UUID id) {
-        Event event = eventRepository.findByIdAndIsDeletedFalse(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Event", "id", id.toString(),
+    public EventDto deleteEvent(UUID eventId) {
+        Event event = eventRepository.findByEventIdAndIsDeletedFalse(eventId)
+                .orElseThrow(() -> new ResourceNotFoundException("Event", "eventId", eventId.toString(),
                         Collections.singletonList("This event may have been deleted or does not exist.")));
         event.setDeleted(true);
         eventRepository.save(event);
