@@ -9,6 +9,7 @@ import lombok.Setter;
 import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -30,4 +31,5 @@ public class PostEventRequest {
     private String description;
     private List<@NotBlank(message = "Tags must not be blank")String> tags;
     private List<ImageRef> images;
+    private UUID creatorId;
 }

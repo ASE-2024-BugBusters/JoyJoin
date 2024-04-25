@@ -1,6 +1,5 @@
 package com.joyjoin.eventservice.model;
 import com.joyjoin.eventservice.model.converter.ImageRefListConverter;
-import com.joyjoin.eventservice.model.template.DefaultProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -9,7 +8,6 @@ import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-
 @Entity
 @Getter
 @Setter
@@ -51,4 +49,6 @@ public class Event {
     protected void onUpdate() {
         lastEdited = LocalDateTime.now();
     }
+    @Column(name = "creator_id", nullable = false)
+    private UUID creatorId;
 }

@@ -58,9 +58,7 @@ public class EventService {
     }
     @Transactional
     public EventDto getEventById(UUID eventId) {
-        System.out.println("here is the id in service");
-        System.out.println(eventId);
-        Event event = eventRepository.findByEventIdAndIsDeletedFalse(eventId)
+        var event = eventRepository.findByEventIdAndIsDeletedFalse(eventId)
                 .orElseThrow(() -> new ResourceNotFoundException("Event", "eventId", eventId.toString(),
                         Collections.singletonList("This event may have been deleted or does not exist.")));
         return eventPacker.packEvent(event);
@@ -70,6 +68,9 @@ public class EventService {
         var existedEvent = eventRepository.findByEventIdAndIsDeletedFalse(eventId)
                 .orElseThrow(() -> new ResourceNotFoundException("Event", "eventId", eventId.toString(),
                         Collections.singletonList("This event may have been deleted or does not exist.")));
+        if (eventDetails.getTags() != null) {
+            existedEvent.getTags().clear();
+        }
         modelMapper.map(eventDetails, existedEvent);
         Event savedEvent = eventRepository.save(existedEvent);
         return eventPacker.packEvent(savedEvent);
@@ -81,6 +82,6 @@ public class EventService {
                         Collections.singletonList("This event may have been deleted or does not exist.")));
         event.setDeleted(true);
         eventRepository.save(event);
-        return modelMapper.map(event, EventDto.class);
+        return eventPacker.packEvent(event);
     }
 }

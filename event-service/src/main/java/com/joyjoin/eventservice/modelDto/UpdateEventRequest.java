@@ -22,6 +22,6 @@ public class UpdateEventRequest {
     private LocationDto location;
     private Integer participationLimit;
     private String description;
-    private List<Tag> tags;
+    private List<String> tags;
     private List<ImageRef> images;
 }

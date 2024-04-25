@@ -135,7 +135,7 @@ export default {
             participationLimit: parseInt(participationLimit.value),
             description: description.value,
             tags: multiValue.value,
-
+            creatorId: sessionStorage.getItem('userId')
       };
       if (!title.value.trim() || !time.value || !multiValue.value.length ||
           !location.street.trim() || !location.number || !location.city.trim() ||
@@ -149,10 +149,8 @@ export default {
   
   console.log("Data to be sent:", data);
   try {
-    let createEventUrl = BASE_URL_EVENT_SERVICE + "/events/create";
-    let createEventUrlTest = "http://localhost:8084/api/events/create"
+    const createEventUrl = BASE_URL_EVENT_SERVICE + "/events/create";
     console.log(createEventUrl);
-    console.log(createEventUrlTest);
     const response = await axios.post(createEventUrl, data, {
       headers: {
         // 'Content-Type': 'application/json',
@@ -202,9 +200,7 @@ export default {
     // Fetching upload URL
     const getUploadUrl = async () => {
         try {
-            const getUploadUrl = "http://localhost:9191/event-service/api/events/get_upload_image_url";
-            const getUploadUrlTest = BASE_URL_EVENT_SERVICE + "/events/get_upload_image_url";
-
+            const getUploadUrl = BASE_URL_EVENT_SERVICE +"/events/get_upload_image_url";
             const response = await axios.get(getUploadUrl,
             {headers: {
               'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`

@@ -21,4 +21,5 @@ public class EventDto {
     private List<Image> images;
     private LocalDateTime createdOn;
     private LocalDateTime lastEdited;
+    private UUID creatorId;
 }
