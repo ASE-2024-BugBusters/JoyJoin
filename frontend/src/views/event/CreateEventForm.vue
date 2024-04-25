@@ -97,8 +97,7 @@ import Multiselect from '@vueform/multiselect';
 import { useRouter } from 'vue-router';
 import { onMounted } from 'vue';
 import * as FilePond from 'filepond';
-import BASE_URL from '../../../config/dev.env';
-import {INTEREST_TAGS} from "../../../config/dev.env";
+import {INTEREST_TAGS, BASE_URL_EVENT_SERVICE} from "../../../config/dev.env";
 export default {
   components: {
     Multiselect,
@@ -136,7 +135,7 @@ export default {
             participationLimit: parseInt(participationLimit.value),
             description: description.value,
             tags: multiValue.value,
-
+            creatorId: sessionStorage.getItem('userId')
       };
       if (!title.value.trim() || !time.value || !multiValue.value.length ||
           !location.street.trim() || !location.number || !location.city.trim() ||
@@ -150,11 +149,9 @@ export default {
   
   console.log("Data to be sent:", data);
   try {
-    let url_create_event = "http://localhost:9191/event-service/api/events/create";
-    let url_create_event_my = "http://localhost:8084/api/events/create"
-    console.log(url_create_event);
-    console.log(url_create_event_my);
-    const response = await axios.post(url_create_event, data, {
+    const createEventUrl = BASE_URL_EVENT_SERVICE + "/events/create";
+    console.log(createEventUrl);
+    const response = await axios.post(createEventUrl, data, {
       headers: {
         // 'Content-Type': 'application/json',
         'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
@@ -203,10 +200,8 @@ export default {
     // Fetching upload URL
     const getUploadUrl = async () => {
         try {
-            let url_get_upload = "http://localhost:9191/event-service/api/events/get_upload_image_url";
-            let url_get_upload_my = "http://localhost:8084/api/events/get_upload_image_url";
-
-            const response = await axios.get(url_get_upload,
+            const getUploadUrl = BASE_URL_EVENT_SERVICE +"/events/get_upload_image_url";
+            const response = await axios.get(getUploadUrl,
             {headers: {
               'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
             },
@@ -244,12 +239,12 @@ export default {
 }
 .flex-row {
   display: flex;
-  flex-wrap: wrap; /* 允许元素在需要时换行 */
-  gap: 10px; /* 设置元素之间的间距 */
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .field {
-  flex-grow: 1; /* 允许每个字段根据需要占据可用空间 */
-  min-width: 300px; /* 设置最小宽度防止元素过小 */
+  flex-grow: 1;
+  min-width: 300px;
 }
 </style>

@@ -26,17 +26,22 @@
                   <img :src="getImageUrl(image)" :alt="`Event Image ${image.key}`" class="card-img-top">
                 </div>
               </div>
+              <div class="d-grid gap-2" v-if="isCreator">
+                <button class="btn btn-outline-info" type="button" @click="toEditEvent">Edit</button>
+                <button class="btn btn-outline-danger" type="button" @click="toDeleteEvent">Delete</button>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+
 </template>
 <script>
 import axios from 'axios';
-import {INTEREST_TAGS} from "../../../config/dev.env";
-import BASE_URL from '../../../config/dev.env';
+import {INTEREST_TAGS, BASE_URL_EVENT_SERVICE} from "../../../config/dev.env";
+import EditEvent from "@/views/event/EditEvent.vue";
 export default {
   data() {
     return {
@@ -60,16 +65,18 @@ export default {
           this.getLabelForTag(tagValue)
       );
     },
+    isCreator() {
+      const userId = sessionStorage.getItem('userId');
+      return this.event && userId === this.event.creatorId;
+    }
   },
   created() {
     this.fetchEventData();
   },
   methods: {
     fetchEventData() {
-      const eventId = this.$route.params.id;
-      let url = BASE_URL + `event-service/api/events/${eventId}`
-      let url_my = `http://localhost:8084/api/events/${eventId}`
-      axios.get(url_my, {
+      const eventId = this.$route.params.eventId;
+      axios.get(`${BASE_URL_EVENT_SERVICE}/events/${eventId}`, {
         headers: {
           // 'Content-Type': 'application/json',
           'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
@@ -90,6 +97,28 @@ export default {
       const item = this.source.find(item => item.value === tagValue);
       return item ? item.label : 'Unknown';
     },
+    async toEditEvent() {
+      const eventId = this.$route.params.eventId;
+      try {
+        await this.$router.push({name: "EditEvent", params:{eventId}});
+      } catch (error) {
+        console.error('Error navigating to edit event page:', error);
+      }
+    },
+    async toDeleteEvent() {
+      const eventId = this.$route.params.eventId;
+      if (confirm('Are you sure you want to delete the event?')) {
+        try {
+          await axios.delete(`${BASE_URL_EVENT_SERVICE}/events/${eventId}`, {
+              headers: { 'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}` }
+          });
+          console.log('Event deleted successfully');
+          await this.$router.push({path: "/"});
+        } catch (error) {
+          console.error('Error deleting event:', error);
+        }
+      }
+    },
   },
 };
 </script>
@@ -97,66 +126,99 @@ export default {
 .container {
   width: 80vw;
   max-width: 1200px;
-
   margin: auto;
-  font-family: Arial,'Roboto', sans-serif;
+  padding: 20px;
+  font-family: Arial, 'Roboto', sans-serif;
 }
+
 @media (max-width: 768px) {
   .container {
     width: 95vw;
+    padding: 10px;
   }
 }
+
 .card-header {
-  background: #131516;
+  background: #2c3e50;
+  padding: 20px 10px;
 }
 
 .card-title {
-  color: #9dff0b;
+  color: white;
   text-align: center;
   font-size: 2.5em;
 }
+
 .card {
-  margin-top: 10px;
+  margin-top: 20px;
   background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(44, 62, 80, 0.15);
 }
-i {
-  margin-right: 0.5em;
-}
+
 .card-body {
+  padding: 20px;
   text-align: left;
-  //font-size: 1.3em;
 }
+
 .card-text {
   font-size: 1.3em;
+  margin-bottom: 10px;
 }
+
 .badge {
-  color: #9dff0b;
-  margin-right: 0.5em; // Add horizontal space between badges
-  margin-bottom: 0.5em; // Optional: add vertical space if the badges wrap to a new line
-  background: #131516;
-  white-space: nowrap; /* Prevents badge text from breaking into multiple lines */
-  line-height: normal; /* Resets line height to avoid extra vertical spacing */
+  background: #2c3e50;
+  color: white;
+  margin-right: 0.5em;
+  margin-bottom: 0.5em;
+  padding: 5px 10px;
+  border-radius: 5px;
+  white-space: nowrap;
 }
+
 .tags-container {
-  display: flex; /* Makes the container a flexbox */
-  align-items: center; /* Aligns children vertically in the center */
-  flex-wrap: wrap; /* Allows tags to wrap to next line on small screens */
-}
-.tag-badges {
-  display: flex; /* Makes the badges container also a flexbox */
-  flex-wrap: wrap; /* Allows badges to wrap */
+  display: flex;
   align-items: center;
-  margin-left: 10px; /* Adds space between "Tags:" and the badges */
+  flex-wrap: wrap;
 }
+
+.tag-badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-left: 10px;
+}
+
 .card-img-top {
-  width: 100%; /* Makes the image take the full width of the card */
-  height: 200px; /* Sets a fixed height for all images */
-  object-fit: cover; /* Ensures the image covers the area without distorting aspect ratio */
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 5px;
 }
+
 .img-fluid {
   width: 100%;
-  max-width: 60%; /* adjusts to roughly half the container width with some margin */
+  max-width: 100%; /* Full width within its container */
   height: auto;
+}
+
+.row g-2 {
+  margin: 2px;
+}
+
+.btn {
+  //margin: 10px 5px;
+  width: auto; /* Adjust width to fit content */
+  //padding: 10px 20px;
+  font-size: 1em;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(44, 62, 80, 0.10);
+  font-weight: bold;
+  margin-top: 0.5em;
+  margin-bottom: 0.2em;
+  //background: white;
+  border: 3px solid #2c3e50;
 }
 </style>
 
