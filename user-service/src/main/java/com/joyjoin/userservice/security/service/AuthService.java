@@ -10,7 +10,6 @@ import com.joyjoin.userservice.security.repository.TokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,7 +56,6 @@ public class AuthService {
         return AuthenticationResponse.builder().userId(savedUser.getId()).token(jwtToken).build();
     }
 
-
     /**
      * @param request <b>AuthenticationRequest</b> contains the user Credentials to create a valid JWT Token
      * @return <b>AuthenticationResponse</b> which contains the JWT Token as a String
@@ -88,7 +86,6 @@ public class AuthService {
 
     /**
      * Only one JWT is allowed to make requests, when it expires a new one needs to be created
-     *
      * @param user
      */
     private void deleteAllUserTokens(User user) {

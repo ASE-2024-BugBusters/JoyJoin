@@ -14,7 +14,7 @@ spring:
     password: "aHauYoTm56oG7X6u"
 
   jpa:
-    show-sql: false
+    show-sql: true
     hibernate:
       ddl-auto: create-drop
 
@@ -46,6 +46,8 @@ info:
 logging:
   level:
     org:
+      hibernate:
+        sql: debug
       springframework:
         web: INFO
 
