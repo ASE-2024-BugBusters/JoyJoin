@@ -1,4 +1,4 @@
-<<template>
+<template>
   <div class="event-single" v-if="event">
     <div class="container">
       <div class="row justify-content-center">
@@ -9,8 +9,8 @@
             </div>
             <div class="card-body">
               <p class="card-text"><i class="bi bi-calendar-check"></i><strong>Time:</strong> {{ formattedDateTime }}</p>
-              <p class="card-text"><i class="bi bi-geo-alt-fill"></i><strong>Location:</strong> {{ event.location.street }}, {{ event.location.city }}</p>
-              <p class="card-text"><i class="bi bi-people-fill"></i><strong>Participants limit:</strong> {{ event.participationLimit }}</p>
+              <p class="card-text"><i class="bi bi-geo-alt-fill"></i><strong>Location:</strong> {{ event.location.street }} {{ event.location.number }}, {{ event.location.city }}</p>
+              <p class="card-text"><i class="bi bi-people-fill"></i><strong>Participants:</strong> {{ event.participants.length }}/{{ event.participationLimit }}</p>
               <p class="card-text"><i class="bi bi-braces-asterisk"></i><strong>Description:</strong> {{ event.description }}</p>
               <div class="card-text">
                 <div class="tags-container">
@@ -22,9 +22,16 @@
                 </div>
               </div>
               <div class="row g-2">
-                <div class="card" style="width: 12rem;height: 11rem;" v-for="image in event.images" :key="image.key">
-                  <img :src="getImageUrl(image)" :alt="`Event Image ${image.key}`" class="card-img-top">
+                <div class="card" style="width: 10rem;height: 8rem;" v-for="image in event.images" :key="image.key">
+                  <img :src="getImageUrl(image)" :alt="`Event Image ${image.key}`" class="card-img">
                 </div>
+                <div class="card add-remove-card" style="width: 10rem; height: 8rem;" @click="openImageManagement">
+                  <div class="card-content">+</div>
+                </div>
+              </div>
+              <div class="d-grid gap-2" v-if="!isCreator">
+                <button class="btn btn-outline-primary" type="button" @click="toRegisterEvent" v-if="!isJoined & !isFullyOccupied">Join</button>
+                <button class="btn btn-outline-warning" type="button" @click="toUnRegisterEvent" v-if="isJoined">Unregister</button>
               </div>
               <div class="d-grid gap-2" v-if="isCreator">
                 <button class="btn btn-outline-info" type="button" @click="toEditEvent">Edit</button>
@@ -36,7 +43,6 @@
       </div>
     </div>
   </div>
-
 </template>
 <script>
 import axios from 'axios';
@@ -47,6 +53,7 @@ export default {
     return {
       event: null,
       source: INTEREST_TAGS,
+      eventId: this.$route.params.eventId
     };
   },
   computed: {
@@ -67,7 +74,18 @@ export default {
     },
     isCreator() {
       const userId = sessionStorage.getItem('userId');
+      console.log("userId from sessionStorage:", userId); // Debugging
+      console.log("Event creator ID:", this.event ? this.event.creatorId : "Event not loaded");
       return this.event && userId === this.event.creatorId;
+    },
+    isJoined() {
+      const userId = sessionStorage.getItem('userId');
+      console.log("userId from sessionStorage:", userId); // Debugging
+      console.log("Event participants:", this.event ? this.event.participants : "Event not loaded");
+      return this.event && this.event.participants.includes(userId);
+    },
+    isFullyOccupied() {
+      return this.event.participationLimit = this.event.participants.length;
     }
   },
   created() {
@@ -78,7 +96,7 @@ export default {
       const eventId = this.$route.params.eventId;
       axios.get(`${BASE_URL_EVENT_SERVICE}/events/${eventId}`, {
         headers: {
-          // 'Content-Type': 'application/json',
+          'Content-Type': 'application/json',
           'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
         }
       })
@@ -110,7 +128,10 @@ export default {
       if (confirm('Are you sure you want to delete the event?')) {
         try {
           await axios.delete(`${BASE_URL_EVENT_SERVICE}/events/${eventId}`, {
-              headers: { 'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}` }
+            headers: {
+              // 'Content-Type': 'application/json',
+              'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
+            }
           });
           console.log('Event deleted successfully');
           await this.$router.push({path: "/"});
@@ -119,6 +140,49 @@ export default {
         }
       }
     },
+    openImageManagement() {
+      // Open a modal or redirect to a page where images can be managed
+      console.log('Opening image management interface.');
+    },
+    toRegisterEvent() {
+      const eventId = this.$route.params.eventId;
+      const userId = sessionStorage.getItem('userId');
+      axios.post(`${BASE_URL_EVENT_SERVICE}/events/${eventId}/register/${userId}`, {}, {  // Ensure the body is an empty object if required, instead of null.
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
+        }
+      })
+          .then(() => {
+            alert('You have successfully joined the event!');
+            // Refresh event data by re-fetching the details
+            this.fetchEventData();
+          })
+          .catch(error => {
+            console.error("Error joining event:", error);
+            alert('Failed to join the event.');
+          });
+    },
+    toUnRegisterEvent() {
+      const eventId = this.$route.params.eventId;
+      const userId = sessionStorage.getItem('userId');
+      axios.delete(`${BASE_URL_EVENT_SERVICE}/events/${eventId}/remove/${userId}`, {  // Ensure the body is an empty object if required, instead of null.
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
+        }
+      })
+          .then(() => {
+            alert('You have successfully unregistered the event!');
+            // Refresh event data by re-fetching the details
+            this.fetchEventData();
+          })
+          .catch(error => {
+            console.error("Error unregistering event:", error);
+            alert('Failed to unregister the event.');
+          });
+    }
+
   },
 };
 </script>
@@ -127,7 +191,7 @@ export default {
   width: 80vw;
   max-width: 1200px;
   margin: auto;
-  padding: 20px;
+  //padding: 20px;
   font-family: Arial, 'Roboto', sans-serif;
 }
 
@@ -136,17 +200,26 @@ export default {
     width: 95vw;
     padding: 10px;
   }
+  .add-remove-card {
+    font-size: 2em; // Smaller plus sign on mobile devices
+  }
 }
-
+i {
+  margin-right: 1em;
+}
 .card-header {
   background: #2c3e50;
   padding: 20px 10px;
+  width: 100%;
+  justify-content: center;
 }
 
 .card-title {
   color: white;
-  text-align: center;
   font-size: 2.5em;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .card {
@@ -154,16 +227,21 @@ export default {
   background-color: #f8f9fa;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(44, 62, 80, 0.15);
+  position: relative;
+  overflow: hidden;  /* hide the part over the card size */
+  display: flex;
+  align-items: center; /* vertically centered */
+  justify-content: center; /* horizontally centered */
 }
 
 .card-body {
-  padding: 20px;
+  //padding: 20px;
   text-align: left;
 }
-
 .card-text {
   font-size: 1.3em;
   margin-bottom: 10px;
+  text-align: left;
 }
 
 .badge {
@@ -171,29 +249,34 @@ export default {
   color: white;
   margin-right: 0.5em;
   margin-bottom: 0.5em;
-  padding: 5px 10px;
   border-radius: 5px;
   white-space: nowrap;
+  align-items: center; /* 垂直居中 */
 }
 
 .tags-container {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
+  margin-bottom: 10px;
+  justify-content: flex-start;
 }
 
 .tag-badges {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  margin-left: 10px;
+  margin-left: 5px;
+  margin-top: 5px;
+;
 }
 
-.card-img-top {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
+.card-img {
   border-radius: 5px;
+  width: 100%;    /* 默认宽度为容器宽度 */
+  height: auto;   /* 高度自动，保持原始长宽比 */
+  min-height: 100%; /* 确保图片至少和容器一样高 */
+  object-fit: cover; /* 覆盖整个容器，多余的部分将被裁剪 */
 }
 
 .img-fluid {
@@ -220,5 +303,40 @@ export default {
   //background: white;
   border: 3px solid #2c3e50;
 }
+.add-remove-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3em;  // 大号加号
+  color: #2c3e50;  // 颜色匹配
+  cursor: pointer;
+  position: relative; // 为伪元素定位提供基准
+  overflow: hidden;   // 隐藏溢出的文本
+
+  .card-content {
+    transition: opacity 0.3s ease, transform 0.3s ease; // 平滑变换
+    opacity: 1; // 默认显示
+  }
+
+  &:hover .card-content {
+    opacity: 0;  // 隐藏加号
+    transform: scale(0.1); // 缩小加号
+  }
+
+  &:hover::after {
+    content: 'Add/Remove';
+    position: absolute;  // 绝对定位使文本居中
+    top: 50%;  // 垂直居中
+    left: 50%;  // 水平居中
+    transform: translate(-50%, -50%); // 精确居中
+    font-size: 0.4em;  // 文本大小适中
+    font-weight: bold;
+    color: #2c3e50;  // 文本颜色
+    transition: opacity 0.3s ease; // 平滑显示
+    opacity: 1; // 确保在hover时显示
+    white-space: nowrap;  // 防止文本折行
+  }
+}
+
 </style>
 

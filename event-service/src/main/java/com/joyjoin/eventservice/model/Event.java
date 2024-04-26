@@ -51,4 +51,6 @@ public class Event {
     }
     @Column(name = "creator_id", nullable = false)
     private UUID creatorId;
+    @ElementCollection
+    private List<UUID> participants;
 }

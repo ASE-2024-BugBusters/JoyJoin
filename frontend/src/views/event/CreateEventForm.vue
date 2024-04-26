@@ -26,7 +26,7 @@
             <div class="field">
               <label class="label">Number</label>
               <div class="control">
-                <input class="input" type="number" v-model="location.number" placeholder="Enter the number" required>
+                <input class="input" type="number" v-model="location.number" placeholder="Enter the number" min="1" required>
               </div>
             </div>
             <div class="field">
@@ -42,11 +42,10 @@
               </div>
             </div>
           </div>
-
           <div class="field">
             <label class="label">Participation Limit</label>
             <div class="control">
-              <input class="input" type="number" v-model="participationLimit" placeholder="Enter the participation limit" required>
+              <input class="input" type="number" v-model="participationLimit" placeholder="Enter the participation limit" min="2"required>
             </div>
           </div>
           <div class="field">
@@ -66,14 +65,12 @@
               />
             </div>
           </div>
-
           <div class="field">
             <label class="label">Description</label>
             <div class="control">
               <textarea class="textarea" v-model="description" placeholder="Enter the description" rows="7"></textarea>
             </div>
           </div>
-
           <div class="field">
             <label class="label">Images</label>
             <input type="file" id="filepond" name="filepond" class="filepond" />

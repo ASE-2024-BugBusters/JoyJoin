@@ -43,22 +43,30 @@ public class EventController {
         List<EventDto> events = eventService.getAllEvents();
         return new ResponseEntity<>(events, HttpStatus.OK);
     }
-    @GetMapping("/{id}")
-    public ResponseEntity<EventDto> getEventById(@PathVariable UUID id) {
-        System.out.println("here is the id in controller");
-        System.out.println(id);
-        EventDto event = eventService.getEventById(id);
+    @GetMapping("/{eventId}")
+    public ResponseEntity<EventDto> getEventById(@PathVariable UUID eventId) {
+        EventDto event = eventService.getEventById(eventId);
         return new ResponseEntity<>(event, HttpStatus.OK);
     }
-    @PatchMapping("/{id}")
-    public ResponseEntity<EventDto> updateEvent(@PathVariable UUID id, @RequestBody UpdateEventRequest request) {
+    @PatchMapping("/{eventId}")
+    public ResponseEntity<EventDto> updateEvent(@PathVariable UUID eventId, @RequestBody UpdateEventRequest request) {
         Event event = modelMapper.map(request, Event.class);
-        return new ResponseEntity<>(eventService.updateEvent(id, event), HttpStatus.OK);
+        return new ResponseEntity<>(eventService.updateEvent(eventId, event), HttpStatus.OK);
     }
-    @DeleteMapping("/{id}")
-    public ResponseEntity<EventDto> deleteEvent(@PathVariable UUID id) {
-        EventDto deletedEvent = eventService.deleteEvent(id);
+    @DeleteMapping("/{eventId}")
+    public ResponseEntity<EventDto> deleteEvent(@PathVariable UUID eventId) {
+        EventDto deletedEvent = eventService.deleteEvent(eventId);
         return new ResponseEntity<>(deletedEvent, HttpStatus.OK);
+    }
+    @PostMapping("{eventId}/register/{userId}")
+    public ResponseEntity<EventDto> registerEvent(@PathVariable UUID eventId, @PathVariable UUID userId) {
+        EventDto updatedEvent = eventService.registerUserToEvent(eventId, userId);
+        return new ResponseEntity<>(updatedEvent, HttpStatus.OK);
+    }
+    @DeleteMapping ("{eventId}/remove/{userId}")
+    public ResponseEntity<EventDto> unregisterEvent(@PathVariable UUID eventId, @PathVariable UUID userId) {
+        EventDto updatedEvent = eventService.removeUserToEvent(eventId, userId);
+        return new ResponseEntity<>(updatedEvent, HttpStatus.OK);
     }
     @GetMapping("/test")
     public String test() {
