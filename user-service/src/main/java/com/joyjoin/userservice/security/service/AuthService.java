@@ -2,6 +2,7 @@ package com.joyjoin.userservice.security.service;
 
 import com.joyjoin.userservice.exception.EmailAlreadyExistsException;
 import com.joyjoin.userservice.exception.ErrorMessages;
+import com.joyjoin.userservice.exception.ResourceNotFoundException;
 import com.joyjoin.userservice.security.model.*;
 import com.joyjoin.userservice.model.User;
 import com.joyjoin.userservice.repository.UserRepository;
@@ -29,11 +30,10 @@ public class AuthService {
     private final TokenRepository tokenRepository;
 
     /**
-     *
      * @param user which contains all the information to create a new one (firstName, lastName, birthDate, email, password)
      * @return <b>AuthenticationResponse</b> which contains the JWT Token as a String
      */
-    public AuthenticationResponse register(User user) throws EmailAlreadyExistsException{
+    public AuthenticationResponse register(User user) throws EmailAlreadyExistsException {
         User optionalUser = repository.findUserByEmail(user.getEmail());
         if (optionalUser != null) {
             throw new EmailAlreadyExistsException(ErrorMessages.USER_EMAIL_ALREADY_EXISTS.getErrorMessage());
@@ -56,16 +56,16 @@ public class AuthService {
         return AuthenticationResponse.builder().userId(savedUser.getId()).token(jwtToken).build();
     }
 
-
     /**
-     *
      * @param request <b>AuthenticationRequest</b> contains the user Credentials to create a valid JWT Token
      * @return <b>AuthenticationResponse</b> which contains the JWT Token as a String
      */
-    public AuthenticationResponse login(AuthenticationRequest request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-        );
+    public AuthenticationResponse login(AuthenticationRequest request) throws ResourceNotFoundException {
+        User optionalUser = repository.findUserByEmail(request.getEmail());
+        if (optionalUser == null) {
+            throw new ResourceNotFoundException("User", "Email", request.getEmail());
+        }
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         var user = repository.findUserByEmail(request.getEmail());
         var jwtToken = jwtService.generateToken(user);
         deleteAllUserTokens(user);
