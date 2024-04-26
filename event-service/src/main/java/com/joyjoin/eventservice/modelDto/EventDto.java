@@ -22,4 +22,5 @@ public class EventDto {
     private LocalDateTime createdOn;
     private LocalDateTime lastEdited;
     private UUID creatorId;
+    private List<UUID> participants;
 }
