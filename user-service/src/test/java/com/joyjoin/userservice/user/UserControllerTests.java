@@ -20,14 +20,12 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.io.IOException;
 import org.springframework.http.HttpHeaders;
 import java.util.Date;
 import java.util.Objects;
 
+import static com.joyjoin.userservice.Util.Util.asJsonString;
+import static com.joyjoin.userservice.Util.Util.stringToObj;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -96,32 +94,5 @@ public class UserControllerTests {
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/login").content(Objects.requireNonNull(asJsonString(authenticationRequest))).contentType("application/json").accept("application/json")).andExpect(status().isOk()).andReturn();
         AuthenticationResponse response = stringToObj(mvcResult, AuthenticationResponse.class);
         mockMvc.perform(MockMvcRequestBuilders.get("/api/user").header(HttpHeaders.AUTHORIZATION, AUTHORIZATION_PREFIX + response.getToken()).accept("application/json")).andExpect(status().isOk());
-    }
-
-    /**
-     * Is used to transform the Object into a JSON String
-     * @param obj
-     * @return
-     */
-    private String asJsonString(final Object obj) {
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    /**
-     * @param mvcResult
-     * @param objClass
-     * @return
-     * @param <T>
-     * @throws IOException
-     */
-    private <T> T stringToObj(MvcResult mvcResult, Class<T> objClass) throws IOException {
-        String content = mvcResult.getResponse().getContentAsString();
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(content, objClass);
     }
 }
