@@ -1,4 +1,5 @@
 package com.joyjoin.eventservice.service;
+import com.joyjoin.eventservice.exception.InvalidRegisterOrUnregisterToEventException;
 import com.joyjoin.eventservice.exception.ResourceNotFoundException;
 import com.joyjoin.eventservice.model.Image;
 import com.joyjoin.eventservice.model.Event;
@@ -42,12 +43,6 @@ public class EventService {
     }
     @Transactional
     public EventDto saveEvent(Event event) {
-//        if (event.getImages() == null) {
-//            event.setImages(new ArrayList<>()); // Ensure images is initialized
-//        }
-//        if (event.getTags() == null) {
-//            event.setTags(new ArrayList<>()); // Ensure tags is initialized
-//        }
         Event savedEvent = eventRepository.save(event);
         return eventPacker.packEvent(savedEvent);
     }
@@ -90,10 +85,12 @@ public class EventService {
                 .orElseThrow(() -> new ResourceNotFoundException("Event", "eventId", eventId.toString(),
                         Collections.singletonList("This event may have been deleted or does not exist.")));
         if (event.getParticipants().size() >= event.getParticipationLimit() ) {
-            throw new IllegalStateException("Participation limit reached for this event.");
+            throw new InvalidRegisterOrUnregisterToEventException("Event", "eventId", eventId.toString(),
+                    Collections.singletonList("Participation limit reached for this event."));
         }
         if (event.getParticipants().contains(userId)) {
-            throw new IllegalStateException("User is already in this event.");
+            throw new InvalidRegisterOrUnregisterToEventException("Event", "eventId", eventId.toString(),
+                    Collections.singletonList("User is already registered for this event."));
         }
         event.getParticipants().add(userId);
         eventRepository.save(event);
@@ -105,7 +102,8 @@ public class EventService {
                 .orElseThrow(() -> new ResourceNotFoundException("Event", "eventId", eventId.toString(),
                         Collections.singletonList("This event may have been deleted or does not exist.")));
         if (!event.getParticipants().contains(userId)) {
-            throw new IllegalArgumentException("User is not registered for this event.");
+            throw new InvalidRegisterOrUnregisterToEventException("Event", "eventId", eventId.toString(),
+                    Collections.singletonList("User is not registered for this event."));
         }
         event.getParticipants().remove(userId);
         eventRepository.save(event);

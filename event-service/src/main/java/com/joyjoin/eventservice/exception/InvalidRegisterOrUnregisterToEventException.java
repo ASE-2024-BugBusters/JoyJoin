@@ -7,18 +7,17 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.List;
 
-@ResponseStatus(value = HttpStatus.NOT_FOUND)
-public class ResourceNotFoundException extends RuntimeException {
+@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+public class InvalidRegisterOrUnregisterToEventException extends RuntimeException {
 
     private String resourceName;
     private String fieldName;
     private String fieldValue;
-    @Getter
-    @Setter
+    @Getter @Setter
     private List<String> details;
 
-    public ResourceNotFoundException(String resourceName, String fieldName, String fieldValue, List<String> details) {
-        super(String.format("%s not found with %s: '%s'", resourceName, fieldName, fieldValue));
+    public InvalidRegisterOrUnregisterToEventException(String resourceName, String fieldName, String fieldValue, List<String> details) {
+        super(String.format("Invalid register or unregister to %s with %s: '%s'", resourceName, fieldName, fieldValue));
         this.resourceName = resourceName;
         this.fieldName = fieldName;
         this.fieldValue = fieldValue;
