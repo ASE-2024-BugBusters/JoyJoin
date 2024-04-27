@@ -36,22 +36,22 @@ import {BASE_URL_EVENT_SERVICE} from "../../../config/dev.env";
 import axios from "axios";
 
 export default {
-  props: ["currentUser", "post"],
+  props: ["currentUser", "postId"],
   data() {
     return {
       leave_comment: '',
       comments: [],
+      prefix_url: "http://localhost:15757/api",
     }
   },
   mounted() {
     this.fetchAllCommentsByPostId();
   },
   methods: {
-    fetchAllCommentsByPostId() {
-      const postId = "09f80c29-bf3f-4b4b-a23e-d179eba80001";
+    async fetchAllCommentsByPostId() {
       // const getAllCommentsUrl = BASE_URL_EVENT_SERVICE + "/posts/" + postId + "/comments";
-      const getAllCommentsUrl = "http://localhost:9771/api/posts/" + postId + "/comments";
-      axios.get(getAllCommentsUrl, {
+      const getAllCommentsUrl = this.prefix_url + "/posts/" + this.postId + "/comments";
+      await axios.get(getAllCommentsUrl, {
         // headers: {
         //   // 'Content-Type': 'application/json',
         //   'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
@@ -78,14 +78,13 @@ export default {
     async submitComment() {
       if (this.leave_comment) {
         try {
-          const postId = "09f80c29-bf3f-4b4b-a23e-d179eba80001";
           const data = {
             userId: "09f80c29-bf3f-4b4b-a23e-d179eba82821",
-            postId: postId,
+            postId: this.postId,
             comment: this.leave_comment
           };
           // const createCommentUrl = BASE_URL_EVENT_SERVICE + "/posts/comments/create";
-          const createCommentUrl = "http://localhost:9771/api/posts/comments/create";
+          const createCommentUrl = this.prefix_url + "/posts/comments/create";
           console.log(createCommentUrl);
           const response = await axios.post(createCommentUrl, data, {
             // headers: {
@@ -110,8 +109,8 @@ export default {
         this.comments.splice(index, 1);
       }
       //Call Delete Comment API
-      // const createCommentUrl = BASE_URL_EVENT_SERVICE + "/posts/comments/" + comment_id;
-      const deleteCommentUrl = "http://localhost:9771/api/posts/comments/" + comment_id;
+      // const deleteCommentUrl = BASE_URL_EVENT_SERVICE + "/posts/comments/" + comment_id;
+      const deleteCommentUrl = this.prefix_url + "/posts/comments/" + comment_id;
       axios.delete(deleteCommentUrl, {
         // headers: {
         //   // 'Content-Type': 'application/json',

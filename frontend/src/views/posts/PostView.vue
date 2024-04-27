@@ -47,7 +47,7 @@
 
         <!--Comments-->
         <div class="post-comments-container">
-          <PostComments :currentUser="currentUser" :post="post"></PostComments>
+          <PostComments :currentUser="currentUser" :postId="post.id"></PostComments>
         </div>
 
       </div>
@@ -79,6 +79,7 @@ export default {
       taggedPeopleSeeMore: false,
       tagpeopleHeader: "Tagged People",
       post: {
+        id: "09f80c29-bf3f-4b4b-a23e-d179eba80001",
         username: "yuinkwann",
         userimage: "../../assets/camera-icon.png",
         // event: "",
