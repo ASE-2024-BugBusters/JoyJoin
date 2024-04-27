@@ -35,6 +35,7 @@
             <PopupContent ref="confirmDialogue"></PopupContent>
           </div>
         </div>
+
         <!--Caption-->
         <textarea class="post-caption" :class="isEditMode? 'post-caption-edit' : ''" v-model="post.caption" ref="post_caption" :readonly="!isEditMode"></textarea>
 
@@ -44,21 +45,11 @@
           <Share></Share>
         </div>
 
-
         <!--Comments-->
         <div class="post-comments-container">
-          <!--Display previous comments-->
-          <div class="post-previous-comments" ref="commentsContainer">
-            <PostComments :currentUser="currentUser" :post="post"></PostComments>
-          </div>
-          <!--Add a comment-->
-          <div class="post-comment post-add-comment">
-            <textarea v-model="leave_comment" placeholder="Leave a comment..." required></textarea>
-            <button class="button-wrapper" :disabled="!leave_comment">
-              <font-awesome-icon :icon="['fas', 'paper-plane']" @click="submitComment"  />
-            </button>
-          </div>
+          <PostComments :currentUser="currentUser" :post="post"></PostComments>
         </div>
+
       </div>
     </div>
   </div>
@@ -82,7 +73,7 @@ export default {
   },
   data() {
     return {
-      currentUser: "kayannn",
+      currentUser: "09f80c29-bf3f-4b4b-a23e-d179eba82821",
       isEditMode: false,
       leave_comment: '',
       taggedPeopleSeeMore: false,
@@ -134,32 +125,32 @@ export default {
           }],
         // likes: [],
         comments: [
-          {cid: 1, username: "kayannn", comment: "Soo beautiful! Soo beautiful! Soo beautiful! Soo beautiful! Soo beautiful! Soo beautiful! Soo beautiful! Soo beautiful! Soo beautiful! Soo beautiful! Soo beautiful! "},
-          {cid: 2, username: "huiling", comment: "nice to meet you! I would like to meet you again in Kepong! You're so evil and I am really like your style! "},
-          {cid: 3, username: "kayannn", comment: "nice to meet you! I would like to meet you again in Kepong! You're so evil and I am really like your style! "},
-          {cid: 4, username: "kayannn", comment: "nice to meet you! I would like to meet you again in Kepong! You're so evil and I am really like your style! "}
+          {
+            cid: 1,
+            username: "kayannn",
+            comment: "Soo beautiful! Soo beautiful! Soo beautiful! Soo beautiful! Soo beautiful! Soo beautiful! Soo beautiful! Soo beautiful! Soo beautiful! Soo beautiful! Soo beautiful! "
+          },
+          {
+            cid: 2,
+            username: "huiling",
+            comment: "nice to meet you! I would like to meet you again in Kepong! You're so evil and I am really like your style! "
+          },
+          {
+            cid: 3,
+            username: "kayannn",
+            comment: "nice to meet you! I would like to meet you again in Kepong! You're so evil and I am really like your style! "
+          },
+          {
+            cid: 4,
+            username: "kayannn",
+            comment: "nice to meet you! I would like to meet you again in Kepong! You're so evil and I am really like your style! "
+          }
         ]
       }
     }
   },
   methods: {
-    scrollToLastComment() {
-      const lastChildElement = this.$refs.commentsContainer.lastElementChild;
-      lastChildElement?.scrollIntoView({
-        behavior: 'smooth',
-      });
-    },
-    submitComment(){
-      if(this.leave_comment){
-        const _cmd = {cid: 5, username: "kayannn", comment: this.leave_comment}
-        this.post.comments.push(_cmd)
-        this.leave_comment = ''
-        this.$nextTick(() => {
-          this.scrollToLastComment();
-        });
-      }
-    },
-    editPost(){
+    editPost() {
       this.isEditMode = !this.isEditMode
     },
     async deletePost() {
@@ -189,21 +180,21 @@ export default {
       } else {
       }
     },
-    async openPostTagModal(){
+    async openPostTagModal() {
       await this.$refs.postTagModal.show({taggedpeople: this.post.taggedpeople});
     },
-    savedTags(temp_taggedpeople){
+    savedTags(temp_taggedpeople) {
       this.post.taggedpeople = structuredClone(toRaw(temp_taggedpeople))
       this.$refs.postTagModal._cancel()
     },
-    openTaggedPeopleModal(){
+    openTaggedPeopleModal() {
       return this.$refs.postTaggedPeopleModal.show();
     }
   },
   computed: {
     taggedusername() {
       let username_list = this.post.taggedpeople.map(taggedperson => taggedperson.username).join(", ")
-      if (username_list.length >= 25){
+      if (username_list.length >= 25) {
         username_list = username_list.substring(0, 25);
         this.taggedPeopleSeeMore = true;
       }
@@ -223,51 +214,41 @@ export default {
   display: inline-block;
   margin-right: 10px;
 }
-.left-right-content-container{
+
+.left-right-content-container {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
 }
+
 .left-content {
   display: flex;
   align-items: flex-start;
 }
-.right-content{
-  min-width:25px;
+
+.right-content {
+  min-width: 25px;
 }
+
 .user-info {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
 }
+
 .username {
   font-weight: bold;
 }
+
 .post-info {
   color: darkgray;
   font-size: 13px;
 }
 
-.post-comments-container{
+.post-comments-container {
   padding: 10px;
 }
-.post-previous-comments{
-  overflow-y: auto;
-  overflow-x: hidden;
-  height: 220px;
-}
-.post-comment{
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  color: black;
-  border-bottom: 1px solid #ECECEC;
-  margin-bottom: 3px;
-}
-.post-add-comment {
-  margin-top:10px;
-  border-bottom: 0;
-}
+
 textarea {
   resize: none;
   min-height: 70px;
@@ -276,54 +257,54 @@ textarea {
   flex: 1;
   font-size: 13px;
 }
+
 .post-caption {
   display: flex;
   justify-content: space-between;
   padding: 10px;
   margin: 10px auto;
-  min-height:150px;
+  min-height: 150px;
   color: black;
   width: 100%;
   border: 0;
 }
+
 .post-caption-edit {
   display: flex;
   justify-content: space-between;
   padding: 10px;
   margin: 10px auto;
-  min-height:150px;
+  min-height: 150px;
   color: black;
   width: 100%;
   border: 1px solid lightgrey;
   cursor: text;
 }
-.button-wrapper {
-  width: 25px;
-  display: flex;
-  justify-content: flex-end;
-  border: none;
-  background: none;
-}
+
 .post-icon {
   width: 25px;
   height: 25px;
   margin-right: 10px;
   cursor: pointer;
 }
-.post-info-icon{
+
+.post-info-icon {
   width: 15px;
-  height:15px;
+  height: 15px;
   margin-left: 5px;
 }
-.post-icon-right{
-  margin-right:0;
+
+.post-icon-right {
+  margin-right: 0;
 }
-.taggedPeopleMore{
+
+.taggedPeopleMore {
   font-style: italic;
   cursor: pointer;
   font-weight: 600;
 }
-.post-likes-share{
+
+.post-likes-share {
   padding: 5px 10px;
   border-top: 1px solid lightgrey;
   border-bottom: 1px solid lightgrey;
