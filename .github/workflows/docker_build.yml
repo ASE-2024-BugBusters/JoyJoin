@@ -19,6 +19,7 @@ jobs:
       - name: Build mvn Package
         run: mvn deploy
         working-directory: "libs3"
+
   build-services:
     strategy:
       matrix:
