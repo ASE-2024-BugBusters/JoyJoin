@@ -38,7 +38,7 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
           overwrite-settings: false
-          settings-path: settings.xml
+          settings-path: ${{ github.workspace }}
       - name: Docker login
         env:
           DOCKER_USERNAME: josip97
