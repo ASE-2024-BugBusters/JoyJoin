@@ -17,7 +17,7 @@ jobs:
           java-version: '17'
           distribution: "adopt"
       - name: Build mvn Package
-        run: mvn clean install -DskipTests
+        run: mvn deploy
         working-directory: "libs3"
   build-services:
     strategy:
