@@ -12,7 +12,6 @@ spring:
     url: "jdbc:postgresql://localhost:5434/eventService"
     username: "postgres"
     password: "N9LoFoo3GbkEf9vV"
-
   jpa:
     show-sql: true
     hibernate:
@@ -61,3 +60,9 @@ eureka:
   client:
     serviceUrl:
       defaultZone: "http://CftYQ29IIX76lbg5:q0XdGl8iEygR311T@localhost:8761/eureka/"
+
+s3:
+  ENDPOINT: "https://s3.localhost.localstack.cloud:4566"
+  ACCESS_KEY: "test"
+  SECRET_KEY: "test"
+  REGION: "us-east-1"

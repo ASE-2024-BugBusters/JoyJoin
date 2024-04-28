@@ -110,6 +110,7 @@ export default {
         
         await axios.post(BASE_URL + "user-service/api/auth/register", data).then(response => {
               sessionStorage.setItem("jwtToken", response.data.token);
+              sessionStorage.setItem("userId", response.data.userId);
 
               this.$router.push({path: "/"});
             })

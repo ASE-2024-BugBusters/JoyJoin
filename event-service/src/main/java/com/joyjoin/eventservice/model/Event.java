@@ -20,11 +20,8 @@ public class Event {
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(updatable = false, nullable = false, name = "event_id")
     private UUID eventId;
-    @Setter
     private LocalDateTime createdOn;
-    @Setter
     private LocalDateTime lastEdited;
-    @Setter
     @Column(name = "is_deleted")
     private boolean isDeleted = false;
     @NotBlank
@@ -51,4 +48,7 @@ public class Event {
     }
     @Column(name = "creator_id", nullable = false)
     private UUID creatorId;
+    @ElementCollection
+    private List<UUID> participants;
+
 }

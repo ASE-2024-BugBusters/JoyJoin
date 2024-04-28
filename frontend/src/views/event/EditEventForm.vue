@@ -26,7 +26,7 @@
             <div class="field">
               <label class="label">Number</label>
               <div class="control">
-                <input class="input" type="number" v-model="event.location.number" :placeholder="event.location.number || 'Enter number'" required>
+                <input class="input" type="number" v-model="event.location.number" :placeholder="event.location.number || 'Enter number'" min="1"required>
               </div>
             </div>
             <div class="field">
@@ -42,14 +42,12 @@
               </div>
             </div>
           </div>
-
           <div class="field">
             <label class="label">Participation Limit</label>
             <div class="control">
-              <input class="input" type="number" v-model="event.participationLimit" :placeholder="event.participationLimit || 'Enter limit'" required>
+              <input class="input" type="number" v-model="event.participationLimit" :placeholder="event.participationLimit || 'Enter limit'" min="2"required>
             </div>
           </div>
-
           <div class="field">
             <label class="label">Tags</label>
             <div class="control">
@@ -67,7 +65,6 @@
               />
             </div>
           </div>
-
           <div class="field">
             <label class="label">Description</label>
             <div class="control">
@@ -154,8 +151,6 @@ export default {
           // tags: multiValue.value.map(tag => tag.value), // Send only the tag values
           tags: multiValue.value,
         };
-        console.log("hiii");
-        console.log(multiValue.value);
         const response = await axios.patch(`${BASE_URL_EVENT_SERVICE}/events/${eventId}`, updatedEvent, {
           headers: { 'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}` }
         });

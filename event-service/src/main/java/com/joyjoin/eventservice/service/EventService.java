@@ -84,4 +84,31 @@ public class EventService {
         eventRepository.save(event);
         return eventPacker.packEvent(event);
     }
+    @Transactional
+    public EventDto registerUserToEvent(UUID eventId, UUID userId) {
+        Event event = eventRepository.findByEventIdAndIsDeletedFalse(eventId)
+                .orElseThrow(() -> new ResourceNotFoundException("Event", "eventId", eventId.toString(),
+                        Collections.singletonList("This event may have been deleted or does not exist.")));
+        if (event.getParticipants().size() >= event.getParticipationLimit() ) {
+            throw new IllegalStateException("Participation limit reached for this event.");
+        }
+        if (event.getParticipants().contains(userId)) {
+            throw new IllegalStateException("User is already in this event.");
+        }
+        event.getParticipants().add(userId);
+        eventRepository.save(event);
+        return eventPacker.packEvent(event);
+    }
+    @Transactional
+    public EventDto removeUserToEvent(UUID eventId, UUID userId) {
+        Event event = eventRepository.findByEventIdAndIsDeletedFalse(eventId)
+                .orElseThrow(() -> new ResourceNotFoundException("Event", "eventId", eventId.toString(),
+                        Collections.singletonList("This event may have been deleted or does not exist.")));
+        if (!event.getParticipants().contains(userId)) {
+            throw new IllegalArgumentException("User is not registered for this event.");
+        }
+        event.getParticipants().remove(userId);
+        eventRepository.save(event);
+        return eventPacker.packEvent(event);
+    }
 }
