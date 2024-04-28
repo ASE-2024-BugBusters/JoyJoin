@@ -116,7 +116,6 @@ public class User implements UserDetails {
         return true;
     }
 
-
     /**
      *     Use this to add new columns with default values to avoid breaking the actual DB
      *     @Column(columnDefinition = "boolean DEFAULT false")
