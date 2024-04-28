@@ -1,0 +1,51 @@
+services:
+  postgres-event:
+    container_name: postgres-event
+    image: postgres
+    environment:
+      POSTGRES_DB: eventService
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: N9LoFoo3GbkEf9vV
+      PGDATA: /data/postgres
+    volumes:
+      - ./postgres-event:/data/postgres
+    expose:
+      - "5434"
+    ports:
+      - "127.0.0.1:5434:5434"
+    command: -p 5434
+    restart: unless-stopped
+
+  postgres-post:
+    container_name: postgres-post
+    image: postgres
+    environment:
+      POSTGRES_DB: postService
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: bEBaGQk+RLTEBydI
+      PGDATA: /data/postgres
+    volumes:
+      - ./postgres-post:/data/postgres
+    expose:
+      - "5435"
+    ports:
+      - "127.0.0.1:5435:5435"
+    command: -p 5435
+    restart: unless-stopped
+
+  postgres-user:
+    container_name: postgres-user
+    image: postgres
+    environment:
+      POSTGRES_DB: userService
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: aHauYoTm56oG7X6u
+      PGDATA: /data/postgres
+    volumes:
+      - ./postgres-user:/data/postgres
+    expose:
+      - "5436"
+    ports:
+      - "127.0.0.1:5436:5436"
+    command: -p 5436
+    restart: unless-stopped
