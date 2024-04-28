@@ -22,6 +22,9 @@ jobs:
 
 
   build-services:
+    permissions:
+      contents: read
+      packages: read
     strategy:
       matrix:
         image_name: [ "user-service", "event-service", "post-service", "registry-service", "api-gateway" ]
@@ -42,6 +45,8 @@ jobs:
       - name: Build mvn Package
         run: mvn clean install -DskipTests
         working-directory: ${{matrix.image_name}}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Build the Docker image
         run: docker build -t josip97/${{matrix.image_name}}:latest .
         working-directory: ${{matrix.image_name}}
