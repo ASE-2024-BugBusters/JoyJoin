@@ -24,21 +24,16 @@ public class UserController {
 
     private final UserService userService;
 
-    private final ImageService imageService;
-
     private final ModelMapper modelMapper;
 
     @Autowired
-    public UserController(UserService userService, ImageService imageService, ModelMapper modelMapper) {
+    public UserController(UserService userService, ModelMapper modelMapper) {
         this.userService = userService;
-        this.imageService = imageService;
         this.modelMapper = modelMapper;
     }
 
     /**
-     * TODO this can only be user for testing, in production needs to be deleted
-     *
-     * @return
+     * @return All Users
      */
     @GetMapping()
     public List<UserDto> getAllUsers() {

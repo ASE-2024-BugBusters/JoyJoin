@@ -1,5 +1,5 @@
 server:
-  port: 8084
+  port: 0
   error:
     include-stacktrace: always
     include-message: always
@@ -10,7 +10,7 @@ spring:
   datasource:
     url: "jdbc:postgresql://postgres-event:5434/eventService"
     username: "postgres"
-    password: "1234"
+    password: "N9LoFoo3GbkEf9vV"
 
   jpa:
     show-sql: false
@@ -51,4 +51,4 @@ logging:
 eureka:
   client:
     serviceUrl:
-      defaultZone: "http://CftYQ29IIX76lbg5:q0XdGl8iEygR311T@localhost:8761/eureka/"
+      defaultZone: "http://CftYQ29IIX76lbg5:q0XdGl8iEygR311T@registry-service:8761/eureka/"
