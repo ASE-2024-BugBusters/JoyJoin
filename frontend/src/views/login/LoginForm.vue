@@ -15,6 +15,7 @@
             <div class="control">
               <input class="input" type="password" v-model="password" placeholder="Enter your password">
             </div>
+            <p class="help is-danger" v-if="loginFailed">{{ errorMessage }}</p>
           </div>
           <div class="field">
             <div class="control">
@@ -35,8 +36,10 @@ import axios from "axios";
 export default {
   data() {
     return {
-      email: '',
-      password: ''
+      email: "",
+      password: "",
+      errorMessage: "Email or password is wrong",
+      loginFailed: false
     };
   },
   methods: {
@@ -51,7 +54,7 @@ export default {
         this.$router.push({path: "/"});
       })
           .catch(error => {
-            console.log("Error: ", error)
+            this.loginFailed = true;
           })
     }
   }
