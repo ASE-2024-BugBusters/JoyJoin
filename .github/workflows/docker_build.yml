@@ -7,7 +7,7 @@ on:
       - development
 
 jobs:
-  build-libs:
+  build-libs3:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -24,6 +24,7 @@ jobs:
       matrix:
         image_name: [ "user-service", "event-service", "post-service", "registry-service", "api-gateway" ]
     runs-on: ubuntu-latest
+    needs: build-libs3
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 17
