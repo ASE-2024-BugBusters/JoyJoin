@@ -18,6 +18,7 @@ jobs:
           distribution: "adopt"
       - name: Build mvn Package
         run: mvn clean install -DskipTests
+        working-directory: "libs3"
   build-services:
     strategy:
       matrix:
