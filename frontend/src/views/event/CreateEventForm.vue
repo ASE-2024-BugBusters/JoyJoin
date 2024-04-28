@@ -198,8 +198,8 @@ export default {
     const getUploadUrl = async () => {
         try {
             const getUploadUrl = BASE_URL_EVENT_SERVICE +"/events/get_upload_image_url";
-            const response = await axios.get(getUploadUrl,
-            {headers: {
+            const response = await axios.get(getUploadUrl, {
+              headers: {
               'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
             },
             });
