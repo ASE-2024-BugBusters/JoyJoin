@@ -28,20 +28,24 @@ export default {
   },
   methods: {
     fetchEvents() {
-      const getAllEventsUrl = BASE_URL_EVENT_SERVICE + "/events"
-      axios.get(getAllEventsUrl, {
-        headers: {
-          // 'Content-Type': 'application/json',
-          'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
-        }
-      })
-        .then(response => {
-          this.events = response.data;
+      debugger;
+      if (sessionStorage.getItem("jwtToken") !== null || sessionStorage.getItem("userId") !== null) {
+        const getAllEventsUrl = BASE_URL_EVENT_SERVICE + "/events"
+        axios.get(getAllEventsUrl, {
+          headers: {
+            // 'Content-Type': 'application/json',
+            'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
+          }
         })
-        .catch(error => {
-          console.error("There was an error fetching the events:", error);
-        });
+            .then(response => {
+              this.events = response.data;
+            })
+            .catch(error => {
+              console.error("There was an error fetching the events:", error);
+            });
+      }
     },
+
     goToEvent(eventId) {
       this.$router.push({ name: 'EventView', params: { eventId } });
     }

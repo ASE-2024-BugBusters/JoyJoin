@@ -4,7 +4,6 @@ import CreatePost from "../views/posts/CreatePost.vue";
 import NotificationIcon from "@/components/Notification/NotificationIcon.vue";
 import PostView from "@/views/posts/PostView.vue";
 import ProfileView from "@/views/profile/ProfileView.vue";
-import EditProfileView from "@/views/profile/EditProfileView.vue";
 
 const routes = [
   {
@@ -81,7 +80,7 @@ const routes = [
   {
     path: "/profile/edit",
     name: "EditProfile",
-    component: EditProfileView
+    component: () => import('../views/profile/EditProfileView.vue')
   }
 ]
 

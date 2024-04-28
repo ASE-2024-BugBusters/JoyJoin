@@ -76,7 +76,7 @@
 
 <script>
 import axios from "axios";
-import {BASE_URL} from "../../../config/dev.env";
+import {BASE_URL, BASE_URL_USER_SERVICE} from "../../../config/dev.env";
 
 export default {
   data() {
@@ -107,11 +107,8 @@ export default {
           password: this.password,
           birthDate: this.birthDate
         };
-        
-        await axios.post(BASE_URL + "user-service/api/auth/register", data).then(response => {
-              sessionStorage.setItem("jwtToken", response.data.token);
-              sessionStorage.setItem("userId", response.data.userId);
 
+        await axios.post(BASE_URL_USER_SERVICE + "/auth/register", data).then(response => {
               this.$router.push({path: "/"});
             })
             .catch(error => {

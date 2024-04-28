@@ -63,6 +63,7 @@
 
 <script>
 import axios from "axios";
+
 import {ref, reactive} from 'vue';
 import Multiselect from '@vueform/multiselect';
 import {useRouter} from 'vue-router';
@@ -79,8 +80,9 @@ export default {
     async fetchUserProfile() {
       try {
         const response = await axios.get(BASE_URL_USER_SERVICE + '/user/users/' + sessionStorage.userId, {
+
           headers: {
-            'Authorization': `Bearer ${sessionStorage.jwtToken}`
+            "Authorization": `Bearer ${sessionStorage.jwtToken}`
           }
         });
         const data = response.data[0];
@@ -106,7 +108,7 @@ export default {
         }
       } catch (e) {
         console.error(e)
-        alert('Failed to fetch user profile')
+        alert("Failed to fetch user profile")
       }
     }
   },
@@ -143,8 +145,8 @@ export default {
         let url_update_profile = BASE_URL_USER_SERVICE + '/user/users/' + sessionStorage.userId
         const response = await axios.patch(url_update_profile, data, {
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${sessionStorage.getItem("jwtToken")}`
           }
         });
         console.log("Successfully published:", response.data);
@@ -155,7 +157,7 @@ export default {
     };
 
     onMounted(() => {
-      const pond = FilePond.create(document.querySelector('.filepond'), {
+      const pond = FilePond.create(document.querySelector(".filepond"), {
         instantUpload: false,
         allowMultiple: false,
         server: {
@@ -169,7 +171,7 @@ export default {
                   progress(e.lengthComputable, e.loaded, e.total);
                 },
                 headers: {
-                  'Content-Type': 'binary'
+                  "Content-Type": "binary"
                 },
               });
 
@@ -177,7 +179,7 @@ export default {
               load(key) // Indicate successful upload
             } catch (uploadError) {
               console.error("Upload error:", uploadError);
-              error('Upload error');
+              error("Upload error");
             }
           }
         }
@@ -190,7 +192,7 @@ export default {
         let url_get_upload = BASE_URL_USER_SERVICE + '/user/users/' + sessionStorage.userId + "/upload_avatar"
         const response = await axios.get(url_get_upload, {
           headers: {
-            'Authorization': `Bearer ${sessionStorage.jwtToken}`
+            "Authorization": `Bearer ${sessionStorage.jwtToken}`
           }
         });
         console.log(response.data)
@@ -214,7 +216,7 @@ export default {
 
 <style scoped>
 @import "@vueform/multiselect/themes/default.css";
-@import 'filepond/dist/filepond.min.css';
+@import "filepond/dist/filepond.min.css";
 
 .container {
   margin-top: 50px;
