@@ -45,7 +45,7 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_ACCESS_TOKEN }}
         run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
       - name: Build mvn Package
-        run: mvn clean install -DskipTests
+        run: mvn clean install -DskipTests -s $GITHUB_WORKSPACE/settings.xml
         working-directory: ${{matrix.image_name}}
         env:
           GITHUB_TOKEN: ${{ github.token }}
