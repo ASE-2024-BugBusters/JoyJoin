@@ -37,6 +37,13 @@ const routes = [
     }
   },
   {
+    path: "/event/:eventId/image-edit",
+    name: "EditImage",
+    component: function () {
+      return import('../views/event/ImageEdit.vue')
+    }
+  },
+  {
     path: "/login",
     name: "login",
     component: () => import('../views/login/LoginView.vue')

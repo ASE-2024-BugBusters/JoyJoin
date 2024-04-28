@@ -25,7 +25,7 @@
                 <div class="card" style="width: 10rem;height: 8rem;" v-for="image in event.images" :key="image.key">
                   <img :src="getImageUrl(image)" :alt="`Event Image ${image.key}`" class="card-img">
                 </div>
-                <div class="card add-remove-card" style="width: 10rem; height: 8rem;" @click="openImageManagement">
+                <div class="card add-remove-card" style="width: 10rem; height: 8rem;" @click="toEditImage">
                   <div class="card-content">+</div>
                 </div>
               </div>
@@ -116,9 +116,8 @@ export default {
       return item ? item.label : 'Unknown';
     },
     async toEditEvent() {
-      const eventId = this.$route.params.eventId;
       try {
-        await this.$router.push({name: "EditEvent", params:{eventId}});
+        await this.$router.push({name: "EditEvent", params: this.eventId});
       } catch (error) {
         console.error('Error navigating to edit event page:', error);
       }
@@ -140,9 +139,9 @@ export default {
         }
       }
     },
-    openImageManagement() {
-      // Open a modal or redirect to a page where images can be managed
-      console.log('Opening image management interface.');
+    async toEditImage() {
+      const eventId = this.$route.params.eventId;
+      await this.$router.push({name: "EditImage", params:{eventId}});
     },
     toRegisterEvent() {
       const eventId = this.$route.params.eventId;
@@ -182,7 +181,6 @@ export default {
             alert('Failed to unregister the event.');
           });
     }
-
   },
 };
 </script>
@@ -301,7 +299,7 @@ i {
   margin-top: 0.5em;
   margin-bottom: 0.2em;
   //background: white;
-  border: 3px solid #2c3e50;
+  border: 1px solid #2c3e50;
 }
 .add-remove-card {
   display: flex;
