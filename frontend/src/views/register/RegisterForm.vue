@@ -49,6 +49,7 @@
             <div class="control">
               <input class="input" type="text" v-model="email" placeholder="Enter your email...">
             </div>
+            <p class="help is-danger" v-if="emailExists">{{ errorMessage }}</p>
           </div>
           <div class="field">
             <label class="label">Password</label>
@@ -81,6 +82,7 @@ import {BASE_URL, BASE_URL_USER_SERVICE} from "../../../config/dev.env";
 export default {
   data() {
     return {
+      emailExists: false,
       showModal: false,
       firstName: "",
       lastName: "",
@@ -112,7 +114,13 @@ export default {
               this.$router.push({path: "/"});
             })
             .catch(error => {
-              console.log("Error: ", error)
+              if (error.response.status === 400) {
+                this.errorMessage = error.response.data.errorMessage;
+                this.emailExists = true;
+              } else {
+                this.emailExists = false;
+                console.log(error);
+              }
             })
       } else {
         this.verifyPasswordError = true;
