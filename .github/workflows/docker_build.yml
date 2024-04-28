@@ -32,7 +32,7 @@ jobs:
     needs: build-libs3
     steps:
       - uses: actions/checkout@v4
-      - name: Set up JDK 17
+      - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           java-version: '21'
@@ -44,8 +44,6 @@ jobs:
           DOCKER_USERNAME: josip97
           DOCKER_PASSWORD: ${{ secrets.DOCKER_ACCESS_TOKEN }}
         run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-      - name: DEBUG show settings.xml
-        run: cat ~/.m2/settings.xml
       - name: Build mvn Package
         run: mvn clean install -DskipTests
         working-directory: ${{matrix.image_name}}
