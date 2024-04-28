@@ -7,6 +7,7 @@ import com.joyjoin.userservice.controller.dto.UpdateUserRequest;
 import com.joyjoin.userservice.model.User;
 import com.joyjoin.userservice.modelDto.UserDto;
 import com.joyjoin.userservice.packer.UserAggregator;
+import com.joyjoin.userservice.service.ImageService;
 import com.joyjoin.userservice.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

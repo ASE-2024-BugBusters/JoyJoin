@@ -45,6 +45,7 @@ public class AuthorizationFilter extends AbstractGatewayFilterFactory<Authorizat
             if (!jwtIsValid(jwt)) {
                 return onError(exchange, "JWT token is not valid", HttpStatus.UNAUTHORIZED);
             }
+            System.out.println("Passed");
             return chain.filter(exchange);
         };
     }

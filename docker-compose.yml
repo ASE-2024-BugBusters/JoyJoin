@@ -7,7 +7,7 @@ services:
     environment:
       POSTGRES_DB: eventService
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 1234
+      POSTGRES_PASSWORD: N9LoFoo3GbkEf9vV
       PGDATA: /data/postgres
     volumes:
       - ./postgres-event:/data/postgres
@@ -24,7 +24,7 @@ services:
     environment:
       POSTGRES_DB: postService
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 1234
+      POSTGRES_PASSWORD: bEBaGQk+RLTEBydI
       PGDATA: /data/postgres
     volumes:
       - ./postgres-post:/data/postgres
@@ -41,7 +41,7 @@ services:
     environment:
       POSTGRES_DB: userService
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 1234
+      POSTGRES_PASSWORD: aHauYoTm56oG7X6u
       PGDATA: /data/postgres
     volumes:
       - ./postgres-user:/data/postgres
@@ -53,7 +53,7 @@ services:
     restart: unless-stopped
 
 
-### Micro Services ###
+#### Micro Services ###
   registry-service:
     image: josip97/registry-service:latest
     container_name: registry-service
@@ -133,7 +133,7 @@ services:
       api-gateway:
         condition: service_started
 
-## Frontend ###
+### Frontend ###
   frontend:
     image: josip97/frontend:latest
     container_name: frontend

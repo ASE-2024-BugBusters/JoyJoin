@@ -1,5 +1,6 @@
 server:
-  port: 8085
+  # Port 0 is used for random port number selection, allows running multiple services without handling available ports
+  port: 0
   error:
     include-stacktrace: always
     include-message: always
@@ -10,7 +11,7 @@ spring:
   datasource:
     url: "jdbc:postgresql://localhost:5435/postService"
     username: "postgres"
-    password: "1234"
+    password: "bEBaGQk+RLTEBydI"
 
   jpa:
     show-sql: false
@@ -50,4 +51,4 @@ logging:
 eureka:
   client:
     serviceUrl:
-      defaultZone: "http://localhost:8761/eureka/"
+      defaultZone: "http://CftYQ29IIX76lbg5:q0XdGl8iEygR311T@localhost:8761/eureka/"

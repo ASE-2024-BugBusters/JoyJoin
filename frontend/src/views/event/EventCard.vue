@@ -18,7 +18,7 @@ export default {
     imageUrl() {
       return this.event.images && this.event.images.length > 0
         ? this.event.images[0].urls[0].url
-        : require('@/assets/defaultEventImg.jpeg');
+        : require('@/assets/event_default.jpeg');
     },
     formattedDateTime() {
       const date = new Date(this.event.time);

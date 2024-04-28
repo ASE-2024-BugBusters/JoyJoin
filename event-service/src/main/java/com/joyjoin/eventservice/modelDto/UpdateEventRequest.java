@@ -11,6 +11,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -22,6 +23,7 @@ public class UpdateEventRequest {
     private LocationDto location;
     private Integer participationLimit;
     private String description;
-    private List<Tag> tags;
+    private List<String> tags;
     private List<ImageRef> images;
+    private List<UUID> participants;
 }
