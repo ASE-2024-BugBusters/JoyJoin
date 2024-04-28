@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# virtualenv
 if [[ ! -d .venv ]]; then
     python -m virtualenv .venv
 fi
@@ -9,7 +8,7 @@ fi
 source .venv/bin/activate
 pip install -U -r requirements.txt
 
-sudo localstack start -d
+docker compose -f docker-compose-dev.yml up -d
 
 while read bucket; do
     cors_config_path="file://$(pwd)/s3_cors_config.json"

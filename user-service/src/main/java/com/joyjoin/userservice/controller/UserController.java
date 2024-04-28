@@ -24,14 +24,11 @@ public class UserController {
 
     private final UserService userService;
 
-    private final ImageService imageService;
-
     private final ModelMapper modelMapper;
 
     @Autowired
-    public UserController(UserService userService, ImageService imageService, ModelMapper modelMapper) {
+    public UserController(UserService userService, ModelMapper modelMapper) {
         this.userService = userService;
-        this.imageService = imageService;
         this.modelMapper = modelMapper;
     }
 

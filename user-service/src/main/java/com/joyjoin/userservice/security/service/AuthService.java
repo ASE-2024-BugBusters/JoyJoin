@@ -46,6 +46,8 @@ public class AuthService implements UserDetailsService {
         roles.add(new Role(RoleEnum.USER));
         User userToSave = User.builder()
                 .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .birthDate(user.getBirthDate())
                 .email(user.getEmail())
                 .password(passwordEncoder.encode(user.getPassword()))
                 .roles(roles)
