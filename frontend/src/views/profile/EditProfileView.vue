@@ -78,18 +78,19 @@ export default {
   methods: {
     async fetchUserProfile() {
       try {
-        const response = await axios.get(BASE_URL_USER_SERVICE + '/user/' + sessionStorage.userId, {
+        const response = await axios.get(BASE_URL_USER_SERVICE + '/user/users/' + sessionStorage.userId, {
           headers: {
             'Authorization': `Bearer ${sessionStorage.jwtToken}`
           }
         });
-        this.nickName = response.data.nickname
-        this.firstName = response.data.firstName
-        this.lastName = response.data.lastName
-        this.biography = response.data.biography
+        const data = response.data[0];
+        this.nickName = data.nickname
+        this.firstName = data.firstName
+        this.lastName = data.lastName
+        this.biography = data.biography
         this.interestTags = []
-        if (response.data.interestTags) {
-          for (const tag of response.data.interestTags) {
+        if (data.interestTags) {
+          for (const tag of data.interestTags) {
             this.interestTags.push(tag)
           }
         }
@@ -97,10 +98,10 @@ export default {
           bucket: "",
           key: ""
         }
-        if (response.data.avatar) {
+        if (data.avatar) {
           this.avatar = {
-            bucket: response.data.avatar.bucket,
-            key: response.data.avatar.key
+            bucket: data.avatar.bucket,
+            key: data.avatar.key
           }
         }
       } catch (e) {
@@ -139,7 +140,7 @@ export default {
 
       console.log("Data to be sent:", data);
       try {
-        let url_update_profile = BASE_URL_USER_SERVICE + '/user/' + sessionStorage.userId
+        let url_update_profile = BASE_URL_USER_SERVICE + '/user/users/' + sessionStorage.userId
         const response = await axios.patch(url_update_profile, data, {
           headers: {
             'Content-Type': 'application/json',
@@ -186,7 +187,7 @@ export default {
     // Fetching upload URL
     const getUploadUrl = async () => {
       try {
-        let url_get_upload = BASE_URL_USER_SERVICE + '/user/' + sessionStorage.userId + "/upload_avatar"
+        let url_get_upload = BASE_URL_USER_SERVICE + '/user/users/' + sessionStorage.userId + "/upload_avatar"
         const response = await axios.get(url_get_upload, {
           headers: {
             'Authorization': `Bearer ${sessionStorage.jwtToken}`

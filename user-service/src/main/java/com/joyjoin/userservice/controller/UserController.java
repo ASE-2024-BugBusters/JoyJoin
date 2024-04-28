@@ -52,7 +52,7 @@ public class UserController {
      * @param request the new values of the user information
      * @return the updated user
      */
-    @PatchMapping("/{uuid}")
+    @PatchMapping("/users/{uuid}")
     public UserDto updateUser(@PathVariable UUID uuid, @RequestBody UpdateUserRequest request) {
         User user = modelMapper.map(request, User.class);
         user.setId(uuid);
@@ -67,21 +67,32 @@ public class UserController {
      * @return {@link com.joyjoin.userservice.controller.dto.GetAvatarUploadUrlResponse},
      * containing both the reference to this newly uploaded image and the URL to upload to.
      */
-    @GetMapping("/{uuid}/upload_avatar")
+    @GetMapping("/users/{uuid}/upload_avatar")
     public GetAvatarUploadUrlResponse getAvatarUploadUrl(@PathVariable UUID uuid) {
         var expireTime = LocalDateTime.now().plusMinutes(30);
         return new GetAvatarUploadUrlResponse(userService.getAvatarUploadInformation(uuid, expireTime));
     }
 
+//    /**
+//     * getUserByUUID returns the information of user with specified uuid
+//     *
+//     * @param uuid uuid of the desired user
+//     * @return user information
+//     */
+//    @GetMapping("/users/{uuid}")
+//    public UserDto getUserByUUID(@PathVariable UUID uuid) {
+//        return userAggregator.aggregate(uuid);
+//    }
+
     /**
-     * getUserByUUID returns the information of user with specified uuid
+     * getUsers returns the information of a batch of users with specified uuids
      *
-     * @param uuid uuid of the desired user
-     * @return user information
+     * @param uuids a list of uuids of the desired users
+     * @return a list of uuid to user information
      */
-    @GetMapping("/{uuid}")
-    public UserDto getUserByUUID(@PathVariable UUID uuid) {
-        return userAggregator.aggregate(uuid);
+    @GetMapping("/users/{uuids}")
+    public List<UserDto> getUsers(@PathVariable List<UUID> uuids) {
+        return userAggregator.batchedAggregate(uuids);
     }
 
     /**
