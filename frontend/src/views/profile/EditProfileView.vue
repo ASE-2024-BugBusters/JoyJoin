@@ -80,7 +80,6 @@ export default {
     async fetchUserProfile() {
       try {
         const response = await axios.get(BASE_URL_USER_SERVICE + '/user/users/' + sessionStorage.userId, {
-
           headers: {
             "Authorization": `Bearer ${sessionStorage.jwtToken}`
           }

@@ -19,6 +19,7 @@
     "bootstrap-icons": "^1.11.3",
     "bootstrap-vue": "^2.23.1",
     "bulma": "^0.9.4",
+    "bulma-calendar": "^6.1.19",
     "filepond": "^4.30.6",
     "vue": "^3.2.13",
     "vue-filepond": "^7.0.4",

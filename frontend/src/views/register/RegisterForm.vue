@@ -34,8 +34,8 @@
           </div>
           <div class="field">
             <label class="label">Birthdate</label>
-            <div class="control">
-              <input class="input" type="date" v-model="birthDate">
+            <div class="control" style="text-align: center">
+              <input class="input" style="margin: 0 auto" type="date" v-model="birthDate">
             </div>
           </div>
           <div class="field">
@@ -59,7 +59,7 @@
           <div class="field">
             <label class="label">Verify Password</label>
             <div class="control">
-              <input class="input" type="password" v-model="verifyPassword" placeholder="Verify your password...">
+              <input class="input" style="justify-content: center" type="password" v-model="verifyPassword" placeholder="Verify your password...">
             </div>
             <p class="help is-danger" v-if="verifyPasswordError">{{ verifyPasswordErrorMessage }}</p>
           </div>
@@ -126,5 +126,9 @@ export default {
 <style>
 .container {
   margin-top: 50px;
+}
+
+.input[type="date"] {
+  justify-content: center;
 }
 </style>

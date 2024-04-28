@@ -74,7 +74,6 @@
           <div class="field">
             <label class="label">Images</label>
             <input type="file" id="filepond" name="filepond" class="filepond" />
-            <input type="hidden" v-model="uploadedImages" />
           </div>
           <div class="field">
             <div class="control">
@@ -238,6 +237,10 @@ export default {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+}
+
+.input[type="datetime-local"] {
+  justify-content: center;
 }
 
 .field {
