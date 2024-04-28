@@ -1,8 +1,5 @@
 package com.joyjoin.userservice.service;
 
-import com.joyjoin.userservice.model.Image;
-import com.joyjoin.userservice.model.ImageRef;
-import com.joyjoin.userservice.model.ImageUrl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,7 +12,6 @@ import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequ
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
 import java.time.Duration;
-import java.util.List;
 
 @Service
 @Slf4j
