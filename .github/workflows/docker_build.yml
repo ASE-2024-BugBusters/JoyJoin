@@ -10,7 +10,7 @@ jobs:
   build-services:
     strategy:
       matrix:
-        image_name: [ "user-service", "event-service", "post-service", "registry-service", "api-gateway" ]
+        image_name: [ "libs3", "user-service", "event-service", "post-service", "registry-service", "api-gateway" ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
