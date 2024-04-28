@@ -107,7 +107,7 @@ export default {
           password: this.password,
           birthDate: this.birthDate
         };
-        
+
         await axios.post(BASE_URL_USER_SERVICE + "/auth/register", data).then(response => {
               this.$router.push({path: "/"});
             })
