@@ -24,7 +24,7 @@
 
 <script>
 import axios from 'axios'
-import {INTEREST_TAGS} from "../../../config/dev.env";
+import {BASE_URL_USER_SERVICE, INTEREST_TAGS} from "../../../config/dev.env";
 
 export default {
   name: 'UserProfile',
@@ -39,7 +39,7 @@ export default {
   methods: {
     async fetchUserProfile() {
       try {
-        const response = await axios.get('http://localhost:8086/api/user/a2227c86-fb43-439c-b866-b5b4871d509d', {
+        const response = await axios.get(BASE_URL_USER_SERVICE + "/user/" + sessionStorage.userId, {
           headers: {
             'Authorization': `Bearer ${sessionStorage.jwtToken}`
           }
