@@ -5,3 +5,4 @@ postgres-post**
 postgres-event**
 localstack
 /.venv/
+.DS_Store
