@@ -37,6 +37,9 @@ jobs:
         with:
           java-version: '17'
           distribution: "adopt"
+          server-id: github
+          server-username: ${{ github.actor	 }}
+          server-password: ${{ github.token }}
       - name: Docker login
         env:
           DOCKER_USERNAME: josip97
@@ -46,7 +49,7 @@ jobs:
         run: mvn clean install -DskipTests
         working-directory: ${{matrix.image_name}}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
       - name: Build the Docker image
         run: docker build -t josip97/${{matrix.image_name}}:latest .
         working-directory: ${{matrix.image_name}}
