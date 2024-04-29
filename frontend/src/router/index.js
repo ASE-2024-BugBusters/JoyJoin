@@ -4,7 +4,6 @@ import CreatePost from "../views/posts/CreatePost.vue";
 import NotificationIcon from "@/components/Notification/NotificationIcon.vue";
 import PostView from "@/views/posts/PostView.vue";
 import ProfileView from "@/views/profile/ProfileView.vue";
-import EditProfileView from "@/views/profile/EditProfileView.vue";
 
 const routes = [
   {
@@ -22,15 +21,43 @@ const routes = [
       return import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
     }
   },
-  // {
-  //   path: '/',
-  //   name: 'EventsList',
-  //   component: EventsList
-  // },
   {
-    path: "/event/:id",
+    path: "/event/:eventId",
     name: "EventView",
-    component: () => import('../views/event/EventView.vue')
+    component: () => import('../views/event/EventView.vue'),
+    beforeEnter: (to, from, next) => {
+      if (sessionStorage.getItem("jwtToken") && sessionStorage.getItem("userId")) {
+        next();
+      } else {
+        next({name: 'home'})
+      }
+    }
+
+  },
+  {
+    path: "/event/:eventId/edit",
+    name: "EditEvent",
+    component: () => import('../views/event/EditEvent.vue'),
+    beforeEnter: (to, from, next) => {
+      if (sessionStorage.getItem("jwtToken") && sessionStorage.getItem("userId")) {
+        next();
+      } else {
+        next({name: 'home'})
+      }
+    }
+  },
+  {
+    path: "/event/:eventId/image-edit",
+    name: "EditImage",
+    component: () => import('../views/event/ImageEdit.vue'),
+    beforeEnter: (to, from, next) => {
+      if (sessionStorage.getItem("jwtToken") && sessionStorage.getItem("userId")) {
+        next();
+      } else {
+        next({name: 'home'})
+      }
+    }
+
   },
   {
     path: "/login",
@@ -45,12 +72,26 @@ const routes = [
   {
     path: "/post",
     name: "post",
-    component: CreatePost
+    component: CreatePost,
+    beforeEnter: (to, from, next) => {
+      if (sessionStorage.getItem("jwtToken") && sessionStorage.getItem("userId")) {
+        next();
+      } else {
+        next({name: 'home'})
+      }
+    }
   },
   {
     path: "/events/create",
     name: "createEvent",
-    component: () => import('../views/event/CreateEvent.vue')
+    component: () => import('../views/event/CreateEvent.vue'),
+    beforeEnter: (to, from, next) => {
+      if (sessionStorage.getItem("jwtToken") && sessionStorage.getItem("userId")) {
+        next();
+      } else {
+        next({name: 'home'})
+      }
+    }
   },
   {
     path: "/notification",
@@ -60,17 +101,38 @@ const routes = [
   {
     path: "/postview",
     name: "postview",
-    component: PostView
+    component: PostView,
+    beforeEnter: (to, from, next) => {
+      if (sessionStorage.getItem("jwtToken") && sessionStorage.getItem("userId")) {
+        next();
+      } else {
+        next({name: 'home'})
+      }
+    }
   },
   {
     path: "/profile",
     name: "profile",
-    component: ProfileView
+    component: ProfileView,
+    beforeEnter: (to, from, next) => {
+      if (sessionStorage.getItem("jwtToken") && sessionStorage.getItem("userId")) {
+        next();
+      } else {
+        next({name: 'home'})
+      }
+    }
   },
   {
     path: "/profile/edit",
     name: "EditProfile",
-    component: EditProfileView
+    component: () => import('../views/profile/EditProfileView.vue'),
+    beforeEnter: (to, from, next) => {
+      if (sessionStorage.getItem("jwtToken") && sessionStorage.getItem("userId")) {
+        next();
+      } else {
+        next({name: 'home'})
+      }
+    }
   }
 ]
 

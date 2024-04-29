@@ -2,7 +2,7 @@
   <div class="container">
     <div class="columns is-centered">
       <div class="column is-half">
-        <h1 class="title">Publish Event</h1>
+        <h1 class="title">Edit Profile</h1>
         <form @submit.prevent="publish">
           <div class="field">
             <label class="label">Nickname</label>
@@ -63,12 +63,13 @@
 
 <script>
 import axios from "axios";
+
 import {ref, reactive} from 'vue';
 import Multiselect from '@vueform/multiselect';
 import {useRouter} from 'vue-router';
 import {onMounted} from 'vue';
 import * as FilePond from 'filepond';
-import BASE_URL, {INTEREST_TAGS} from '../../../config/dev.env';
+import {BASE_URL_USER_SERVICE, INTEREST_TAGS} from '../../../config/dev.env';
 
 export default {
   components: {
@@ -78,26 +79,35 @@ export default {
   methods: {
     async fetchUserProfile() {
       try {
-        const response = await axios.get('http://localhost:8086/api/user/a2227c86-fb43-439c-b866-b5b4871d509d', {
+        const response = await axios.get(BASE_URL_USER_SERVICE + '/user/users/' + sessionStorage.userId, {
           headers: {
-            'Authorization': `Bearer ${sessionStorage.jwtToken}`
+            "Authorization": `Bearer ${sessionStorage.jwtToken}`
           }
         });
-        this.nickName = response.data.nickname
-        this.firstName = response.data.firstName
-        this.lastName = response.data.lastName
-        this.biography = response.data.biography
+        const data = response.data[0];
+        this.nickName = data.nickname
+        this.firstName = data.firstName
+        this.lastName = data.lastName
+        this.biography = data.biography
         this.interestTags = []
-        for (const tag of response.data.interestTags) {
-          this.interestTags.push(tag)
+        if (data.interestTags) {
+          for (const tag of data.interestTags) {
+            this.interestTags.push(tag)
+          }
         }
         this.avatar = {
-          bucket: response.data.avatar.bucket,
-          key: response.data.avatar.key
+          bucket: "",
+          key: ""
+        }
+        if (data.avatar) {
+          this.avatar = {
+            bucket: data.avatar.bucket,
+            key: data.avatar.key
+          }
         }
       } catch (e) {
         console.error(e)
-        alert('Failed to fetch user profile')
+        alert("Failed to fetch user profile")
       }
     }
   },
@@ -131,11 +141,11 @@ export default {
 
       console.log("Data to be sent:", data);
       try {
-        let url_update_profile = "http://localhost:8086/api/user/a2227c86-fb43-439c-b866-b5b4871d509d"
+        let url_update_profile = BASE_URL_USER_SERVICE + '/user/users/' + sessionStorage.userId
         const response = await axios.patch(url_update_profile, data, {
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${sessionStorage.getItem("jwtToken")}`
           }
         });
         console.log("Successfully published:", response.data);
@@ -146,7 +156,7 @@ export default {
     };
 
     onMounted(() => {
-      const pond = FilePond.create(document.querySelector('.filepond'), {
+      const pond = FilePond.create(document.querySelector(".filepond"), {
         instantUpload: false,
         allowMultiple: false,
         server: {
@@ -160,7 +170,7 @@ export default {
                   progress(e.lengthComputable, e.loaded, e.total);
                 },
                 headers: {
-                  'Content-Type': 'binary'
+                  "Content-Type": "binary"
                 },
               });
 
@@ -168,7 +178,7 @@ export default {
               load(key) // Indicate successful upload
             } catch (uploadError) {
               console.error("Upload error:", uploadError);
-              error('Upload error');
+              error("Upload error");
             }
           }
         }
@@ -178,10 +188,10 @@ export default {
     // Fetching upload URL
     const getUploadUrl = async () => {
       try {
-        let url_get_upload = "http://localhost:8086/api/user/a2227c86-fb43-439c-b866-b5b4871d509d/upload_avatar"
+        let url_get_upload = BASE_URL_USER_SERVICE + '/user/users/' + sessionStorage.userId + "/upload_avatar"
         const response = await axios.get(url_get_upload, {
           headers: {
-            'Authorization': `Bearer ${sessionStorage.jwtToken}`
+            "Authorization": `Bearer ${sessionStorage.jwtToken}`
           }
         });
         console.log(response.data)
@@ -205,7 +215,7 @@ export default {
 
 <style scoped>
 @import "@vueform/multiselect/themes/default.css";
-@import 'filepond/dist/filepond.min.css';
+@import "filepond/dist/filepond.min.css";
 
 .container {
   margin-top: 50px;

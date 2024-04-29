@@ -1,6 +1,19 @@
+// Is used to adjust the variables dynamically and concatenate them
+const API_VERSION = "api"
+const BASE_URL =  "http://localhost:9191/";
+const BASE_URL_USER_SERVICE =  BASE_URL + "user-service/" + API_VERSION;
+const BASE_URL_EVENT_SERVICE = BASE_URL + "event-service/" + API_VERSION;
+const BASE_URL_POST_SERVICE =  BASE_URL + "post-service/" + API_VERSION;
+
+/**
+ * Is used to be accessed globally
+ */
 module.exports = {
-    BASE_URL: "http://localhost:9191/",
-    BASE_URL_POST: "http://localhost:9191/api",
+    API_VERSION,
+    BASE_URL,
+    BASE_URL_USER_SERVICE,
+    BASE_URL_EVENT_SERVICE,
+    BASE_URL_POST_SERVICE,
     TOKEN_PREFIX: "Bearer ",
     INTEREST_TAGS: [
         {value: 'VeganCuisine', label: 'Vegan Cuisine'},

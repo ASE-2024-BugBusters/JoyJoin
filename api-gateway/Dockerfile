@@ -1,3 +1,4 @@
-FROM openjdk:17
-COPY target/*.jar app.jar
-ENTRYPOINT ["java", "-jar","/app.jar"]
+FROM --platform=linux/amd64 openjdk:17
+VOLUME /tmp
+COPY target/*.jar Api-Gateway.jar
+ENTRYPOINT ["java", "-jar","/Api-Gateway.jar"]

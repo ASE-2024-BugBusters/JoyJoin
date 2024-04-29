@@ -34,8 +34,8 @@
           </div>
           <div class="field">
             <label class="label">Birthdate</label>
-            <div class="control">
-              <input class="input" type="date" v-model="birthDate">
+            <div class="control" style="text-align: center">
+              <input class="input" style="margin: 0 auto" type="date" v-model="birthDate">
             </div>
           </div>
           <div class="field">
@@ -49,6 +49,7 @@
             <div class="control">
               <input class="input" type="text" v-model="email" placeholder="Enter your email...">
             </div>
+            <p class="help is-danger" v-if="emailExists">{{ errorMessage }}</p>
           </div>
           <div class="field">
             <label class="label">Password</label>
@@ -59,7 +60,7 @@
           <div class="field">
             <label class="label">Verify Password</label>
             <div class="control">
-              <input class="input" type="password" v-model="verifyPassword" placeholder="Verify your password...">
+              <input class="input" style="justify-content: center" type="password" v-model="verifyPassword" placeholder="Verify your password...">
             </div>
             <p class="help is-danger" v-if="verifyPasswordError">{{ verifyPasswordErrorMessage }}</p>
           </div>
@@ -76,11 +77,12 @@
 
 <script>
 import axios from "axios";
-import {BASE_URL} from "../../../config/dev.env";
+import {BASE_URL, BASE_URL_USER_SERVICE} from "../../../config/dev.env";
 
 export default {
   data() {
     return {
+      emailExists: false,
       showModal: false,
       firstName: "",
       lastName: "",
@@ -107,14 +109,18 @@ export default {
           password: this.password,
           birthDate: this.birthDate
         };
-        
-        await axios.post(BASE_URL + "user-service/api/auth/register", data).then(response => {
-              sessionStorage.setItem("jwtToken", response.data.token);
 
+        await axios.post(BASE_URL_USER_SERVICE + "/auth/register", data).then(response => {
               this.$router.push({path: "/"});
             })
             .catch(error => {
-              console.log("Error: ", error)
+              if (error.response.status === 400) {
+                this.errorMessage = error.response.data.errorMessage;
+                this.emailExists = true;
+              } else {
+                this.emailExists = false;
+                console.log(error);
+              }
             })
       } else {
         this.verifyPasswordError = true;
@@ -128,5 +134,9 @@ export default {
 <style>
 .container {
   margin-top: 50px;
+}
+
+.input[type="date"] {
+  justify-content: center;
 }
 </style>

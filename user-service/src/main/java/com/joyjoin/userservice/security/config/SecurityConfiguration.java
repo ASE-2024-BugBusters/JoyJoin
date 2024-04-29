@@ -29,8 +29,8 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize ->
                         authorize
-                                .requestMatchers("/api/auth/**").permitAll()
-                                .anyRequest().authenticated())
+                                .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
+                                .anyRequest().permitAll())
                 .logout((logout) -> logout.logoutUrl("/api/auth/logout").addLogoutHandler(logoutHandler).logoutSuccessHandler((
                         (request, response, authentication) -> SecurityContextHolder.clearContext())))
                 .sessionManagement((session) -> session

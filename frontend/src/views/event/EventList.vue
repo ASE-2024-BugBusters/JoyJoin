@@ -2,8 +2,8 @@
   <div class="events container">
     <h2 class="subtitle is-3">Check out our upcoming events</h2>
     <div class="columns is-multiline">
-      <div v-for="event in events" :key="event.id" class="column is-one-quarter">
-        <EventCard :event="event" @click.native="goToEvent(event.id)" />
+      <div v-for="event in events" :key="event.eventId" class="column is-one-quarter">
+        <EventCard :event="event" @click.native="goToEvent(event.eventId)" />
       </div>
     </div>
   </div>
@@ -12,7 +12,7 @@
 <script>
 import axios from 'axios';
 import EventCard from '@/views/event/EventCard.vue';
-
+import {BASE_URL_EVENT_SERVICE} from "../../../config/dev.env";
 export default {
   name: 'EventsList',
   components: {
@@ -28,16 +28,26 @@ export default {
   },
   methods: {
     fetchEvents() {
-      axios.get('http://localhost:8084/api/events')
-        .then(response => {
-          this.events = response.data;
+      debugger;
+      if (sessionStorage.getItem("jwtToken") !== null || sessionStorage.getItem("userId") !== null) {
+        const getAllEventsUrl = BASE_URL_EVENT_SERVICE + "/events"
+        axios.get(getAllEventsUrl, {
+          headers: {
+            // 'Content-Type': 'application/json',
+            'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
+          }
         })
-        .catch(error => {
-          console.error("There was an error fetching the events:", error);
-        });
+            .then(response => {
+              this.events = response.data;
+            })
+            .catch(error => {
+              console.error("There was an error fetching the events:", error);
+            });
+      }
     },
-    goToEvent(id) {
-      this.$router.push({ name: 'EventView', params: { id } });
+
+    goToEvent(eventId) {
+      this.$router.push({ name: 'EventView', params: { eventId } });
     }
   }
 };

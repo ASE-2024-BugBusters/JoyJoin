@@ -35,6 +35,8 @@ import {toRaw} from 'vue'
 import TaggedUsers from '../../components/Posts/TaggedUsers.vue'
 import AllUsers from '../../components/Posts/AllUsers.vue'
 import PopupModal from '@/components/Popup/PopupModal.vue'
+import {BASE_URL_USER_SERVICE} from "../../../config/dev.env";
+import axios from "axios";
 
 export default {
   components: { TaggedUsers, AllUsers, PopupModal },
@@ -46,8 +48,11 @@ export default {
     }
   },
   mounted(){
-    fetch('http://localhost:3000/users')
-        .then(res => res.json())
+    axios.get(BASE_URL_USER_SERVICE + "/user", {
+      headers: {
+        'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
+      }
+    })
         .then(data => this.users = data)
         .catch(err => console.log(err.message))
   },

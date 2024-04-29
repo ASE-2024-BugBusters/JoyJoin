@@ -15,6 +15,7 @@
             <div class="control">
               <input class="input" type="password" v-model="password" placeholder="Enter your password">
             </div>
+            <p class="help is-danger" v-if="loginFailed">{{ errorMessage }}</p>
           </div>
           <div class="field">
             <div class="control">
@@ -29,14 +30,16 @@
 
 <script>
 
-import {BASE_URL} from "../../../config/dev.env";
+import {BASE_URL_USER_SERVICE} from "../../../config/dev.env";
 import axios from "axios";
 
 export default {
   data() {
     return {
-      email: '',
-      password: ''
+      email: "",
+      password: "",
+      errorMessage: "Email or password is wrong",
+      loginFailed: false
     };
   },
   methods: {
@@ -45,13 +48,13 @@ export default {
         email: this.email,
         password: this.password,
       }
-      console.log(data)
-      await axios.post(BASE_URL + "user-service/api/auth/login", data).then(response => {
+      await axios.post( BASE_URL_USER_SERVICE + "/auth/login", data).then(response => {
         sessionStorage.setItem("jwtToken", response.data.token);
+        sessionStorage.setItem("userId", response.data.userId);
         this.$router.push({path: "/"});
       })
           .catch(error => {
-            console.log("Error: ", error)
+            this.loginFailed = true;
           })
     }
   }

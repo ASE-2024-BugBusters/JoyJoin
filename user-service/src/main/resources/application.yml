@@ -1,4 +1,5 @@
 server:
+  # Port 0 is used for random port number selection, allows running multiple services without handling available ports
   port: 0
   error:
     include-stacktrace: always
@@ -10,7 +11,7 @@ spring:
   datasource:
     url: "jdbc:postgresql://localhost:5436/userService"
     username: "postgres"
-    password: "1234"
+    password: "aHauYoTm56oG7X6u"
 
   jpa:
     show-sql: false
@@ -45,6 +46,8 @@ info:
 logging:
   level:
     org:
+      hibernate:
+        sql: debug
       springframework:
         web: INFO
 
@@ -52,3 +55,9 @@ eureka:
   client:
     serviceUrl:
       defaultZone: "http://CftYQ29IIX76lbg5:q0XdGl8iEygR311T@localhost:8761/eureka/"
+
+s3:
+  ENDPOINT: "https://s3.localhost.localstack.cloud:4566"
+  ACCESS_KEY: "test"
+  SECRET_KEY: "test"
+  REGION: "us-east-1"

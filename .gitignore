@@ -1,5 +1,8 @@
 /.idea/
+/.vscode/
 postgres-user**
 postgres-post**
 postgres-event**
+localstack
 /.venv/
+.DS_Store

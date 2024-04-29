@@ -5,8 +5,7 @@ import com.joyjoin.userservice.model.converter.TagsConverter;
 import com.joyjoin.userservice.security.model.Role;
 import com.joyjoin.userservice.security.model.Token;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -28,8 +27,10 @@ public class User implements UserDetails {
     @GeneratedValue
     private UUID id;
 
+    @Size(min = 2, max= 50, message = "The firstname should contain at least 2 and max 50 characters")
     private String firstName;
 
+    @Size(min = 2, max= 50, message = "The lastname should contain at least 2 and max 50 characters")
     private String lastName;
 
     @Column(unique = true)
@@ -37,7 +38,6 @@ public class User implements UserDetails {
     @Email(message = "Invalid Email format")
     private String email;
 
-    @NotBlank(message = "Password can't be empty")
     private String password;
 
     @Column(unique = true)
@@ -115,7 +115,6 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
 
     /**
      *     Use this to add new columns with default values to avoid breaking the actual DB

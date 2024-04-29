@@ -24,7 +24,7 @@
 
 <script>
 import axios from 'axios'
-import {INTEREST_TAGS} from "../../../config/dev.env";
+import {BASE_URL_USER_SERVICE, INTEREST_TAGS} from "../../../config/dev.env";
 
 export default {
   name: 'UserProfile',
@@ -39,24 +39,26 @@ export default {
   methods: {
     async fetchUserProfile() {
       try {
-        const response = await axios.get('http://localhost:8086/api/user/a2227c86-fb43-439c-b866-b5b4871d509d', {
+        const response = await axios.get(BASE_URL_USER_SERVICE + "/user/users/" + sessionStorage.userId, {
           headers: {
-            'Authorization': `Bearer ${sessionStorage.jwtToken}`
+            'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
           }
-        });
+        })
+        const data = response.data[0]
+        console.log(data)
         this.userProfile = {
-          nickname: response.data.nickname,
-          biography: response.data.biography
+          nickname: data.nickname,
+          biography: data.biography
         }
-        if (response.data.avatar) {
-          this.userProfile.avatar_url = response.data.avatar.urls[0].url
+        if (data.avatar) {
+          this.userProfile.avatar_url = data.avatar.urls[0].url
         }
-        if (response.data.firstName || response.data.lastName) {
-          this.userProfile.name = response.data.firstName + ' ' + response.data.lastName
+        if (data.firstName || data.lastName) {
+          this.userProfile.name = data.firstName + ' ' + data.lastName
         }
-        if (response.data.interestTags) {
+        if (data.interestTags) {
           let interestTags = []
-          for (const tag of response.data.interestTags) {
+          for (const tag of data.interestTags) {
             for (const pair of INTEREST_TAGS) {
               if (tag === pair.value) {
                 interestTags.push(pair.label)

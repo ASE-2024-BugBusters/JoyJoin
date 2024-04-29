@@ -1,7 +1,8 @@
 package com.joyjoin.userservice.security.service;
 
 import com.joyjoin.userservice.exception.EmailAlreadyExistsException;
-import com.joyjoin.userservice.exception.ErrorCode;
+import com.joyjoin.userservice.exception.ErrorMessages;
+import com.joyjoin.userservice.exception.ResourceNotFoundException;
 import com.joyjoin.userservice.security.model.*;
 import com.joyjoin.userservice.model.User;
 import com.joyjoin.userservice.repository.UserRepository;
@@ -9,6 +10,9 @@ import com.joyjoin.userservice.security.repository.TokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +25,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class AuthService {
+public class AuthService implements UserDetailsService {
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
@@ -29,20 +33,21 @@ public class AuthService {
     private final TokenRepository tokenRepository;
 
     /**
-     *
      * @param user which contains all the information to create a new one (firstName, lastName, birthDate, email, password)
      * @return <b>AuthenticationResponse</b> which contains the JWT Token as a String
      */
-    public AuthenticationResponse register(User user){
+    public AuthenticationResponse register(User user) throws EmailAlreadyExistsException {
         User optionalUser = repository.findUserByEmail(user.getEmail());
         if (optionalUser != null) {
-            throw new EmailAlreadyExistsException(ErrorCode.USER_EMAIL_ALREADY_EXISTS.getErrorCode());
+            throw new EmailAlreadyExistsException(ErrorMessages.USER_EMAIL_ALREADY_EXISTS.getErrorMessage());
         }
         LocalDateTime now = LocalDateTime.now();
         Collection<Role> roles = new ArrayList<>();
         roles.add(new Role(RoleEnum.USER));
         User userToSave = User.builder()
                 .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .birthDate(user.getBirthDate())
                 .email(user.getEmail())
                 .password(passwordEncoder.encode(user.getPassword()))
                 .roles(roles)
@@ -56,16 +61,16 @@ public class AuthService {
         return AuthenticationResponse.builder().userId(savedUser.getId()).token(jwtToken).build();
     }
 
-
     /**
-     *
      * @param request <b>AuthenticationRequest</b> contains the user Credentials to create a valid JWT Token
      * @return <b>AuthenticationResponse</b> which contains the JWT Token as a String
      */
-    public AuthenticationResponse login(AuthenticationRequest request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-        );
+    public AuthenticationResponse login(AuthenticationRequest request) throws ResourceNotFoundException {
+        User optionalUser = repository.findUserByEmail(request.getEmail());
+        if (optionalUser == null) {
+            throw new ResourceNotFoundException("User", "Email", request.getEmail());
+        }
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         var user = repository.findUserByEmail(request.getEmail());
         var jwtToken = jwtService.generateToken(user);
         deleteAllUserTokens(user);
@@ -94,5 +99,10 @@ public class AuthService {
             return;
         }
         tokenRepository.deleteAll();
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return null;
     }
 }
