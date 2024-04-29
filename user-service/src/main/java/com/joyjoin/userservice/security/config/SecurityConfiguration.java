@@ -30,7 +30,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(authorize ->
                         authorize
                                 .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
-                                .anyRequest().authenticated())
+                                .anyRequest().permitAll())
                 .logout((logout) -> logout.logoutUrl("/api/auth/logout").addLogoutHandler(logoutHandler).logoutSuccessHandler((
                         (request, response, authentication) -> SecurityContextHolder.clearContext())))
                 .sessionManagement((session) -> session

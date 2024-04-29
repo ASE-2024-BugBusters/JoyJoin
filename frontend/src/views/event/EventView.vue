@@ -10,7 +10,8 @@
             <div class="card-body">
               <p class="card-text"><i class="bi bi-calendar-check"></i><strong>Time:</strong> {{ formattedDateTime }}</p>
               <p class="card-text"><i class="bi bi-geo-alt-fill"></i><strong>Location:</strong> {{ event.location.street }} {{ event.location.number }}, {{ event.location.city }}</p>
-              <p class="card-text"><i class="bi bi-people-fill"></i><strong>Participants:</strong> {{ event.participants.length }}/{{ event.participationLimit }}</p>
+              <p class="card-text"><i class="bi bi-people-fill"></i><strong>Enrolled Participants:</strong> {{ event.participants.length }}</p>
+              <p class="card-text"><i class="bi bi-people-fill"></i><strong>Participation Limit:</strong> {{ event.participationLimit }}</p>
               <p class="card-text"><i class="bi bi-braces-asterisk"></i><strong>Description:</strong> {{ event.description }}</p>
               <div class="card-text">
                 <div class="tags-container">
@@ -85,7 +86,7 @@ export default {
       return this.event && this.event.participants.includes(userId);
     },
     isFullyOccupied() {
-      return this.event.participationLimit = this.event.participants.length;
+      return this.event.participationLimit == this.event.participants.length;
     }
   },
   created() {
