@@ -27,10 +27,10 @@ public class User implements UserDetails {
     @GeneratedValue
     private UUID id;
 
-    @Size(min = 2, max= 50, message = "The firstname should contain at least 2 and max 50 characters")
+    @Size(min = 2, max = 50, message = "The firstname should contain at least 2 and max 50 characters")
     private String firstName;
 
-    @Size(min = 2, max= 50, message = "The lastname should contain at least 2 and max 50 characters")
+    @Size(min = 2, max = 50, message = "The lastname should contain at least 2 and max 50 characters")
     private String lastName;
 
     @Column(unique = true)
@@ -57,6 +57,17 @@ public class User implements UserDetails {
     private ImageRef avatar;
 
     private ProfileVisibility profileVisibility;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "_follow",
+            joinColumns = @JoinColumn(name = "follower_id"),
+            inverseJoinColumns = @JoinColumn(name = "followee_id")
+    )
+    private Set<User> followee;
+
+    @ManyToMany(mappedBy = "followee")
+    private Set<User> follower;
 
     private boolean loggedIn = false;
     private boolean deactivated = false;
