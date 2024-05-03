@@ -80,29 +80,4 @@ public class EventService {
         eventRepository.save(event);
         return eventPacker.packEvent(event);
     }
-//    /**
-//     * Deletes specific images from an event, assuming the event and images exist.
-//     *
-//     * @param eventId The UUID of the event.
-//     * @param imageKeys A list of keys representing the images to be deleted.
-//     */
-//    @Transactional
-//    public EventDto deleteEventImages(UUID eventId, List<String> imageKeys) {
-//        Event event = eventRepository.findByEventIdAndIsDeletedFalse(eventId)
-//                .orElseThrow(() -> new ResourceNotFoundException("Event", "eventId", eventId.toString(),
-//                        Collections.singletonList("This event may have been deleted or does not exist.")));
-//
-//        // Determine which images are to be kept
-//        List<ImageRef> remainingImages = event.getImages().stream()
-//                .filter(imageRef -> !imageKeys.contains(imageRef.getKey()))
-//                .collect(Collectors.toList());
-//
-////        // Remove the images from storage
-////        imageKeys.forEach(imageStorageService::deleteImage);
-//
-//        // Set the remaining images back to the event and save
-//        event.setImages(remainingImages);
-//        eventRepository.save(event);
-//        return eventPacker.packEvent(event);
-//    }
 }
