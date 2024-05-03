@@ -10,7 +10,7 @@
             <div class="card-body">
               <p class="card-text"><i class="bi bi-calendar-check"></i><strong>Time:</strong> {{ formattedDateTime }}</p>
               <p class="card-text"><i class="bi bi-geo-alt-fill"></i><strong>Location:</strong> {{ event.location.street }} {{ event.location.number }}, {{ event.location.city }}</p>
-              <p class="card-text"><i class="bi bi-people-fill"></i><strong>Enrolled Participants:</strong> {{ event.participants.length }}</p>
+              <p class="card-text"><i class="bi bi-people-fill"></i><strong>Enrolled Participants:</strong> {{ participants.length }}</p>
               <p class="card-text"><i class="bi bi-people-fill"></i><strong>Participation Limit:</strong> {{ event.participationLimit }}</p>
               <p class="card-text"><i class="bi bi-braces-asterisk"></i><strong>Description:</strong> {{ event.description }}</p>
               <div class="card-text">
@@ -54,7 +54,8 @@ export default {
     return {
       event: null,
       source: INTEREST_TAGS,
-      eventId: this.$route.params.eventId
+      eventId: this.$route.params.eventId,
+      participants: null
     };
   },
   computed: {
@@ -82,15 +83,16 @@ export default {
     isJoined() {
       const userId = sessionStorage.getItem('userId');
       console.log("userId from sessionStorage:", userId); // Debugging
-      console.log("Event participants:", this.event ? this.event.participants : "Event not loaded");
-      return this.event && this.event.participants.includes(userId);
+      console.log("Event participants:", this.event ? this.participants : "Event not loaded");
+      return this.event && this.participants.includes(userId);
     },
     isFullyOccupied() {
-      return this.event.participationLimit == this.event.participants.length;
+      return this.event.participationLimit == this.participants.length;
     }
   },
   created() {
     this.fetchEventData();
+    this.fetchParticipants();
   },
   methods: {
     fetchEventData() {
@@ -106,6 +108,21 @@ export default {
           })
           .catch(error => {
             console.error("There was an error fetching the event details:", error);
+          });
+    },
+    fetchParticipants() {
+      const eventId = this.$route.params.eventId;
+      axios.get(`${BASE_URL_EVENT_SERVICE}/events/${eventId}/participants`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
+        }
+      })
+          .then(response => {
+            this.participants = response.data;
+          })
+          .catch(error => {
+            console.error("There was an error fetching the event participants:", error);
           });
     },
     getImageUrl(image) {
