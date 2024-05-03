@@ -10,25 +10,24 @@
             <div class="card-body">
               <p class="card-text"><i class="bi bi-calendar-check"></i><strong>Time:</strong> {{ formattedDateTime }}</p>
               <p class="card-text"><i class="bi bi-geo-alt-fill"></i><strong>Location:</strong> {{ event.location.street }} {{ event.location.number }}, {{ event.location.city }}</p>
-              <p class="card-text"><i class="bi bi-people-fill"></i><strong>Enrolled Participants:</strong> {{ participants.length }}</p>
-              <p class="card-text"><i class="bi bi-people-fill"></i><strong>Participation Limit:</strong> {{ event.participationLimit }}</p>
-              <p class="card-text"><i class="bi bi-braces-asterisk"></i><strong>Description:</strong> {{ event.description }}</p>
               <div class="card-text">
                 <div class="tags-container">
                   <i class="bi bi-tags-fill"></i>
-                  <strong>Tags:</strong>
+                  <strong>Category:</strong>
                   <div class="tag-badges">
                     <span class="badge" v-for="label in tagLabels" :key="label">{{ label }}</span>
                   </div>
                 </div>
               </div>
+              <p class="card-text"><i class="bi bi-chat-left-text-fill"></i><strong>Description:</strong> {{ event.description }}</p>
+              <p class="card-text"><i class="bi bi-people-fill"></i><strong>Enrolled Participants:</strong> {{ participants.length }}/{{ event.participationLimit }}</p>
               <div class="row g-2">
                 <div class="card" style="width: 10rem;height: 8rem;" v-for="image in event.images" :key="image.key">
                   <img :src="getImageUrl(image)" :alt="`Event Image ${image.key}`" class="card-img">
                 </div>
-                <div class="card add-remove-card" style="width: 10rem; height: 8rem;" @click="toEditImage">
-                  <div class="card-content">+</div>
-                </div>
+<!--                <div class="card add-remove-card" style="width: 10rem; height: 8rem;" @click="toEditImage" v-if="isCreator">-->
+<!--                  <div class="card-content">+</div>-->
+<!--                </div>-->
               </div>
               <div class="d-grid gap-2" v-if="!isCreator">
                 <button class="btn btn-outline-primary" type="button" @click="toRegisterEvent" v-if="!isJoined & !isFullyOccupied">Join</button>
@@ -174,6 +173,7 @@ export default {
             alert('You have successfully joined the event!');
             // Refresh event data by re-fetching the details
             this.fetchEventData();
+            this.fetchParticipants();
           })
           .catch(error => {
             console.error("Error joining event:", error);
@@ -193,6 +193,7 @@ export default {
             alert('You have successfully unregistered the event!');
             // Refresh event data by re-fetching the details
             this.fetchEventData();
+            this.fetchParticipants();
           })
           .catch(error => {
             console.error("Error unregistering event:", error);
