@@ -67,4 +67,27 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         );
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(EventRegistrationNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleEventRegistrationNotFoundException(EventRegistrationNotFoundException ex) {
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.NOT_FOUND,
+                ex.getMessage(),
+                ex.getDetails()
+        );
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+    @ExceptionHandler(DuplicateRegistrationException.class)
+    public ResponseEntity<Map<String, Object>> handleDuplicateRegistration(DuplicateRegistrationException ex) {
+        Map<String, Object> errorDetails = new HashMap<>();
+        errorDetails.put("error", "Duplicate registration error");
+        errorDetails.put("status", HttpStatus.CONFLICT);
+        errorDetails.put("message", ex.getMessage());
+        errorDetails.put("fields", ex.getFields());
+
+        if (ex.getDetails() != null && !ex.getDetails().isEmpty()) {
+            errorDetails.put("details", ex.getDetails());
+        }
+
+        return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
+    }
 }

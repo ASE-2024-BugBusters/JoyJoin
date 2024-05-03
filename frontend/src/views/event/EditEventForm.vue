@@ -26,7 +26,7 @@
             <div class="field">
               <label class="label">Number</label>
               <div class="control">
-                <input class="input" type="number" v-model="event.location.number" :placeholder="event.location.number || 'Enter number'" min="1"required>
+                <input class="input" type="number" v-model="event.location.number" :placeholder="event.location.number || 'Enter number'" min="1" required>
               </div>
             </div>
             <div class="field">
@@ -45,24 +45,7 @@
           <div class="field">
             <label class="label">Participation Limit</label>
             <div class="control">
-              <input class="input" type="number" v-model="event.participationLimit" :placeholder="event.participationLimit || 'Enter limit'" min="2"required>
-            </div>
-          </div>
-          <div class="field">
-            <label class="label">Tags</label>
-            <div class="control">
-              <Multiselect
-                  v-model="multiValue"
-                  mode="tags"
-                  :close-on-select="false"
-                  :searchable="true"
-                  :create-option="false"
-                  :options="source"
-                  option-label="label"
-                  option-value="value"
-                  placeholder="Pick some tags"
-                  required
-              />
+              <input class="input" type="number" v-model="event.participationLimit" :placeholder="event.participationLimit || 'Enter limit'" min="2" required>
             </div>
           </div>
           <div class="field">
@@ -85,21 +68,17 @@
 
 <script>
 import axios from "axios";
-import Multiselect from '@vueform/multiselect';
-import {ref, reactive, onMounted, computed, nextTick} from 'vue';
+import { ref, reactive, onMounted, computed, nextTick, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { INTEREST_TAGS, BASE_URL_EVENT_SERVICE } from "../../../config/dev.env";
+import { BASE_URL_EVENT_SERVICE } from "../../../config/dev.env";
 
 export default {
-  components: {
-    Multiselect
-  },
   setup() {
     const router = useRouter();
     const eventId = router.currentRoute.value.params.eventId;
     const minDateTime = computed(() => {
       let now = new Date();
-      return now.toISOString().substring(0, 16); // YYYY-MM-DDTHH:MM format
+      return now.toISOString().substring(0, 16);
     });
     const event = reactive({
       title: "",
@@ -107,12 +86,9 @@ export default {
       location: { street: "", number: "", city: "", country: "" },
       participationLimit: "",
       description: "",
-      tags: [],
     });
-
-    let multiValue = ref([]);
-    // const multiValue = event.tags;
-    const source = ref(INTEREST_TAGS); // Static list of all possible tags
+    const originalEvent = ref({});
+    const dirty = ref(false);
     const loading = ref(true);
 
     const fetchEventData = async () => {
@@ -121,14 +97,7 @@ export default {
           headers: { 'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}` }
         });
         Object.assign(event, response.data);
-        multiValue.value = event.tags;
-        // event.tags = ref([]);
-        // Convert tag strings to objects based on INTEREST_TAGS
-        // multiValue.value = response.data.tags.map(tagString => {
-        //   const tagObject = source.value.find(tag => tag.value === tagString);
-        //   return tagObject ? { label: tagObject.label, value: tagObject.value } : { label: tagString, value: tagString };
-        // });
-
+        Object.assign(originalEvent.value, response.data);
       } catch (error) {
         console.error("Error fetching event data:", error);
       } finally {
@@ -136,53 +105,73 @@ export default {
       }
     };
 
+    watch(event, (newVal, oldVal) => {
+      dirty.value = JSON.stringify(newVal) !== JSON.stringify(originalEvent.value);
+    }, { deep: true });
+
+    const saveChanges = async () => {
+      await nextTick();
+      const updatedEvent = {
+        title: event.title,
+        time: new Date(event.time).toISOString(),
+        location: event.location,
+        participationLimit: parseInt(event.participationLimit),
+        description: event.description,
+      };
+      try {
+        const response = await axios.patch(`${BASE_URL_EVENT_SERVICE}/events/${eventId}`, updatedEvent, {
+          headers: { 'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}` }
+        });
+        console.log("Successfully updated event:", response.data);
+        Object.assign(originalEvent.value, updatedEvent);
+        dirty.value = false;
+      } catch (error) {
+        console.error("Error updating the event:", error);
+        throw new Error('Failed to save changes');
+      }
+    };
 
     const editEvent = async () => {
-      if (!event.title.trim() || !event.time || !multiValue.value.length ||
+      if (!event.title.trim() || !event.time ||
           !event.location.street.trim() || !event.location.number || !event.location.city.trim() ||
           !event.location.country.trim() || !event.participationLimit) {
         alert('Please fill all the required fields.');
         return;
       }
-      await nextTick();
       try {
-        const updatedEvent = {
-          title: event.title,
-          time: new Date(event.time).toISOString(),
-          location: event.location,
-          participationLimit: parseInt(event.participationLimit),
-          description: event.description,
-          // tags: multiValue.value.map(tag => tag.value), // Send only the tag values
-          tags: multiValue.value,
-        };
-        const response = await axios.patch(`${BASE_URL_EVENT_SERVICE}/events/${eventId}`, updatedEvent, {
-          headers: { 'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}` }
-        });
-        console.log("Successfully updated event:", response.data);
-        await router.push({name: 'EventView', params: {eventId}});
+        await saveChanges();
+        router.push({name: 'EventView', params: {eventId}});
       } catch (error) {
-        console.error("Error updating the event:", error);
+        alert('Failed to save changes.');
       }
     };
+
     const returnToEventView = () => {
-      router.push({name: 'EventView', params: {eventId}});
+      if (dirty.value) {
+        if (confirm('You have unsaved changes. Do you want to save them before leaving?')) {
+          editEvent(); // Save changes before returning
+        } else {
+          router.push({name: 'EventView', params: {eventId}}); // Leave without saving
+        }
+      } else {
+        router.push({name: 'EventView', params: {eventId}});
+      }
     };
+
     onMounted(fetchEventData);
 
     return {
-      event, editEvent, multiValue, source, loading, minDateTime, returnToEventView
+      event, editEvent, loading, minDateTime, returnToEventView
     };
   }
 }
 </script>
 
 
+
 <style scoped>
 .container {
   margin-top: 50px;
-}
-.subtitle {
-  font-weight: bold;
 }
 .textarea {
   min-height: 150px;

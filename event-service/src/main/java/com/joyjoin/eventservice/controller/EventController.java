@@ -1,12 +1,17 @@
 package com.joyjoin.eventservice.controller;
 
 import com.joyjoin.eventservice.controller.dto.GetImgUploadUrlResponse;
+import com.joyjoin.eventservice.exception.ResourceNotFoundException;
 import com.joyjoin.eventservice.model.Event;
+import com.joyjoin.eventservice.model.EventRegistration;
 import com.joyjoin.eventservice.modelDto.EventDto;
+import com.joyjoin.eventservice.modelDto.EventRegistrationDto;
 import com.joyjoin.eventservice.modelDto.PostEventRequest;
 import com.joyjoin.eventservice.modelDto.UpdateEventRequest;
+import com.joyjoin.eventservice.service.EventRegistrationService;
 import com.joyjoin.eventservice.service.EventService;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,16 +31,20 @@ import java.util.*;
 public class EventController {
     private final EventService eventService;
     private final ModelMapper modelMapper;
+    private  final EventRegistrationService eventRegistrationService;
 
     /**
      * Constructs an EventController with the specified EventService and ModelMapper.
      *
-     * @param eventService the service to handle the event logic
-     * @param modelMapper  the tool to map between DTOs and entities
+     * @param eventService             the service to handle the event logic
+     * @param modelMapper              the tool to map between DTOs and entities
+     * @param eventRegistrationService
      */
-    public EventController(EventService eventService, ModelMapper modelMapper) {
+    @Autowired
+    public EventController(EventService eventService, ModelMapper modelMapper, EventRegistrationService eventRegistrationService) {
         this.eventService = eventService;
         this.modelMapper = modelMapper;
+        this.eventRegistrationService = eventRegistrationService;
     }
 
     /**
@@ -110,18 +119,18 @@ public class EventController {
         EventDto deletedEvent = eventService.deleteEvent(eventId);
         return new ResponseEntity<>(deletedEvent, HttpStatus.OK);
     }
-
     /**
      * Registers a user to an event by their IDs.
      *
      * @param eventId the UUID of the event
      * @param userId the UUID of the user to register
-     * @return a response entity containing the event DTO after registration
+     * @return a response entity containing the eventRegistration DTO after registration
      */
-    @PostMapping("{eventId}/register/{userId}")
-    public ResponseEntity<EventDto> registerEvent(@PathVariable UUID eventId, @PathVariable UUID userId) {
-        EventDto updatedEvent = eventService.registerUserToEvent(eventId, userId);
-        return new ResponseEntity<>(updatedEvent, HttpStatus.OK);
+    @PostMapping("/{eventId}/register/{userId}")
+    public ResponseEntity<EventRegistrationDto> registerEvent(@PathVariable UUID eventId, @PathVariable UUID userId) {
+        EventRegistration registration = eventRegistrationService.registerUserToEvent(eventId, userId);
+        EventRegistrationDto registrationDto = modelMapper.map(registration, EventRegistrationDto.class);
+        return new ResponseEntity<>(registrationDto, HttpStatus.OK);
     }
 
     /**
@@ -129,14 +138,38 @@ public class EventController {
      *
      * @param eventId the UUID of the event
      * @param userId the UUID of the user to unregister
-     * @return a response entity containing the event DTO after unregistration
+     * @return a response entity containing the eventRegistration DTO after unregistration
      */
-    @DeleteMapping("{eventId}/remove/{userId}")
-    public ResponseEntity<EventDto> unregisterEvent(@PathVariable UUID eventId, @PathVariable UUID userId) {
-        EventDto updatedEvent = eventService.removeUserToEvent(eventId, userId);
-        return new ResponseEntity<>(updatedEvent, HttpStatus.OK);
+    @DeleteMapping("/{eventId}/remove/{userId}")
+    public ResponseEntity<EventRegistrationDto> unregisterEvent(@PathVariable UUID eventId, @PathVariable UUID userId) {
+        EventRegistration registration = eventRegistrationService.removeUserToEvent(eventId, userId);
+        EventRegistrationDto registrationDto = modelMapper.map(registration, EventRegistrationDto.class);
+        return new ResponseEntity<>(registrationDto, HttpStatus.OK);
     }
-
+    /**
+     * Retrieves a list of participant UUIDs for a given event.
+     * This method responds to a GET request at the path '/{eventId}/participants'.
+     * It calls the service layer to fetch all participants registered for the specified event.
+     *
+     * @param eventId The unique identifier of the event for which participants are being queried.
+     * @return A list of UUIDs representing the participants of the event. The list is empty if no participants are found.
+     */
+    @GetMapping("/{eventId}/participants")
+    public List<UUID> getParticipantsByEventId(@PathVariable UUID eventId) {
+        List<UUID> users = eventRegistrationService.getParticipantsByEventId(eventId);
+        return users;
+    }
+    /**
+     * Retrieves a list of all events that a specific user has registered for.
+     *
+     * @param userId The UUID of the user whose registered events are to be retrieved.
+     * @return A ResponseEntity containing a list of EventDto objects for the registered events.
+     */
+    @GetMapping("/by-userId")
+    public ResponseEntity<List<EventDto>> getEventsByUserId(@RequestParam UUID userId) {
+        List<EventDto> events = eventRegistrationService.getEventsByUserId(userId);
+        return new ResponseEntity<>(events, HttpStatus.OK);
+    }
     /**
      * A simple test endpoint to check if the service is running.
      *
@@ -146,4 +179,22 @@ public class EventController {
     public String test() {
         return "test";
     }
+//    /**
+//     * Deletes specific images associated with an event.
+//     *
+//     * @param eventId The UUID of the event from which images are to be deleted.
+//     * @param imageKeys A list of image keys that need to be deleted.
+//     * @return ResponseEntity representing the status of the operation.
+//     */
+//    @DeleteMapping("/{eventId}/images")
+//    public ResponseEntity<?> deleteEventImages(@PathVariable UUID eventId, @RequestBody List<String> imageKeys) {
+//        try {
+//            eventService.deleteEventImages(eventId, imageKeys);
+//            return ResponseEntity.ok().build();  // Successful deletion returns HTTP 200 OK
+//        } catch (ResourceNotFoundException e) {
+//            return ResponseEntity.notFound().build();  // Event not found returns HTTP 404 Not Found
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());  // Generic error returns HTTP 500
+//        }
+//    }
 }

@@ -25,5 +25,4 @@ public class UpdateEventRequest {
     private String description;
     private List<String> tags;
     private List<ImageRef> images;
-    private List<UUID> participants;
 }

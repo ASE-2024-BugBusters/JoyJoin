@@ -3,6 +3,7 @@ import com.joyjoin.eventservice.exception.InvalidRegisterOrUnregisterToEventExce
 import com.joyjoin.eventservice.exception.ResourceNotFoundException;
 import com.joyjoin.eventservice.model.Image;
 import com.joyjoin.eventservice.model.Event;
+import com.joyjoin.eventservice.model.ImageRef;
 import com.joyjoin.eventservice.model.ImageUrl;
 import com.joyjoin.eventservice.modelDto.EventDto;
 import com.joyjoin.eventservice.packer.EventPacker;
@@ -79,34 +80,29 @@ public class EventService {
         eventRepository.save(event);
         return eventPacker.packEvent(event);
     }
-    @Transactional
-    public EventDto registerUserToEvent(UUID eventId, UUID userId) {
-        Event event = eventRepository.findByEventIdAndIsDeletedFalse(eventId)
-                .orElseThrow(() -> new ResourceNotFoundException("Event", "eventId", eventId.toString(),
-                        Collections.singletonList("This event may have been deleted or does not exist.")));
-        if (event.getParticipants().size() >= event.getParticipationLimit() ) {
-            throw new InvalidRegisterOrUnregisterToEventException("Event", "eventId", eventId.toString(),
-                    Collections.singletonList("Participation limit reached for this event."));
-        }
-        if (event.getParticipants().contains(userId)) {
-            throw new InvalidRegisterOrUnregisterToEventException("Event", "eventId", eventId.toString(),
-                    Collections.singletonList("User is already registered for this event."));
-        }
-        event.getParticipants().add(userId);
-        eventRepository.save(event);
-        return eventPacker.packEvent(event);
-    }
-    @Transactional
-    public EventDto removeUserToEvent(UUID eventId, UUID userId) {
-        Event event = eventRepository.findByEventIdAndIsDeletedFalse(eventId)
-                .orElseThrow(() -> new ResourceNotFoundException("Event", "eventId", eventId.toString(),
-                        Collections.singletonList("This event may have been deleted or does not exist.")));
-        if (!event.getParticipants().contains(userId)) {
-            throw new InvalidRegisterOrUnregisterToEventException("Event", "eventId", eventId.toString(),
-                    Collections.singletonList("User is not registered for this event."));
-        }
-        event.getParticipants().remove(userId);
-        eventRepository.save(event);
-        return eventPacker.packEvent(event);
-    }
+//    /**
+//     * Deletes specific images from an event, assuming the event and images exist.
+//     *
+//     * @param eventId The UUID of the event.
+//     * @param imageKeys A list of keys representing the images to be deleted.
+//     */
+//    @Transactional
+//    public EventDto deleteEventImages(UUID eventId, List<String> imageKeys) {
+//        Event event = eventRepository.findByEventIdAndIsDeletedFalse(eventId)
+//                .orElseThrow(() -> new ResourceNotFoundException("Event", "eventId", eventId.toString(),
+//                        Collections.singletonList("This event may have been deleted or does not exist.")));
+//
+//        // Determine which images are to be kept
+//        List<ImageRef> remainingImages = event.getImages().stream()
+//                .filter(imageRef -> !imageKeys.contains(imageRef.getKey()))
+//                .collect(Collectors.toList());
+//
+////        // Remove the images from storage
+////        imageKeys.forEach(imageStorageService::deleteImage);
+//
+//        // Set the remaining images back to the event and save
+//        event.setImages(remainingImages);
+//        eventRepository.save(event);
+//        return eventPacker.packEvent(event);
+//    }
 }
