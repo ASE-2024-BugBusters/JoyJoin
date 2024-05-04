@@ -86,7 +86,14 @@ const routes = [
   {
     path: "/events/create",
     name: "createEvent",
-    component: () => import('../views/event/CreateEvent.vue')
+    component: () => import('../views/event/CreateEvent.vue'),
+    beforeEnter: (to, from, next) => {
+      if (sessionStorage.getItem("jwtToken") && sessionStorage.getItem("userId")) {
+        next();
+      } else {
+        next({name: 'home'})
+      }
+    }
   },
   {
     path: "/notification",
@@ -96,14 +103,14 @@ const routes = [
   {
     path: "/post/:id",
     name: "post",
-      component: PostView,
-      beforeEnter: (to, from, next) => {
-          if (sessionStorage.getItem("jwtToken") && sessionStorage.getItem("userId")) {
-              next();
-          } else {
-              next({name: 'home'})
-          }
+    component: PostView,
+    beforeEnter: (to, from, next) => {
+      if (sessionStorage.getItem("jwtToken") && sessionStorage.getItem("userId")) {
+        next();
+      } else {
+        next({name: 'home'})
       }
+    }
   },
   {
     path: "/profile",
@@ -120,19 +127,26 @@ const routes = [
   {
     path: "/profile/edit",
     name: "EditProfile",
-      component: () => import('../views/profile/EditProfileView.vue'),
-      beforeEnter: (to, from, next) => {
-          if (sessionStorage.getItem("jwtToken") && sessionStorage.getItem("userId")) {
-              next();
-          } else {
-              next({name: 'home'})
-          }
+    component: () => import('../views/profile/EditProfileView.vue'),
+    beforeEnter: (to, from, next) => {
+      if (sessionStorage.getItem("jwtToken") && sessionStorage.getItem("userId")) {
+        next();
+      } else {
+        next({name: 'home'})
       }
+    }
   },
   {
     path: "/posts",
     name: "AllPosts",
-    component: UserAllPosts
+    component: () => import('../components/Posts/UserAllPosts.vue'),
+    beforeEnter: (to, from, next) => {
+      if (sessionStorage.getItem("jwtToken") && sessionStorage.getItem("userId")) {
+        next();
+      } else {
+        next({name: 'home'})
+      }
+    }
   }
 ]
 

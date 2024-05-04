@@ -80,6 +80,7 @@ export default {
     addUserIntoTaggedList(user){
       this.temp_taggedpeople.push(user)
     },
+    // Method: Show this PostTag(Modal)
     show(opts = {}) {
       this.search = '';
       if(opts.taggedpeople){
@@ -97,10 +98,12 @@ export default {
       this.$refs.popup.close()
       this.resolvePromise(true)
     },
+    // Method: Close this PostTag(Modal)
     _cancel() {
       this.$refs.popup.close()
       this.resolvePromise(false)
     },
+    // Method: Trigger the saveTags of PostView.vue
     saveTags() {
       this.$emit('saveTags', this.temp_taggedpeople)
     }

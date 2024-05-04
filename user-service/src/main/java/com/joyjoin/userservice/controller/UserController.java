@@ -94,8 +94,8 @@ public class UserController {
      * @return a list of uuid to user information
      */
     @GetMapping("/users/{uuids}")
-    public ResponseEntity<List<UserDto>> getUsers(@PathVariable List<UUID> uuids) {
-        return new ResponseEntity<>(userAggregator.batchedAggregate(uuids), HttpStatus.OK);
+    public List<UserDto> getUsers(@PathVariable List<UUID> uuids) {
+        return userAggregator.batchedAggregate(uuids);
     }
 
     /**

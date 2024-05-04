@@ -34,7 +34,6 @@ export default {
         const getAllEventsUrl = BASE_URL_EVENT_SERVICE + "/events"
         axios.get(getAllEventsUrl, {
           headers: {
-            // 'Content-Type': 'application/json',
             'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
           }
         })
