@@ -60,7 +60,7 @@
                   :options="source"
                   option-label="label"
                   option-value="value"
-                  placeholder=""
+                  placeholder="Pick some tags"
                   required
               />
             </div>
@@ -73,7 +73,8 @@
           </div>
           <div class="field">
             <div class="control">
-              <button class="button is-primary" @click="editEvent">Save</button>
+              <button class="btn btn-outline-secondary" @click="returnToEventView"><strong>Return</strong></button>
+              <button class="btn btn-outline-success" @click="editEvent"><strong>Save</strong></button>
             </div>
           </div>
         </form>
@@ -106,9 +107,11 @@ export default {
       location: { street: "", number: "", city: "", country: "" },
       participationLimit: "",
       description: "",
+      tags: [],
     });
 
-    const multiValue = ref([]);
+    let multiValue = ref([]);
+    // const multiValue = event.tags;
     const source = ref(INTEREST_TAGS); // Static list of all possible tags
     const loading = ref(true);
 
@@ -118,7 +121,8 @@ export default {
           headers: { 'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}` }
         });
         Object.assign(event, response.data);
-        event.tags = ref([]);
+        multiValue.value = event.tags;
+        // event.tags = ref([]);
         // Convert tag strings to objects based on INTEREST_TAGS
         // multiValue.value = response.data.tags.map(tagString => {
         //   const tagObject = source.value.find(tag => tag.value === tagString);
@@ -160,10 +164,13 @@ export default {
         console.error("Error updating the event:", error);
       }
     };
+    const returnToEventView = () => {
+      router.push({name: 'EventView', params: {eventId}});
+    };
     onMounted(fetchEventData);
 
     return {
-      event, editEvent, multiValue, source, loading, minDateTime
+      event, editEvent, multiValue, source, loading, minDateTime, returnToEventView
     };
   }
 }
@@ -191,4 +198,10 @@ export default {
   flex-grow: 1;
   min-width: 300px;
 }
+.control {
+  display: grid;
+  grid-auto-flow: column;
+  gap: 10px;  /* This sets the gap between any grid items */
+}
+
 </style>

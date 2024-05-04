@@ -52,7 +52,7 @@
 
     <br>
     <!--Submit Button-->
-    <div class="submit" @click="createNewPost" :disabled="!caption">Share</div>
+    <div class="button is-primary" @click="createNewPost" :disabled="!caption">Share</div>
   </div>
   <PostTag ref="postTagModal" @saveTags="savedTags"></PostTag>
   <PostEvent ref="postEventModal" @saveTagEvent="savedTagEvent"></PostEvent>

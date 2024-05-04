@@ -41,7 +41,7 @@ export default {
       try {
         const response = await axios.get(BASE_URL_USER_SERVICE + "/user/users/" + sessionStorage.userId, {
           headers: {
-            'Authorization': `Bearer ${sessionStorage.jwtToken}`
+            'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
           }
         })
         const data = response.data[0]

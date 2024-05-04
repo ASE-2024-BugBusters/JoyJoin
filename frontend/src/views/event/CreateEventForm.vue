@@ -74,7 +74,6 @@
           <div class="field">
             <label class="label">Images</label>
             <input type="file" id="filepond" name="filepond" class="filepond" />
-            <input type="hidden" v-model="uploadedImages" />
           </div>
           <div class="field">
             <div class="control">
@@ -198,8 +197,8 @@ export default {
     const getUploadUrl = async () => {
         try {
             const getUploadUrl = BASE_URL_EVENT_SERVICE +"/events/get_upload_image_url";
-            const response = await axios.get(getUploadUrl,
-            {headers: {
+            const response = await axios.get(getUploadUrl, {
+              headers: {
               'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
             },
             });
@@ -238,6 +237,10 @@ export default {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+}
+
+.input[type="datetime-local"] {
+  justify-content: center;
 }
 
 .field {

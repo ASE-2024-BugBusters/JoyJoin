@@ -20,9 +20,9 @@
       <div class="navbar-start">
         <router-link to="/" class="navbar-item" style="text-decoration: none">Home</router-link>
         <router-link to="/about" class="navbar-item noTextDecoration" style="text-decoration: none">About</router-link>
-        <router-link to="/profile" class="navbar-item noTextDecoration" style="text-decoration: none">Profile</router-link>
-        <router-link to="/post/create" class="navbar-item noTextDecoration" style="text-decoration: none">Create Post</router-link>
-        <router-link to="/events/create" class="navbar-item noTextDecoration" style="text-decoration: none">Publish Event</router-link>
+        <router-link v-if="jwt" to="/profile" class="navbar-item noTextDecoration" style="text-decoration: none">Profile</router-link>
+        <router-link v-if="jwt" to="/post" class="navbar-item noTextDecoration" style="text-decoration: none">Create Post</router-link>
+        <router-link v-if="jwt" to="/events/create" class="navbar-item noTextDecoration" style="text-decoration: none">Publish Event</router-link>
         <router-link v-if="jwt" to="/posts" class="navbar-item noTextDecoration" style="text-decoration: none">All Posts</router-link>
       </div>
       <div class="navbar-end">
@@ -83,16 +83,17 @@ export default {
           "Authorization": `Bearer ${sessionStorage.getItem("jwtToken")}`
         }
       }).then(response => {
-        sessionStorage.removeItem("jwtToken")
+        sessionStorage.removeItem("jwtToken");
+        sessionStorage.removeItem("userId");
         this.checkJwt();
         this.$router.push({path: "/"});
       }).catch(error => {
-            console.log("Error: ", error)
+            console.log("Error: ", error);
       })
     },
 
     checkJwt() {
-      this.jwt = sessionStorage.getItem("jwtToken") !== null;
+      this.jwt = (sessionStorage.getItem("jwtToken") !== null || sessionStorage.getItem("userId") !== null);
     }
   },
   watch: {

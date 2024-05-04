@@ -10,7 +10,8 @@
             <div class="card-body">
               <p class="card-text"><i class="bi bi-calendar-check"></i><strong>Time:</strong> {{ formattedDateTime }}</p>
               <p class="card-text"><i class="bi bi-geo-alt-fill"></i><strong>Location:</strong> {{ event.location.street }} {{ event.location.number }}, {{ event.location.city }}</p>
-              <p class="card-text"><i class="bi bi-people-fill"></i><strong>Participants:</strong> {{ event.participants.length }}/{{ event.participationLimit }}</p>
+              <p class="card-text"><i class="bi bi-people-fill"></i><strong>Enrolled Participants:</strong> {{ event.participants.length }}</p>
+              <p class="card-text"><i class="bi bi-people-fill"></i><strong>Participation Limit:</strong> {{ event.participationLimit }}</p>
               <p class="card-text"><i class="bi bi-braces-asterisk"></i><strong>Description:</strong> {{ event.description }}</p>
               <div class="card-text">
                 <div class="tags-container">
@@ -25,7 +26,7 @@
                 <div class="card" style="width: 10rem;height: 8rem;" v-for="image in event.images" :key="image.key">
                   <img :src="getImageUrl(image)" :alt="`Event Image ${image.key}`" class="card-img">
                 </div>
-                <div class="card add-remove-card" style="width: 10rem; height: 8rem;" @click="openImageManagement">
+                <div class="card add-remove-card" style="width: 10rem; height: 8rem;" @click="toEditImage">
                   <div class="card-content">+</div>
                 </div>
               </div>
@@ -85,7 +86,7 @@ export default {
       return this.event && this.event.participants.includes(userId);
     },
     isFullyOccupied() {
-      return this.event.participationLimit = this.event.participants.length;
+      return this.event.participationLimit == this.event.participants.length;
     }
   },
   created() {
@@ -116,9 +117,8 @@ export default {
       return item ? item.label : 'Unknown';
     },
     async toEditEvent() {
-      const eventId = this.$route.params.eventId;
       try {
-        await this.$router.push({name: "EditEvent", params:{eventId}});
+        await this.$router.push({name: "EditEvent", params: this.eventId});
       } catch (error) {
         console.error('Error navigating to edit event page:', error);
       }
@@ -140,9 +140,9 @@ export default {
         }
       }
     },
-    openImageManagement() {
-      // Open a modal or redirect to a page where images can be managed
-      console.log('Opening image management interface.');
+    async toEditImage() {
+      const eventId = this.$route.params.eventId;
+      await this.$router.push({name: "EditImage", params:{eventId}});
     },
     toRegisterEvent() {
       const eventId = this.$route.params.eventId;
@@ -182,7 +182,6 @@ export default {
             alert('Failed to unregister the event.');
           });
     }
-
   },
 };
 </script>
@@ -301,7 +300,7 @@ i {
   margin-top: 0.5em;
   margin-bottom: 0.2em;
   //background: white;
-  border: 3px solid #2c3e50;
+  border: 1px solid #2c3e50;
 }
 .add-remove-card {
   display: flex;

@@ -26,6 +26,7 @@ import java.util.UUID;
 public class UserController {
 
     private final UserService userService;
+
     private final UserAggregator userAggregator;
     private final ModelMapper modelMapper;
 

@@ -1,5 +1,5 @@
 server:
-  port: 8085
+  port: 0
   error:
     include-stacktrace: always
     include-message: always
@@ -10,7 +10,7 @@ spring:
   datasource:
     url: "jdbc:postgresql://postgres-post:5435/postService"
     username: "postgres"
-    password: "1234"
+    password: "bEBaGQk+RLTEBydI"
 
   jpa:
     show-sql: false
