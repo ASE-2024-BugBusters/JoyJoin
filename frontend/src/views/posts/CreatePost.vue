@@ -53,6 +53,7 @@
     <br>
     <!--Submit Button-->
     <div class="button is-primary" @click="createNewPost" :disabled="!caption">Share</div>
+<!--    <div class="submit" @click="createNewPost" :disabled="!caption">Share</div>-->
   </div>
   <PostTag ref="postTagModal" @saveTags="savedTags"></PostTag>
   <PostEvent ref="postEventModal" @saveTagEvent="savedTagEvent"></PostEvent>
@@ -162,15 +163,11 @@ export default {
       await this.$refs.postEventModal.show();
     },
     savedTags(temp_taggedpeople){
-      if(temp_taggedpeople){
-        this.taggedpeople = structuredClone(toRaw(temp_taggedpeople))
-      }
+      this.taggedpeople = structuredClone(toRaw(temp_taggedpeople))
       this.$refs.postTagModal._cancel()
     },
     savedTagEvent(temp_taggedevent){
-      if(temp_taggedevent){
-        this.taggedEvent = structuredClone(toRaw(temp_taggedevent))
-      }
+      this.taggedEvent = structuredClone(toRaw(temp_taggedevent))
       this.$refs.postEventModal._cancel()
     }
   },

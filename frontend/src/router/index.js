@@ -70,8 +70,8 @@ const routes = [
     component: () => import('../views/register/RegisterView.vue')
   },
   {
-    path: "/post",
-    name: "post",
+    path: "/post/create",
+    name: "createPost",
     component: CreatePost,
     beforeEnter: (to, from, next) => {
       if (sessionStorage.getItem("jwtToken") && sessionStorage.getItem("userId")) {
@@ -100,7 +100,7 @@ const routes = [
   },
   {
     path: "/post/:id",
-    name: "post",
+    name: "postView",
     component: PostView,
     beforeEnter: (to, from, next) => {
       if (sessionStorage.getItem("jwtToken") && sessionStorage.getItem("userId")) {
