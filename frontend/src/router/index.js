@@ -4,8 +4,6 @@ import CreatePost from "../views/posts/CreatePost.vue";
 import NotificationIcon from "@/components/Notification/NotificationIcon.vue";
 import PostView from "@/views/posts/PostView.vue";
 import ProfileView from "@/views/profile/ProfileView.vue";
-import EditProfileView from "@/views/profile/EditProfileView.vue";
-import UserAllPosts from "@/components/Posts/UserAllPosts.vue";
 
 const routes = [
   {
