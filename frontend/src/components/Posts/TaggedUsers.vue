@@ -6,7 +6,7 @@
                 <img class="tagged-userimage" src="../../assets/camera-icon.png" alt="User Image">
                 <button v-if="isAddOrEdit" type="button" class="remove-button btn-close" @click="removeTaggedPeople(user)"></button>
             </div>
-            <div class="tagged-username">{{ user.username }}</div>
+            <div class="tagged-username">{{ user.id }}</div>
         </div>
     </div>
     <div v-else>

@@ -15,6 +15,9 @@
         </div>
       </div>
     </section>
+
+    <!--Event-->
+    <h2 class="event-title">Check out our upcoming events</h2>
     <EventList/>
   </div>
 </template>
@@ -69,5 +72,9 @@ export default {
 }
 .is-xl {
   font-size: 1.7rem;
+}
+.event-title{
+  margin-top: 60px;
+  text-align: center;
 }
 </style>

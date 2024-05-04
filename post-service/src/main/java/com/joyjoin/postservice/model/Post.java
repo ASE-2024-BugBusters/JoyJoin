@@ -27,8 +27,10 @@ public class Post extends DefaultProperties {
     private UUID userId;
     @Column(length = 1000)
     private String caption;
+    @ElementCollection
     private List<UUID> taggedUsersId;
     private UUID taggedEventId;
+    @ElementCollection
     private List<UUID> likedUsersId;
 
 //    @Convert(converter = ImageRefListConverter.class)

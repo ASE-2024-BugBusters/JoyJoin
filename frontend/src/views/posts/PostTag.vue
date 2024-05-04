@@ -35,6 +35,8 @@ import {toRaw} from 'vue'
 import TaggedUsers from '../../components/Posts/TaggedUsers.vue'
 import AllUsers from '../../components/Posts/AllUsers.vue'
 import PopupModal from '@/components/Popup/PopupModal.vue'
+import {BASE_URL_USER_SERVICE} from "../../../config/dev.env";
+import axios from "axios";
 
 export default {
   components: { TaggedUsers, AllUsers, PopupModal },
@@ -45,21 +47,36 @@ export default {
       temp_taggedpeople: []
     }
   },
-  mounted(){
-    fetch('http://localhost:3000/users')
-        .then(res => res.json())
-        .then(data => this.users = data)
-        .catch(err => console.log(err.message))
+  created(){
+    this.getAllUsersAPI();
   },
   computed: {
     searchingUsers() {
-      return this.users.filter(user => {
-        return user.username.includes(this.search) &&
-            !this.temp_taggedpeople.some(taggedUser => taggedUser.username === user.username);
-      });
+      if(this.users) {
+        return this.users.filter(user => {
+          return user.id.includes(this.search) &&
+              !this.temp_taggedpeople.some(taggedUser => taggedUser.id === user.id);
+        });
+      }
     }
   },
   methods: {
+    // Method: Get All User Information
+    async getAllUsersAPI() {
+      const getAllUsersUrl = BASE_URL_USER_SERVICE + "/user" ;
+      await axios.get(getAllUsersUrl, {
+        headers: {
+          'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
+        }
+      })
+          .then(response => {
+            this.users = response.data;
+          })
+          .catch(error => {
+            console.error("[getAllUsersAPI] There was an error getting the all users:", error);
+          });
+    },
+    // Method: Add user into temporarily TaggedUser_list
     addUserIntoTaggedList(user){
       this.temp_taggedpeople.push(user)
     },

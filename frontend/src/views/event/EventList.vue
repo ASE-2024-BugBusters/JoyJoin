@@ -1,9 +1,9 @@
 <template>
   <div class="events container">
-    <h2 class="subtitle is-3">Check out our upcoming events</h2>
     <div class="columns is-multiline">
       <div v-for="event in events" :key="event.eventId" class="column is-one-quarter">
-        <EventCard :event="event" @click.native="goToEvent(event.eventId)" />
+<!--        <EventCard :event="event" @click.native="goToEvent(event.eventId)" />-->
+        <EventCard :event="event" @click.native="goToAction(event)" />
       </div>
     </div>
   </div>
@@ -14,6 +14,7 @@ import axios from 'axios';
 import EventCard from '@/views/event/EventCard.vue';
 import {BASE_URL_EVENT_SERVICE} from "../../../config/dev.env";
 export default {
+  props: ['isPostAddOrEdit'],
   name: 'EventsList',
   components: {
     EventCard,
@@ -42,8 +43,17 @@ export default {
           console.error("There was an error fetching the events:", error);
         });
     },
-    goToEvent(eventId) {
-      this.$router.push({ name: 'EventView', params: { eventId } });
+    // goToEvent(eventId) {
+    //   this.$router.push({ name: 'EventView', params: { eventId } });
+    // }
+    goToAction(event) {
+      if(this.isPostAddOrEdit){
+        this.$emit('addTaggedEvent', event)
+      }else{
+        const eventId = event.eventId;
+        this.$router.push({ name: 'EventView', params: { eventId } });
+      }
+
     }
   }
 };
@@ -51,7 +61,7 @@ export default {
 
 <style lang="scss" scoped>
 .events {
-  margin-top: 100px;
+  margin-top: 20px;
   text-align: center;
 }
 </style>

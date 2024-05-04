@@ -11,6 +11,8 @@ import com.joyjoin.userservice.service.ImageService;
 import com.joyjoin.userservice.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -91,8 +93,8 @@ public class UserController {
      * @return a list of uuid to user information
      */
     @GetMapping("/users/{uuids}")
-    public List<UserDto> getUsers(@PathVariable List<UUID> uuids) {
-        return userAggregator.batchedAggregate(uuids);
+    public ResponseEntity<List<UserDto>> getUsers(@PathVariable List<UUID> uuids) {
+        return new ResponseEntity<>(userAggregator.batchedAggregate(uuids), HttpStatus.OK);
     }
 
     /**

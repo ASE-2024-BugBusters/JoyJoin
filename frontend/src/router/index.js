@@ -5,6 +5,7 @@ import NotificationIcon from "@/components/Notification/NotificationIcon.vue";
 import PostView from "@/views/posts/PostView.vue";
 import ProfileView from "@/views/profile/ProfileView.vue";
 import EditProfileView from "@/views/profile/EditProfileView.vue";
+import UserAllPosts from "@/components/Posts/UserAllPosts.vue";
 
 const routes = [
   {
@@ -47,8 +48,8 @@ const routes = [
     component: () => import('../views/register/RegisterView.vue')
   },
   {
-    path: "/post",
-    name: "post",
+    path: "/post/create",
+    name: "createPost",
     component: CreatePost
   },
   {
@@ -62,8 +63,8 @@ const routes = [
     component: NotificationIcon
   },
   {
-    path: "/postview",
-    name: "postview",
+    path: "/post/:id",
+    name: "post",
     component: PostView
   },
   {
@@ -75,6 +76,11 @@ const routes = [
     path: "/profile/edit",
     name: "EditProfile",
     component: EditProfileView
+  },
+  {
+    path: "/posts",
+    name: "AllPosts",
+    component: UserAllPosts
   }
 ]
 

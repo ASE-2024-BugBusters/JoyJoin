@@ -37,7 +37,7 @@ spring:
           uri:
             'lb://POST-SERVICE'
           predicates:
-            - 'Path=/post-service/api/post/**'
+            - 'Path=/post-service/api/posts/**'
             - 'Header=Authorization, Bearer (.*)'
           filters:
             - 'RemoveRequestHeader=Cookie'
