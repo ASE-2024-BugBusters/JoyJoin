@@ -1,6 +1,6 @@
 <template>
   <div class="events container">
-    <h2 class="subtitle is-3">Check out our upcoming events</h2>
+    <h1 class="subtitle is-3">Check Out Upcoming Events</h1>
     <div class="columns is-multiline">
       <div v-for="event in events" :key="event.eventId" class="column is-one-quarter">
         <EventCard :event="event" @click.native="goToEvent(event.eventId)" />
@@ -57,5 +57,9 @@ export default {
 .events {
   margin-top: 100px;
   text-align: center;
+}
+h1 {
+  font-weight: bold;
+  color: black;
 }
 </style>
