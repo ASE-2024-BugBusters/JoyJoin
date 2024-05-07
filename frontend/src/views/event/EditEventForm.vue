@@ -76,10 +76,7 @@ export default {
   setup() {
     const router = useRouter();
     const eventId = router.currentRoute.value.params.eventId;
-    const minDateTime = computed(() => {
-      let now = new Date();
-      return now.toISOString().substring(0, 16);
-    });
+    const minDateTime = computed(() => new Date().toISOString().substring(0, 16));
     const event = reactive({
       title: "",
       time: "",
@@ -92,14 +89,13 @@ export default {
     const loading = ref(true);
 
     const fetchEventData = async () => {
+      loading.value = true;
       try {
         const response = await axios.get(`${BASE_URL_EVENT_SERVICE}/events/${eventId}`, {
           headers: { 'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}` }
         });
         Object.assign(event, response.data);
-        Object.assign(originalEvent.value, response.data);
-      } catch (error) {
-        console.error("Error fetching event data:", error);
+        originalEvent.value = JSON.parse(JSON.stringify(response.data)); // 深拷贝初始化
       } finally {
         loading.value = false;
       }
@@ -108,43 +104,6 @@ export default {
     watch(event, (newVal, oldVal) => {
       dirty.value = JSON.stringify(newVal) !== JSON.stringify(originalEvent.value);
     }, { deep: true });
-
-    const saveChanges = async () => {
-      await nextTick();
-      const updatedEvent = {
-        title: event.title,
-        time: new Date(event.time).toISOString(),
-        location: event.location,
-        participationLimit: parseInt(event.participationLimit),
-        description: event.description,
-      };
-      try {
-        const response = await axios.patch(`${BASE_URL_EVENT_SERVICE}/events/${eventId}`, updatedEvent, {
-          headers: { 'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}` }
-        });
-        console.log("Successfully updated event:", response.data);
-        Object.assign(originalEvent.value, updatedEvent);
-        dirty.value = false;
-      } catch (error) {
-        console.error("Error updating the event:", error);
-        throw new Error('Failed to save changes');
-      }
-    };
-
-    const editEvent = async () => {
-      if (!event.title.trim() || !event.time ||
-          !event.location.street.trim() || !event.location.number || !event.location.city.trim() ||
-          !event.location.country.trim() || !event.participationLimit) {
-        alert('Please fill all the required fields.');
-        return;
-      }
-      try {
-        await saveChanges();
-        router.push({name: 'EventView', params: {eventId}});
-      } catch (error) {
-        alert('Failed to save changes.');
-      }
-    };
 
     const returnToEventView = () => {
       if (dirty.value) {
@@ -161,11 +120,12 @@ export default {
     onMounted(fetchEventData);
 
     return {
-      event, editEvent, loading, minDateTime, returnToEventView
+      event, loading, minDateTime, returnToEventView
     };
   }
 }
 </script>
+
 
 
 
@@ -192,5 +152,7 @@ export default {
   grid-auto-flow: column;
   gap: 10px;  /* This sets the gap between any grid items */
 }
-
+.btn {
+  font-weight: bold;
+}
 </style>

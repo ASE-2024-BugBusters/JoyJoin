@@ -108,11 +108,22 @@ public class EventController {
         return new ResponseEntity<>(eventService.updateEvent(eventId, event), HttpStatus.OK);
     }
 
+    /**
+     * Updates the images associated with a specific event.
+     *
+     * This method receives an event ID and an update request object, and it uses these to update the event's images.
+     * The {@code @PatchMapping} annotation indicates that this method will respond to HTTP PATCH requests at the specified URI.
+     *
+     * @param eventId The UUID of the event to update.
+     * @param request The request body containing updates for the event, typically including new images.
+     * @return A {@link ResponseEntity} containing the updated {@link EventDto} and the HTTP status.
+     */
     @PatchMapping("/{eventId}/images")
     public ResponseEntity<EventDto> updateImages(@PathVariable UUID eventId, @RequestBody UpdateEventRequest request) {
         Event event = modelMapper.map(request, Event.class);
         return new ResponseEntity<>(eventService.updateImages(eventId, event), HttpStatus.OK);
     }
+
     /**
      * Deletes an event by its ID.
      *
@@ -124,6 +135,7 @@ public class EventController {
         EventDto deletedEvent = eventService.deleteEvent(eventId);
         return new ResponseEntity<>(deletedEvent, HttpStatus.OK);
     }
+
     /**
      * Registers a user to an event by their IDs.
      *
@@ -151,6 +163,7 @@ public class EventController {
         EventRegistrationDto registrationDto = modelMapper.map(registration, EventRegistrationDto.class);
         return new ResponseEntity<>(registrationDto, HttpStatus.OK);
     }
+
     /**
      * Retrieves a list of participant UUIDs for a given event.
      * This method responds to a GET request at the path '/{eventId}/participants'.
@@ -164,6 +177,7 @@ public class EventController {
         List<UUID> users = eventRegistrationService.getParticipantsByEventId(eventId);
         return users;
     }
+
     /**
      * Retrieves a list of all events that a specific user has registered for.
      *
@@ -175,6 +189,7 @@ public class EventController {
         List<EventDto> events = eventRegistrationService.getEventsByUserId(userId);
         return new ResponseEntity<>(events, HttpStatus.OK);
     }
+
     /**
      * A simple test endpoint to check if the service is running.
      *
@@ -184,22 +199,4 @@ public class EventController {
     public String test() {
         return "test";
     }
-//    /**
-//     * Deletes specific images associated with an event.
-//     *
-//     * @param eventId The UUID of the event from which images are to be deleted.
-//     * @param imageKeys A list of image keys that need to be deleted.
-//     * @return ResponseEntity representing the status of the operation.
-//     */
-//    @DeleteMapping("/{eventId}/images")
-//    public ResponseEntity<?> deleteEventImages(@PathVariable UUID eventId, @RequestBody List<String> imageKeys) {
-//        try {
-//            eventService.deleteEventImages(eventId, imageKeys);
-//            return ResponseEntity.ok().build();  // Successful deletion returns HTTP 200 OK
-//        } catch (ResourceNotFoundException e) {
-//            return ResponseEntity.notFound().build();  // Event not found returns HTTP 404 Not Found
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());  // Generic error returns HTTP 500
-//        }
-//    }
 }

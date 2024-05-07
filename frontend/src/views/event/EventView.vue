@@ -27,16 +27,17 @@
 <!--                </div>-->
 <!--              </div>-->
               <div class="row g-2">
-                <div class="image-card" v-for="image in event.images" :key="image.key" @click="toRemoveImage(image.key)">
-                  <img :src="getImageUrl(image)" :alt="`Event Image ${image.key}`" class="card-img">
+                <div class="image-card" v-for="image in event.images" :key="image.key" @click="isCreator ? toRemoveImage(image.key) : null" :class="{ 'creator-mode': isCreator }">
+                  <img :src="getImageUrl(image)" :alt="`Event Image ${image.key}`" class="card-img" :class="{ 'clickable': isCreator }">
                 </div>
               </div>
 
               <div class="d-grid gap-2" v-if="!isCreator">
-                <button class="btn btn-outline-primary" type="button" @click="toRegisterEvent" v-if="!isJoined & !isFullyOccupied">Join</button>
+                <button class="btn btn-outline-success" type="button" @click="toRegisterEvent" v-if="!isJoined & !isFullyOccupied">Join</button>
                 <button class="btn btn-outline-warning" type="button" @click="toUnRegisterEvent" v-if="isJoined">Unregister</button>
               </div>
               <div class="d-grid gap-2" v-if="isCreator">
+                <button class="btn btn-outline-secondary" type="button" @click="toUploadImages">Upload Images</button>
                 <button class="btn btn-outline-info" type="button" @click="toEditEvent">Edit</button>
                 <button class="btn btn-outline-danger" type="button" @click="toDeleteEvent">Delete</button>
               </div>
@@ -57,7 +58,7 @@ export default {
       event: null,
       source: INTEREST_TAGS,
       eventId: this.$route.params.eventId,
-      participants: null,
+      participants: [],
       imageDetails: []
     };
   },
@@ -158,13 +159,20 @@ export default {
         console.error('Error navigating to edit event page:', error);
       }
     },
+    async toUploadImages() {
+      try {
+        await this.$router.push({name: "EditImage", params: this.eventId});
+      } catch (error) {
+        console.error('Error navigating to upload image page:', error);
+      }
+    },
     async toDeleteEvent() {
       const eventId = this.$route.params.eventId;
       if (confirm('Are you sure you want to delete the event?')) {
         try {
           await axios.delete(`${BASE_URL_EVENT_SERVICE}/events/${eventId}`, {
             headers: {
-              // 'Content-Type': 'application/json',
+              'Content-Type': 'application/json',
               'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
             }
           });
@@ -324,44 +332,9 @@ i {
   margin-left: 5px;
   margin-top: 5px;
 }
-
-//.card-img {
-//  border-radius: 5px;
-//  width: 100%;
-//  height: auto;
-//  min-height: 100%;
-//  object-fit: cover;
-//  transition: opacity 0.3s ease;
-//  cursor: pointer;
-//}
-//
-//.card-img:hover {
-//  opacity: 0.3; /* Set transparency on hover */
-//
-//}
-//
-//.card:hover::after {
-//  content: 'Delete'; /* Display the word 'Delete' */
-//  position: absolute;
-//  top: 50%;
-//  left: 50%;
-//  transform: translate(-50%, -50%);
-//  font-size: 1.5em;
-//  color: #fff;
-//  text-shadow: 0 0 8px rgba(0, 0, 0, 0.6); /* Enhance visibility */
-//  opacity: 1;
-//  z-index: 100;
-//  cursor: pointer;
-//}
-//
-//.img-fluid {
-//  width: 100%;
-//  max-width: 100%;
-//  height: auto;
-//}
 .image-card {
-  width: 10rem;
-  height: 8rem;
+  width: 9rem;
+  height: 7rem;
   position: relative;
   margin: 0.5rem;
 }
@@ -372,26 +345,34 @@ i {
   object-fit: cover;
   border-radius: 5px;
   transition: opacity 0.3s ease;
-  cursor: pointer;
   border: 1px black solid;
 }
 
 .image-card:hover .card-img {
-  opacity: 0.3;
+  opacity: 1;
 }
-
-.image-card:hover::after {
+.image-card.creator-mode:hover .card-img {
+  opacity: 0.4; /* Apply opacity only if creator */
+}
+.image-card::after {
+  content: '';
+  display: none; /* Hide by default */
+}
+.image-card.creator-mode:hover::after {
   content: 'Delete';
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 1.5em;
+  font-size: 1.2em;
   color: #fff;
   text-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
   opacity: 1;
   z-index: 100;
   cursor: pointer;
+  display: block;
+  color: rgba(255, 30, 0, 0.99);
+  font-weight: bold;
 }
 
 .img-fluid {
@@ -399,15 +380,18 @@ i {
   max-width: 100%;
   height: auto;
 }
+.clickable {
+  cursor: pointer; /* Changes cursor to pointer to indicate it's clickable */
+}
 .btn {
   width: auto;
   font-size: 1em;
   border-radius: 5px;
   box-shadow: 0 2px 5px rgba(44, 62, 80, 0.10);
-  font-weight: bold;
   margin-top: 0.5em;
   margin-bottom: 0.2em;
   border: 1px solid #2c3e50;
+  font-weight: bold;
 }
 </style>
 
