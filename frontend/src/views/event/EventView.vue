@@ -21,14 +21,17 @@
               </div>
               <p class="card-text"><i class="bi bi-chat-left-text-fill"></i><strong>Description:</strong> {{ event.description }}</p>
               <p class="card-text"><i class="bi bi-people-fill"></i><strong>Enrolled Participants:</strong> {{ participants.length }}/{{ event.participationLimit }}</p>
+<!--              <div class="row g-2">-->
+<!--                <div class="card" style="width: 10rem;height: 8rem;" v-for="image in event.images" :key="image.key">-->
+<!--                  <img :src="getImageUrl(image)" :alt="`Event Image ${image.key}`" class="card-img">-->
+<!--                </div>-->
+<!--              </div>-->
               <div class="row g-2">
-                <div class="card" style="width: 10rem;height: 8rem;" v-for="image in event.images" :key="image.key">
+                <div class="image-card" v-for="image in event.images" :key="image.key" @click="toRemoveImage(image.key)">
                   <img :src="getImageUrl(image)" :alt="`Event Image ${image.key}`" class="card-img">
                 </div>
-<!--                <div class="card add-remove-card" style="width: 10rem; height: 8rem;" @click="toEditImage" v-if="isCreator">-->
-<!--                  <div class="card-content">+</div>-->
-<!--                </div>-->
               </div>
+
               <div class="d-grid gap-2" v-if="!isCreator">
                 <button class="btn btn-outline-primary" type="button" @click="toRegisterEvent" v-if="!isJoined & !isFullyOccupied">Join</button>
                 <button class="btn btn-outline-warning" type="button" @click="toUnRegisterEvent" v-if="isJoined">Unregister</button>
@@ -54,7 +57,8 @@ export default {
       event: null,
       source: INTEREST_TAGS,
       eventId: this.$route.params.eventId,
-      participants: null
+      participants: null,
+      imageDetails: []
     };
   },
   computed: {
@@ -86,12 +90,19 @@ export default {
       return this.event && this.participants.includes(userId);
     },
     isFullyOccupied() {
-      return this.event.participationLimit == this.participants.length;
+      return (this.event.participationLimit == this.participants.length);
     }
   },
   created() {
     this.fetchEventData();
     this.fetchParticipants();
+  },
+  watch: {
+    event(newVal) {
+      if (newVal) {
+        this.extractImageDetails();
+      }
+    }
   },
   methods: {
     fetchEventData() {
@@ -108,6 +119,14 @@ export default {
           .catch(error => {
             console.error("There was an error fetching the event details:", error);
           });
+    },
+    extractImageDetails() {
+      if (this.event && this.event.images) {
+        this.imageDetails = this.event.images.map(image => ({
+          bucket: image.bucket,
+          key: image.key
+        }));
+      }
     },
     fetchParticipants() {
       const eventId = this.$route.params.eventId;
@@ -156,9 +175,29 @@ export default {
         }
       }
     },
-    async toEditImage() {
+    async toRemoveImage(key) {
       const eventId = this.$route.params.eventId;
-      await this.$router.push({name: "EditImage", params:{eventId}});
+      this.imageDetails = this.imageDetails.filter(detail => detail.key !== key);
+      const updateImagesRequest = {
+        images: this.imageDetails.map(image => ({
+          bucket: image.bucket,
+          key: image.key
+        }))
+      };
+      if (confirm('Are you sure you want to delete the image?')) {
+        try {
+          await axios.patch(`${BASE_URL_EVENT_SERVICE}/events/${eventId}/images`, updateImagesRequest, {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
+            }
+          });
+          console.log('Delete images successfully');
+          this.fetchEventData();
+        } catch (error) {
+          console.error('Error deleting images:', error);
+        }
+      }
     },
     toRegisterEvent() {
       const eventId = this.$route.params.eventId;
@@ -200,16 +239,14 @@ export default {
             alert('Failed to unregister the event.');
           });
     }
-  },
-};
+  }
+}
 </script>
 <style lang="scss" scoped>
 .container {
   width: 80vw;
   max-width: 1200px;
   margin: auto;
-  //padding: 20px;
-  font-family: Arial, 'Roboto', sans-serif;
 }
 
 @media (max-width: 768px) {
@@ -218,12 +255,14 @@ export default {
     padding: 10px;
   }
   .add-remove-card {
-    font-size: 2em; // Smaller plus sign on mobile devices
+    font-size: 2em;
   }
 }
+
 i {
   margin-right: 1em;
 }
+
 .card-header {
   background: #2c3e50;
   padding: 20px 10px;
@@ -245,16 +284,16 @@ i {
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(44, 62, 80, 0.15);
   position: relative;
-  overflow: hidden;  /* hide the part over the card size */
+  overflow: hidden;
   display: flex;
-  align-items: center; /* vertically centered */
-  justify-content: center; /* horizontally centered */
+  align-items: center;
+  justify-content: center;
 }
 
 .card-body {
-  //padding: 20px;
   text-align: left;
 }
+
 .card-text {
   font-size: 1.3em;
   margin-bottom: 10px;
@@ -267,8 +306,7 @@ i {
   margin-right: 0.5em;
   margin-bottom: 0.5em;
   border-radius: 5px;
-  white-space: nowrap;
-  align-items: center; /* 垂直居中 */
+  align-items: center;
 }
 
 .tags-container {
@@ -285,75 +323,92 @@ i {
   align-items: center;
   margin-left: 5px;
   margin-top: 5px;
-;
+}
+
+//.card-img {
+//  border-radius: 5px;
+//  width: 100%;
+//  height: auto;
+//  min-height: 100%;
+//  object-fit: cover;
+//  transition: opacity 0.3s ease;
+//  cursor: pointer;
+//}
+//
+//.card-img:hover {
+//  opacity: 0.3; /* Set transparency on hover */
+//
+//}
+//
+//.card:hover::after {
+//  content: 'Delete'; /* Display the word 'Delete' */
+//  position: absolute;
+//  top: 50%;
+//  left: 50%;
+//  transform: translate(-50%, -50%);
+//  font-size: 1.5em;
+//  color: #fff;
+//  text-shadow: 0 0 8px rgba(0, 0, 0, 0.6); /* Enhance visibility */
+//  opacity: 1;
+//  z-index: 100;
+//  cursor: pointer;
+//}
+//
+//.img-fluid {
+//  width: 100%;
+//  max-width: 100%;
+//  height: auto;
+//}
+.image-card {
+  width: 10rem;
+  height: 8rem;
+  position: relative;
+  margin: 0.5rem;
 }
 
 .card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   border-radius: 5px;
-  width: 100%;    /* 默认宽度为容器宽度 */
-  height: auto;   /* 高度自动，保持原始长宽比 */
-  min-height: 100%; /* 确保图片至少和容器一样高 */
-  object-fit: cover; /* 覆盖整个容器，多余的部分将被裁剪 */
+  transition: opacity 0.3s ease;
+  cursor: pointer;
+  border: 1px black solid;
+}
+
+.image-card:hover .card-img {
+  opacity: 0.3;
+}
+
+.image-card:hover::after {
+  content: 'Delete';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.5em;
+  color: #fff;
+  text-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
+  opacity: 1;
+  z-index: 100;
+  cursor: pointer;
 }
 
 .img-fluid {
   width: 100%;
-  max-width: 100%; /* Full width within its container */
+  max-width: 100%;
   height: auto;
 }
-
-.row g-2 {
-  margin: 2px;
-}
-
 .btn {
-  //margin: 10px 5px;
-  width: auto; /* Adjust width to fit content */
-  //padding: 10px 20px;
+  width: auto;
   font-size: 1em;
-  border: none;
   border-radius: 5px;
   box-shadow: 0 2px 5px rgba(44, 62, 80, 0.10);
   font-weight: bold;
   margin-top: 0.5em;
   margin-bottom: 0.2em;
-  //background: white;
   border: 1px solid #2c3e50;
 }
-.add-remove-card {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 3em;  // 大号加号
-  color: #2c3e50;  // 颜色匹配
-  cursor: pointer;
-  position: relative; // 为伪元素定位提供基准
-  overflow: hidden;   // 隐藏溢出的文本
-
-  .card-content {
-    transition: opacity 0.3s ease, transform 0.3s ease; // 平滑变换
-    opacity: 1; // 默认显示
-  }
-
-  &:hover .card-content {
-    opacity: 0;  // 隐藏加号
-    transform: scale(0.1); // 缩小加号
-  }
-
-  &:hover::after {
-    content: 'Add/Remove';
-    position: absolute;  // 绝对定位使文本居中
-    top: 50%;  // 垂直居中
-    left: 50%;  // 水平居中
-    transform: translate(-50%, -50%); // 精确居中
-    font-size: 0.4em;  // 文本大小适中
-    font-weight: bold;
-    color: #2c3e50;  // 文本颜色
-    transition: opacity 0.3s ease; // 平滑显示
-    opacity: 1; // 确保在hover时显示
-    white-space: nowrap;  // 防止文本折行
-  }
-}
-
 </style>
+
 

@@ -64,10 +64,17 @@ public class EventService {
         var existedEvent = eventRepository.findByEventIdAndIsDeletedFalse(eventId)
                 .orElseThrow(() -> new ResourceNotFoundException("Event", "eventId", eventId.toString(),
                         Collections.singletonList("This event may have been deleted or does not exist.")));
-        if (eventDetails.getTags() != null) {
-            existedEvent.getTags().clear();
-        }
         modelMapper.map(eventDetails, existedEvent);
+        Event savedEvent = eventRepository.save(existedEvent);
+        return eventPacker.packEvent(savedEvent);
+    }
+    @Transactional
+    public EventDto updateImages(UUID eventId, Event eventDetails) {
+        var existedEvent = eventRepository.findByEventIdAndIsDeletedFalse(eventId)
+                .orElseThrow(() -> new ResourceNotFoundException("Event", "eventId", eventId.toString(),
+                        Collections.singletonList("This event may have been deleted or does not exist.")));
+        existedEvent.getImages().clear();
+        existedEvent.getImages().addAll(eventDetails.getImages());
         Event savedEvent = eventRepository.save(existedEvent);
         return eventPacker.packEvent(savedEvent);
     }

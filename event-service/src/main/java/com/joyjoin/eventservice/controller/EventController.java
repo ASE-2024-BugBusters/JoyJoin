@@ -108,6 +108,11 @@ public class EventController {
         return new ResponseEntity<>(eventService.updateEvent(eventId, event), HttpStatus.OK);
     }
 
+    @PatchMapping("/{eventId}/images")
+    public ResponseEntity<EventDto> updateImages(@PathVariable UUID eventId, @RequestBody UpdateEventRequest request) {
+        Event event = modelMapper.map(request, Event.class);
+        return new ResponseEntity<>(eventService.updateImages(eventId, event), HttpStatus.OK);
+    }
     /**
      * Deletes an event by its ID.
      *
