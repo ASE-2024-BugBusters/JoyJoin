@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" v-if="finishLoaded">
     <div class="row">
       <!--Left section: Image (Slide images)-->
       <div class="col-md-7 d-flex justify-content-center align-items-center">
@@ -11,15 +11,16 @@
         <!--Username-->
         <div class="left-right-content-container">
           <div class="left-content">
-            <img class="user-image" src="../../assets/camera-icon.png" alt="User Profile Picture">
+            <img class="user-image" v-if="!post.user.avatar" src="../../assets/Default_User_Icon.png" alt="User Profile Picture" @click="navigateToUserProfile(post.user.id)">
+            <img class="user-image" v-else :src="post.user.avatar.urls[0].url"  alt="User Profile Picture" @click="navigateToUserProfile(post.user.id)">
             <div class="user-info">
               <div class="username" v-if="post.user"> {{ post.user.id }}</div>
-              <div class="post-info">
-                <span v-if="post.taggedEvent">{{ post.taggedEvent.title }}</span>
+              <div class="post-info" :class="isEditMode? 'post-info-edit' : ''">
+                <span class="navigate-info" v-if="post.taggedEvent" @click="navigateToEvent(post.taggedEvent.eventId)" title="Navigate to Event Information">{{ post.taggedEvent.title }}</span>
                 <span v-else-if="!post.taggedEvent && isEditMode">No event is binded</span>
                 <font-awesome-icon v-if="isEditMode" class="post-icon post-info-icon" :icon="['fas', 'edit']" title="Edit Event" @click="openPostEventModal"/>
               </div>
-              <div class="post-info" v-if="post.taggedUsers">
+              <div class="post-info" v-if="post.taggedUsers" :class="isEditMode? 'post-info-edit' : ''">
                 <span v-if="post.taggedUsers.length">With {{ taggedusername }}
                   <span class="taggedPeopleMore" v-if="taggedUsersSeeMore" @click="openTaggedPeopleModal">...more</span>
                 </span>
@@ -55,9 +56,13 @@
       </div>
     </div>
   </div>
+  <div v-else>
+    <LoadView></LoadView>
+  </div>
   <PostTag ref="postTagModal" :taggedpeople="post.taggedUsers" @saveTags="savedTags"></PostTag>
   <PostEvent ref="postEventModal" @saveTagEvent="savedTagEvent"></PostEvent>
   <AllUsersModal ref="postTaggedPeopleModal" :users="post.taggedUsers" :header="tagpeopleHeader"></AllUsersModal>
+
 </template>
 
 <script>
@@ -72,11 +77,12 @@ import Share from '@/components/Posts/Share.vue';
 import {BASE_URL_POST_SERVICE} from "../../../config/dev.env";
 import axios from "axios";
 import PostEvent from "@/views/posts/PostEvent.vue";
+import LoadView from "../../components/Loader/LoadView.vue";
 
 export default {
   components: {
     PostEvent,
-    ImageSlider, PopupContent, PostComments, PostTotalLikes, PostTag, AllUsersModal, Share
+    ImageSlider, PopupContent, PostComments, PostTotalLikes, PostTag, AllUsersModal, Share, LoadView
   },
   data() {
     return {
@@ -87,7 +93,8 @@ export default {
       taggedUsersSeeMore: false,
       tagpeopleHeader: "Tagged People",
       usernameListMaximumLength: 25,
-      post: {}
+      post: {},
+      finishLoaded: false
     }
   },
   created() {
@@ -108,6 +115,7 @@ export default {
       })
           .then(response => {
             this.post = response.data;
+            this.finishLoaded = true;
           })
           .catch(error => {
             console.error("[fetchPostInfoAPI] There was an error fetching the post's information:", error);
@@ -215,6 +223,14 @@ export default {
     },
     openTaggedPeopleModal() {
       return this.$refs.postTaggedPeopleModal.show();
+    },
+    // Method: Navigate to user Profile
+    navigateToUserProfile(userId){
+      // this.$router.push({name: 'profile'})
+    },
+    // Method: Navigate to Event's information
+    navigateToEvent(eventId){
+      this.$router.push({name: "EventView", params: { eventId: eventId }});
     }
   },
   computed: {
@@ -268,8 +284,10 @@ export default {
 }
 
 .post-info {
-  color: darkgray;
   font-size: 13px;
+}
+.post-info-edit {
+  color: darkgray;
 }
 
 .post-comments-container {
@@ -340,4 +358,11 @@ textarea {
   justify-content: space-between;
   align-items: center;
 }
+.navigate-info{
+  cursor: pointer;
+}
+.navigate-info:hover{
+  font-weight: bold;
+}
+
 </style>

@@ -23,7 +23,6 @@
         <router-link v-if="jwt" to="/profile" class="navbar-item noTextDecoration" style="text-decoration: none">Profile</router-link>
         <router-link v-if="jwt" to="/post/create" class="navbar-item noTextDecoration" style="text-decoration: none">Create New Post</router-link>
         <router-link v-if="jwt" to="/events/create" class="navbar-item noTextDecoration" style="text-decoration: none">Publish Event</router-link>
-        <router-link v-if="jwt" to="/posts" class="navbar-item noTextDecoration" style="text-decoration: none">All Posts</router-link>
       </div>
       <div class="navbar-end">
         <div v-if="!jwt" class="navbar-item">

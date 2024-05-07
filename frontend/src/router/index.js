@@ -1,9 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import CreatePost from "../views/posts/CreatePost.vue";
 import NotificationIcon from "@/components/Notification/NotificationIcon.vue";
-import PostView from "@/views/posts/PostView.vue";
 import ProfileView from "@/views/profile/ProfileView.vue";
+
 
 const routes = [
   {
@@ -72,7 +71,7 @@ const routes = [
   {
     path: "/post/create",
     name: "createPost",
-    component: CreatePost,
+    component: () => import('../views/posts/CreatePost.vue'),
     beforeEnter: (to, from, next) => {
       if (sessionStorage.getItem("jwtToken") && sessionStorage.getItem("userId")) {
         next();
@@ -101,7 +100,7 @@ const routes = [
   {
     path: "/post/:id",
     name: "post",
-    component: PostView,
+    component: () => import('../views/posts/PostView.vue'),
     beforeEnter: (to, from, next) => {
       if (sessionStorage.getItem("jwtToken") && sessionStorage.getItem("userId")) {
         next();
@@ -145,7 +144,7 @@ const routes = [
         next({name: 'home'})
       }
     }
-  }
+  },
 ]
 
 const router = createRouter({

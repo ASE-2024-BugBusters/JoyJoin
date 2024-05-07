@@ -20,14 +20,19 @@
       <router-link :to="{ name: 'EditProfile' }" class="btn btn-primary">Edit</router-link>
     </div>
   </div>
+
+  <!--User's All Posts-->
+  <UserAllPosts></UserAllPosts>
 </template>
 
 <script>
 import axios from 'axios'
 import {BASE_URL_USER_SERVICE, INTEREST_TAGS} from "../../../config/dev.env";
+import UserAllPosts from "@/components/Posts/UserAllPosts.vue"
 
 export default {
   name: 'UserProfile',
+  components: {UserAllPosts},
   data() {
     return {
       userProfile: null

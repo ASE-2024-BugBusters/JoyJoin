@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" v-if="finishLoaded">
     <div class="row" v-if="posts.length">
       <div class="col-4 d-flex justify-content-center align-items-center" v-for="post in posts" :key="post.id" @click="navigateToPost(post.id)">
         <div class="image-container">
@@ -13,16 +13,22 @@
       There is no posts.
     </div>
   </div>
+  <div class="container" v-else>
+    <LoadView></LoadView>
+  </div>
 </template>
 
 <script>
 import {BASE_URL_POST_SERVICE} from "../../../config/dev.env";
 import axios from "axios";
+import LoadView from "@/components/Loader/LoadView.vue";
 
 export default {
+  components: {LoadView},
     data() {
         return {
             posts: [],
+            finishLoaded: false
         };
     },
     created(){
@@ -41,6 +47,7 @@ export default {
         })
             .then(response => {
               this.posts = response.data;
+              this.finishLoaded = true;
             })
             .catch(error => {
               console.error("[fetchAllPostsByUserIdAPI] There was an error fetching the all posts:", error);
@@ -57,6 +64,10 @@ export default {
 </script>
 
 <style scoped>
+.container{
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
 .image-container {
     position: relative;
     width: 100%;
