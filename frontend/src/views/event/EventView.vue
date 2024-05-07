@@ -10,31 +10,34 @@
             <div class="card-body">
               <p class="card-text"><i class="bi bi-calendar-check"></i><strong>Time:</strong> {{ formattedDateTime }}</p>
               <p class="card-text"><i class="bi bi-geo-alt-fill"></i><strong>Location:</strong> {{ event.location.street }} {{ event.location.number }}, {{ event.location.city }}</p>
-              <p class="card-text"><i class="bi bi-people-fill"></i><strong>Enrolled Participants:</strong> {{ event.participants.length }}</p>
-              <p class="card-text"><i class="bi bi-people-fill"></i><strong>Participation Limit:</strong> {{ event.participationLimit }}</p>
-              <p class="card-text"><i class="bi bi-braces-asterisk"></i><strong>Description:</strong> {{ event.description }}</p>
               <div class="card-text">
                 <div class="tags-container">
                   <i class="bi bi-tags-fill"></i>
-                  <strong>Tags:</strong>
+                  <strong>Category:</strong>
                   <div class="tag-badges">
                     <span class="badge" v-for="label in tagLabels" :key="label">{{ label }}</span>
                   </div>
                 </div>
               </div>
+              <p class="card-text"><i class="bi bi-chat-left-text-fill"></i><strong>Description:</strong> {{ event.description }}</p>
+              <p class="card-text"><i class="bi bi-people-fill"></i><strong>Enrolled Participants:</strong> {{ participants.length }}/{{ event.participationLimit }}</p>
+<!--              <div class="row g-2">-->
+<!--                <div class="card" style="width: 10rem;height: 8rem;" v-for="image in event.images" :key="image.key">-->
+<!--                  <img :src="getImageUrl(image)" :alt="`Event Image ${image.key}`" class="card-img">-->
+<!--                </div>-->
+<!--              </div>-->
               <div class="row g-2">
-                <div class="card" style="width: 10rem;height: 8rem;" v-for="image in event.images" :key="image.key">
-                  <img :src="getImageUrl(image)" :alt="`Event Image ${image.key}`" class="card-img">
-                </div>
-                <div class="card add-remove-card" style="width: 10rem; height: 8rem;" @click="toEditImage">
-                  <div class="card-content">+</div>
+                <div class="image-card" v-for="image in event.images" :key="image.key" @click="isCreator ? toRemoveImage(image.key) : null" :class="{ 'creator-mode': isCreator }">
+                  <img :src="getImageUrl(image)" :alt="`Event Image ${image.key}`" class="card-img" :class="{ 'clickable': isCreator }">
                 </div>
               </div>
+
               <div class="d-grid gap-2" v-if="!isCreator">
-                <button class="btn btn-outline-primary" type="button" @click="toRegisterEvent" v-if="!isJoined & !isFullyOccupied">Join</button>
+                <button class="btn btn-outline-success" type="button" @click="toRegisterEvent" v-if="!isJoined & !isFullyOccupied">Join</button>
                 <button class="btn btn-outline-warning" type="button" @click="toUnRegisterEvent" v-if="isJoined">Unregister</button>
               </div>
               <div class="d-grid gap-2" v-if="isCreator">
+                <button class="btn btn-outline-secondary" type="button" @click="toUploadImages">Upload Images</button>
                 <button class="btn btn-outline-info" type="button" @click="toEditEvent">Edit</button>
                 <button class="btn btn-outline-danger" type="button" @click="toDeleteEvent">Delete</button>
               </div>
@@ -54,7 +57,9 @@ export default {
     return {
       event: null,
       source: INTEREST_TAGS,
-      eventId: this.$route.params.eventId
+      eventId: this.$route.params.eventId,
+      participants: [],
+      imageDetails: []
     };
   },
   computed: {
@@ -82,15 +87,23 @@ export default {
     isJoined() {
       const userId = sessionStorage.getItem('userId');
       console.log("userId from sessionStorage:", userId); // Debugging
-      console.log("Event participants:", this.event ? this.event.participants : "Event not loaded");
-      return this.event && this.event.participants.includes(userId);
+      console.log("Event participants:", this.event ? this.participants : "Event not loaded");
+      return this.event && this.participants.includes(userId);
     },
     isFullyOccupied() {
-      return this.event.participationLimit == this.event.participants.length;
+      return (this.event.participationLimit == this.participants.length);
     }
   },
   created() {
     this.fetchEventData();
+    this.fetchParticipants();
+  },
+  watch: {
+    event(newVal) {
+      if (newVal) {
+        this.extractImageDetails();
+      }
+    }
   },
   methods: {
     fetchEventData() {
@@ -108,6 +121,29 @@ export default {
             console.error("There was an error fetching the event details:", error);
           });
     },
+    extractImageDetails() {
+      if (this.event && this.event.images) {
+        this.imageDetails = this.event.images.map(image => ({
+          bucket: image.bucket,
+          key: image.key
+        }));
+      }
+    },
+    fetchParticipants() {
+      const eventId = this.$route.params.eventId;
+      axios.get(`${BASE_URL_EVENT_SERVICE}/events/${eventId}/participants`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
+        }
+      })
+          .then(response => {
+            this.participants = response.data;
+          })
+          .catch(error => {
+            console.error("There was an error fetching the event participants:", error);
+          });
+    },
     getImageUrl(image) {
       return image.urls[0].url;
     },
@@ -123,13 +159,20 @@ export default {
         console.error('Error navigating to edit event page:', error);
       }
     },
+    async toUploadImages() {
+      try {
+        await this.$router.push({name: "EditImage", params: this.eventId});
+      } catch (error) {
+        console.error('Error navigating to upload image page:', error);
+      }
+    },
     async toDeleteEvent() {
       const eventId = this.$route.params.eventId;
       if (confirm('Are you sure you want to delete the event?')) {
         try {
           await axios.delete(`${BASE_URL_EVENT_SERVICE}/events/${eventId}`, {
             headers: {
-              // 'Content-Type': 'application/json',
+              'Content-Type': 'application/json',
               'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
             }
           });
@@ -140,9 +183,29 @@ export default {
         }
       }
     },
-    async toEditImage() {
+    async toRemoveImage(key) {
       const eventId = this.$route.params.eventId;
-      await this.$router.push({name: "EditImage", params:{eventId}});
+      this.imageDetails = this.imageDetails.filter(detail => detail.key !== key);
+      const updateImagesRequest = {
+        images: this.imageDetails.map(image => ({
+          bucket: image.bucket,
+          key: image.key
+        }))
+      };
+      if (confirm('Are you sure you want to delete the image?')) {
+        try {
+          await axios.patch(`${BASE_URL_EVENT_SERVICE}/events/${eventId}/images`, updateImagesRequest, {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
+            }
+          });
+          console.log('Delete images successfully');
+          this.fetchEventData();
+        } catch (error) {
+          console.error('Error deleting images:', error);
+        }
+      }
     },
     toRegisterEvent() {
       const eventId = this.$route.params.eventId;
@@ -157,6 +220,7 @@ export default {
             alert('You have successfully joined the event!');
             // Refresh event data by re-fetching the details
             this.fetchEventData();
+            this.fetchParticipants();
           })
           .catch(error => {
             console.error("Error joining event:", error);
@@ -176,22 +240,21 @@ export default {
             alert('You have successfully unregistered the event!');
             // Refresh event data by re-fetching the details
             this.fetchEventData();
+            this.fetchParticipants();
           })
           .catch(error => {
             console.error("Error unregistering event:", error);
             alert('Failed to unregister the event.');
           });
     }
-  },
-};
+  }
+}
 </script>
 <style lang="scss" scoped>
 .container {
   width: 80vw;
   max-width: 1200px;
   margin: auto;
-  //padding: 20px;
-  font-family: Arial, 'Roboto', sans-serif;
 }
 
 @media (max-width: 768px) {
@@ -200,12 +263,14 @@ export default {
     padding: 10px;
   }
   .add-remove-card {
-    font-size: 2em; // Smaller plus sign on mobile devices
+    font-size: 2em;
   }
 }
+
 i {
   margin-right: 1em;
 }
+
 .card-header {
   background: #2c3e50;
   padding: 20px 10px;
@@ -227,16 +292,16 @@ i {
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(44, 62, 80, 0.15);
   position: relative;
-  overflow: hidden;  /* hide the part over the card size */
+  overflow: hidden;
   display: flex;
-  align-items: center; /* vertically centered */
-  justify-content: center; /* horizontally centered */
+  align-items: center;
+  justify-content: center;
 }
 
 .card-body {
-  //padding: 20px;
   text-align: left;
 }
+
 .card-text {
   font-size: 1.3em;
   margin-bottom: 10px;
@@ -249,8 +314,7 @@ i {
   margin-right: 0.5em;
   margin-bottom: 0.5em;
   border-radius: 5px;
-  white-space: nowrap;
-  align-items: center; /* 垂直居中 */
+  align-items: center;
 }
 
 .tags-container {
@@ -267,75 +331,68 @@ i {
   align-items: center;
   margin-left: 5px;
   margin-top: 5px;
-;
+}
+.image-card {
+  width: 9rem;
+  height: 7rem;
+  position: relative;
+  margin: 0.5rem;
 }
 
 .card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   border-radius: 5px;
-  width: 100%;    /* 默认宽度为容器宽度 */
-  height: auto;   /* 高度自动，保持原始长宽比 */
-  min-height: 100%; /* 确保图片至少和容器一样高 */
-  object-fit: cover; /* 覆盖整个容器，多余的部分将被裁剪 */
+  transition: opacity 0.3s ease;
+  border: 1px black solid;
+}
+
+.image-card:hover .card-img {
+  opacity: 1;
+}
+.image-card.creator-mode:hover .card-img {
+  opacity: 0.4; /* Apply opacity only if creator */
+}
+.image-card::after {
+  content: '';
+  display: none; /* Hide by default */
+}
+.image-card.creator-mode:hover::after {
+  content: 'Delete';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.2em;
+  color: #fff;
+  text-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
+  opacity: 1;
+  z-index: 100;
+  cursor: pointer;
+  display: block;
+  color: rgba(255, 30, 0, 0.99);
+  font-weight: bold;
 }
 
 .img-fluid {
   width: 100%;
-  max-width: 100%; /* Full width within its container */
+  max-width: 100%;
   height: auto;
 }
-
-.row g-2 {
-  margin: 2px;
+.clickable {
+  cursor: pointer; /* Changes cursor to pointer to indicate it's clickable */
 }
-
 .btn {
-  //margin: 10px 5px;
-  width: auto; /* Adjust width to fit content */
-  //padding: 10px 20px;
+  width: auto;
   font-size: 1em;
-  border: none;
   border-radius: 5px;
   box-shadow: 0 2px 5px rgba(44, 62, 80, 0.10);
-  font-weight: bold;
   margin-top: 0.5em;
   margin-bottom: 0.2em;
-  //background: white;
   border: 1px solid #2c3e50;
+  font-weight: bold;
 }
-.add-remove-card {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 3em;  // 大号加号
-  color: #2c3e50;  // 颜色匹配
-  cursor: pointer;
-  position: relative; // 为伪元素定位提供基准
-  overflow: hidden;   // 隐藏溢出的文本
-
-  .card-content {
-    transition: opacity 0.3s ease, transform 0.3s ease; // 平滑变换
-    opacity: 1; // 默认显示
-  }
-
-  &:hover .card-content {
-    opacity: 0;  // 隐藏加号
-    transform: scale(0.1); // 缩小加号
-  }
-
-  &:hover::after {
-    content: 'Add/Remove';
-    position: absolute;  // 绝对定位使文本居中
-    top: 50%;  // 垂直居中
-    left: 50%;  // 水平居中
-    transform: translate(-50%, -50%); // 精确居中
-    font-size: 0.4em;  // 文本大小适中
-    font-weight: bold;
-    color: #2c3e50;  // 文本颜色
-    transition: opacity 0.3s ease; // 平滑显示
-    opacity: 1; // 确保在hover时显示
-    white-space: nowrap;  // 防止文本折行
-  }
-}
-
 </style>
+
 

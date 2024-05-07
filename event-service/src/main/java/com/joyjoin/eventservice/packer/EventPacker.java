@@ -26,13 +26,6 @@ public class EventPacker {
 
     public EventDto packEvent(Event event) {
         EventDto res = modelMapper.map(event, EventDto.class);
-//        List<String> tagNames = Collections.emptyList();
-//        if (event.getTags() != null && !event.getTags().isEmpty()) {
-//            tagNames = event.getTags().stream()
-//                    .map(Enum::name)
-//                    .collect(Collectors.toList());
-//        }
-//        res.setTags(tagNames);
         res.setImages(imagePacker.packImage(event.getImages(), LocalDateTime.now().plusDays(1)));
         return res;
     }
