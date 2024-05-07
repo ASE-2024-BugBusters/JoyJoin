@@ -22,4 +22,5 @@ public class PostDto {
     private UUID taggedEventId;
     private List<UUID> likedUsersId;
     private List<Image> images;
+    private LocalDateTime createdOn;
 }

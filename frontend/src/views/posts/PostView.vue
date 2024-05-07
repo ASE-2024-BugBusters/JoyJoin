@@ -42,6 +42,9 @@
         <!--Caption-->
         <textarea class="post-caption" :class="isEditMode? 'post-caption-edit' : ''" v-model="post.caption" ref="post_caption" :readonly="!isEditMode"></textarea>
 
+        <!--Created On-->
+        <div class="post-create-time">Created on: {{formattedDateTime}}</div>
+
         <!--Likes & Share-->
         <div class="post-likes-share">
           <PostTotalLikes :postId="postId"></PostTotalLikes>
@@ -242,6 +245,14 @@ export default {
         this.taggedUsersSeeMore = true;
       }
       return username_list
+    },
+    // Format post.CreatedOn to "May 7, 2024 at 08:12 PM"
+    formattedDateTime() {
+      const date = new Date(this.post.createdOn);
+      return date.toLocaleString('en-US', {
+        year: 'numeric', month: 'long', day: 'numeric',
+        hour: '2-digit', minute: '2-digit', hour12: true
+      });
     }
   }
 }
@@ -308,7 +319,7 @@ textarea {
   justify-content: space-between;
   padding: 10px;
   margin: 10px auto;
-  min-height: 150px;
+  min-height: 120px;
   color: black;
   width: 100%;
   border: 0;
@@ -363,6 +374,12 @@ textarea {
 }
 .navigate-info:hover{
   font-weight: bold;
+}
+.post-create-time{
+  font-size: 13px;
+  color: darkgray;
+  padding-left: 10px;
+  font-style: italic;
 }
 
 </style>

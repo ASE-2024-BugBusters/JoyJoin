@@ -253,7 +253,7 @@ export default{
 .slider-wrapper .image-list {
   display: grid;
   gap: 18px;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(9, 1fr);
   overflow-x: auto;
   scrollbar-width: none;
   margin-top: 20px;

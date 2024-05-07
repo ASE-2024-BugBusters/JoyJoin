@@ -114,17 +114,20 @@ export default {
             messageIcon: ['fas', 'check-circle'],
             messageIconColor: 'green',
           });
-          // Automatically close success message modal after 3 seconds
-          setTimeout(() => {
-            this.$refs.successDialogue._cancel();
-            this.$router.push({name: 'home'})
-          }, 2000);
 
           // Upload Images into AWS_S3
           await this.$refs.imagePreview.uploadImages();
 
           // Post API send to database
           this.createNewPostAPI();
+
+          // Automatically close success message modal after 3 seconds
+          setTimeout(() => {
+            this.$refs.successDialogue._cancel();
+            this.$router.push({name: 'profile'})
+          }, 2000);
+
+
 
         }, 0)
       }

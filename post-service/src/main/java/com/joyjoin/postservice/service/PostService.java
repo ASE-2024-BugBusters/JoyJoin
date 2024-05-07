@@ -112,7 +112,12 @@ public class PostService {
     }
 
     public List<PostDto> getAllPostsForUserId(UUID userId){
-        List<Post> posts = postRepository.findAll().stream().filter(post -> post.getUserId().equals(userId)).toList();
+//        List<Post> posts = postRepository.findAll().stream().filter(post -> post.getUserId().equals(userId)).toList();
+        List<Post> posts = postRepository.findAll()
+                .stream()
+                .filter(post -> post.getUserId().equals(userId))
+                .sorted(Comparator.comparing(Post:: getCreatedOn).reversed())
+                .toList();
         return posts.stream().map(postPacker::packPost).collect(Collectors.toList());
     }
 
@@ -143,6 +148,7 @@ public class PostService {
         postWithUser.setId(postDto.getId());
         postWithUser.setCaption(postDto.getCaption());
         postWithUser.setImages(postDto.getImages());
+        postWithUser.setCreatedOn(postDto.getCreatedOn());
 
         // Step3.1: Map user information to (postDto.userId)
         UserDto _user = findUserById(usersInfo, postDto.getUserId());
@@ -188,7 +194,13 @@ public class PostService {
 
 
     public List<CommentWithUserInfoDto> getAllCommentsForPostId(String token, UUID postId) {
-        List<Comment> comments = commentRepository.findAll().stream().filter(comment -> comment.getPostId().equals(postId)).toList();
+//        List<Comment> comments = commentRepository.findAll().stream().filter(comment -> comment.getPostId().equals(postId)).toList();
+
+        List<Comment> comments = commentRepository.findAll()
+                .stream()
+                .filter(comment -> comment.getPostId().equals(postId))
+                .sorted(Comparator.comparing(Comment:: getCreatedOn))
+                .toList();
 
         List<CommentWithUserInfoDto> result = new ArrayList<>();
 

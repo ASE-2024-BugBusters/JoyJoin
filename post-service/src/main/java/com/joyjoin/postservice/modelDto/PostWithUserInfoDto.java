@@ -3,6 +3,7 @@ package com.joyjoin.postservice.modelDto;
 import com.joyjoin.postservice.model.Image;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,4 +20,5 @@ public class PostWithUserInfoDto {
     private EventDto taggedEvent;
 //    private List<UserDto> likedUsers;
     private List<Image> images;
+    private LocalDateTime createdOn;
 }
