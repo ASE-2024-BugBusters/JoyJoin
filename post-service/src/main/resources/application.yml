@@ -12,7 +12,6 @@ spring:
     url: "jdbc:postgresql://localhost:5435/postService"
     username: "postgres"
     password: "bEBaGQk+RLTEBydI"
-
   jpa:
     show-sql: false
     hibernate:
@@ -24,6 +23,12 @@ spring:
 
   aop:
     proxy-target-class: true
+
+  http:
+    cors:
+      allowed-origins: "*"
+      allowed-methods: "*"
+      allowed-headers: "*"
 
 management:
   endpoint:

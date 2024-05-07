@@ -1,6 +1,7 @@
 package com.joyjoin.postservice.controller;
 
-import com.joyjoin.eventservice.exception.ResourceNotFoundException;
+import com.joyjoin.postservice.controller.dto.GetImgUploadUrlResponse;
+import com.joyjoin.postservice.exception.ResourceNotFoundException;
 import com.joyjoin.postservice.controller.dto.CreatePostCommentRequest;
 import com.joyjoin.postservice.controller.dto.CreatePostRequest;
 import com.joyjoin.postservice.controller.dto.LikePostRequest;
@@ -9,13 +10,13 @@ import com.joyjoin.postservice.model.Comment;
 import com.joyjoin.postservice.model.Post;
 import com.joyjoin.postservice.modelDto.*;
 import com.joyjoin.postservice.service.PostService;
-import com.joyjoin.postservice.service.ImageService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,14 +27,12 @@ public class PostController {
 
     private final PostService postService;
 
-    private final ImageService imageService;
 
     private final ModelMapper modelMapper;
 
     @Autowired
-    public PostController(PostService postService, ImageService imageService, ModelMapper modelMapper) {
+    public PostController(PostService postService, ModelMapper modelMapper) {
         this.postService = postService;
-        this.imageService = imageService;
         this.modelMapper = modelMapper;
     }
 
@@ -77,6 +76,17 @@ public class PostController {
         Post post = modelMapper.map(request, Post.class);
         PostDto createdPost = postService.createPost(post);
         return new ResponseEntity<>(createdPost, HttpStatus.CREATED);
+    }
+
+    /**
+     * Provides an upload URL for an event image that expires in 30 minutes.
+     *
+     * @return the response containing the URL and expiration information
+     */
+    @GetMapping("/get_upload_image_url")
+    public GetImgUploadUrlResponse getImgUploadUrl() {
+        var expireTime = LocalDateTime.now().plusMinutes(30);
+        return new GetImgUploadUrlResponse(postService.getImgUploadInformation(expireTime));
     }
 
     // (5): Update Post

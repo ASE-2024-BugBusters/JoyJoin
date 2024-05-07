@@ -1,6 +1,5 @@
 package com.joyjoin.postservice.service;
 
-import com.joyjoin.eventservice.model.Event;
 import com.joyjoin.postservice.exception.ResourceNotFoundException;
 import com.joyjoin.postservice.controller.dto.LikePostRequest;
 import com.joyjoin.postservice.controller.dto.UpdatePostRequest;
@@ -36,11 +35,11 @@ public class PostService {
     RestTemplate restTemplate;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
-    private final ModelMapper modelMapper;
-
     private final ImageService imageService;
-
+    private final ModelMapper modelMapper;
     private final PostPacker postPacker;
+
+    static final String POST_BUCKET = "postimg";
 
     public PostService(PostRepository postRepository, CommentRepository commentRepository, ModelMapper modelMapper, ImageService imageService, PostPacker postPacker) {
         this.postRepository = postRepository;
@@ -50,13 +49,12 @@ public class PostService {
         this.postPacker = postPacker;
     }
 
-    static final String EVENT_BUCKET = "post_img";
     public Image getImgUploadInformation(LocalDateTime expireTime) {
         String key = String.valueOf(UUID.randomUUID());
         LocalDateTime now = LocalDateTime.now();
-        String uploadUrl = imageService.getPreSignedUrlForUpload(EVENT_BUCKET, key, Duration.between(now, expireTime));
+        String uploadUrl = imageService.getPreSignedUrlForUpload(POST_BUCKET, key, Duration.between(now, expireTime));
         ImageUrl imageUploadUrl = new ImageUrl(uploadUrl, expireTime);
-        return new Image(EVENT_BUCKET, key, List.of(imageUploadUrl));
+        return new Image(POST_BUCKET, key, List.of(imageUploadUrl));
     }
 
     public PostDto createPost(Post post) {
@@ -121,14 +119,15 @@ public class PostService {
     @Transactional
     public PostWithUserInfoDto getPostById(String token, UUID id) {
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "id", id.toString()));
+        PostDto postDto = postPacker.packPost(post);
 
-        // Step1: Create a new list to store userIds (post.userId, post.taggedUserIds)
+        // Step1: Create a new list to store userIds (postDto.userId, postDto.taggedUserIds)
         List<UUID> userIdsList = new ArrayList<>();
 
-        if(post.getTaggedUsersId() != null){
-            userIdsList.addAll(post.getTaggedUsersId());
+        if(postDto.getTaggedUsersId() != null){
+            userIdsList.addAll(postDto.getTaggedUsersId());
         }
-        userIdsList.add(post.getUserId());
+        userIdsList.add(postDto.getUserId());
 
         // Store distinct values only
         String userIds = userIdsList.stream()
@@ -139,20 +138,21 @@ public class PostService {
         // Step2: Call getUsers API to retrieve User's information, including id, username, image, bios
         List<UserDto> usersInfo = getUsersInfoAPI(token, userIds);
 
-        // Step3: Map user information to (post.userId, post.taggedUserIds, post.likedUsersId)
+        // Step3: Map user information to (postDto.userId, postDto.taggedUserIds, postDto.likedUsersId)
         PostWithUserInfoDto postWithUser = new PostWithUserInfoDto();
-        postWithUser.setId(post.getId());
-        postWithUser.setCaption(post.getCaption());
+        postWithUser.setId(postDto.getId());
+        postWithUser.setCaption(postDto.getCaption());
+        postWithUser.setImages(postDto.getImages());
 
-        // Step3.1: Map user information to (post.userId)
-        UserDto _user = findUserById(usersInfo, post.getUserId());
+        // Step3.1: Map user information to (postDto.userId)
+        UserDto _user = findUserById(usersInfo, postDto.getUserId());
         if (_user != null){
             postWithUser.setUser(_user);
         }
 
-        // Step3.2: Map user information to (post.taggedUserIds)
+        // Step3.2: Map user information to (postDto.taggedUserIds)
         List<UserDto> _taggedpeople = new ArrayList<UserDto>();
-        for (UUID userId : post.getTaggedUsersId()) {
+        for (UUID userId : postDto.getTaggedUsersId()) {
             UserDto _userInfo = findUserById(usersInfo, userId);
             if (_userInfo != null) {
                 _taggedpeople.add(_userInfo);
@@ -160,19 +160,9 @@ public class PostService {
         }
         postWithUser.setTaggedUsers(_taggedpeople);
 
-//        // Step3.3: Map user information to (post.taggedUserIds)
-//        List<UserDto> _likedusers = new ArrayList<UserDto>();
-//        for (UUID userId : post.getLikedUsersId()) {
-//            UserDto _userInfo = findUserById(usersInfo, userId);
-//            if (_userInfo != null) {
-//                _likedusers.add(_userInfo);
-//            }
-//        }
-//        postWithUser.setLikedUsers(_likedusers);
-
         // Step4: Map eventId to event, to retrieve its title
-        if (post.getTaggedEventId() != null) {
-            EventDto eventInfo = getEventInfoAPI(token, post.getTaggedEventId().toString());
+        if (postDto.getTaggedEventId() != null) {
+            EventDto eventInfo = getEventInfoAPI(token, postDto.getTaggedEventId().toString());
             if (eventInfo != null) {
                 postWithUser.setTaggedEvent(eventInfo);
             }

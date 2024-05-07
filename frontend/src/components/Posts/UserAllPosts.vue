@@ -4,8 +4,7 @@
       <div class="col-4 d-flex justify-content-center align-items-center" v-for="post in posts" :key="post.id" @click="navigateToPost(post.id)">
         <div class="image-container">
           <div style="cursor:pointer">
-<!--            <img :src="image.url" class="img-fluid mb-3" alt="Image">-->
-            <img src="../../assets/camera-icon.png" class="img-fluid mb-3" alt="Image">
+            <img :src="post.images[0].urls[0].url" class="img-fluid mb-3" alt="Image">
           </div>
         </div>
       </div>
@@ -24,13 +23,6 @@ export default {
     data() {
         return {
             posts: [],
-            images: [
-              { url: require('@/assets/camera-icon.png') },
-              { url: require('@/assets/camera-icon.png') },
-              { url: require('@/assets/camera-icon.png') },
-              { url: require('@/assets/camera-icon.png') },
-                // Add more image URLs as needed
-            ]
         };
     },
     created(){
@@ -57,7 +49,8 @@ export default {
       // Method: Navigate to specific post
       navigateToPost(postId) {
         this.$router.push({ name: 'post', params: { id: postId } });
-      }
+      },
+
     }
 
 }
@@ -80,7 +73,7 @@ export default {
   right: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain; /* Ensure the image fits within the container */
+  object-fit: cover; /* Ensure the image fits within the container */
 }
 .row>*{
     padding-left:2.5px;

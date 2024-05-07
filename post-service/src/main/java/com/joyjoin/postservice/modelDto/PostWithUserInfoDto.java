@@ -1,5 +1,6 @@
 package com.joyjoin.postservice.modelDto;
 
+import com.joyjoin.postservice.model.Image;
 import lombok.*;
 
 import java.util.List;
@@ -17,5 +18,5 @@ public class PostWithUserInfoDto {
     private List<UserDto> taggedUsers;
     private EventDto taggedEvent;
 //    private List<UserDto> likedUsers;
-//    private List<Image> images;
+    private List<Image> images;
 }

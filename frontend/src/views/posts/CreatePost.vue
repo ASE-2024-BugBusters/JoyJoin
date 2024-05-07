@@ -101,12 +101,12 @@ export default {
       }
       return valid;
     },
-    createNewPost() {
+    async createNewPost() {
       // Logic to post the data
       const valid = this.validateFields();
       if (valid){
         //Return back to homepage
-        setTimeout(() => {
+        setTimeout(async () => {
           // Show success message modal
           this.$refs.successDialogue.show({
             title: 'Succesfully Create Post',
@@ -119,8 +119,13 @@ export default {
             this.$refs.successDialogue._cancel();
             this.$router.push({name: 'home'})
           }, 2000);
-          //Post API send to database
+
+          // Upload Images into AWS_S3
+          await this.$refs.imagePreview.uploadImages();
+
+          // Post API send to database
           this.createNewPostAPI();
+
         }, 0)
       }
     },
@@ -136,12 +141,16 @@ export default {
       if(this.taggedEvent){
         _tevent = this.taggedEvent.eventId;
       }
+
+      console.log("[createNewPostAPI]..... images: " + this.images);
+
       // Creating POST-Json
       const data = {
         userId: this.currentUser,
         caption: this.caption,
         taggedUsersId: _tuser,
-        taggedEventId: _tevent
+        taggedEventId: _tevent,
+        images: this.images,
       };
       // Calling the API
       const createPostUrl = BASE_URL_POST_SERVICE + "/posts/create";
@@ -169,7 +178,7 @@ export default {
     savedTagEvent(temp_taggedevent){
       this.taggedEvent = structuredClone(toRaw(temp_taggedevent))
       this.$refs.postEventModal._cancel()
-    }
+    },
   },
   computed: {
     taggedusername() {

@@ -1,10 +1,11 @@
 package com.joyjoin.postservice.packer;
 
 import com.joyjoin.postservice.model.Post;
+import com.joyjoin.postservice.modelDto.PostDto;
 import com.joyjoin.postservice.model.Comment;
 import com.joyjoin.postservice.modelDto.CommentDto;
 import com.joyjoin.postservice.packer.ImagePacker;
-import com.joyjoin.postservice.modelDto.PostDto;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -30,7 +31,9 @@ public class PostPacker {
 //                    .collect(Collectors.toList());
 //        }
 //        res.setTags(tagNames);
+
 //        res.setImages(imagePacker.packImage(post.getImages(), LocalDateTime.now().plusDays(1)));
+        res.setImages(imagePacker.packImage(post.getImages(), LocalDateTime.now().plusDays(1)));
         return res;
     }
 

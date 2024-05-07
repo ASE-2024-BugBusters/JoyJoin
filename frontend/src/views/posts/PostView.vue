@@ -3,7 +3,7 @@
     <div class="row">
       <!--Left section: Image (Slide images)-->
       <div class="col-md-7 d-flex justify-content-center align-items-center">
-        <ImageSlider />
+        <ImageSlider :images="post.images"/>
       </div>
 
       <!--Right section: Caption, Tags, Events, Likes, Comment-->

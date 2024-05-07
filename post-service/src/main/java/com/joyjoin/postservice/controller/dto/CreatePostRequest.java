@@ -25,5 +25,5 @@ public class CreatePostRequest {
     private List<UUID> taggedUsersId;
     private UUID taggedEventId;
     private List<UUID> likedUsersId;
-//    private List<ImageRef> images;
+    private List<ImageRef> images;
 }

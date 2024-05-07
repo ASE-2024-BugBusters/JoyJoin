@@ -100,7 +100,7 @@ const routes = [
   },
   {
     path: "/post/:id",
-    name: "postView",
+    name: "post",
     component: PostView,
     beforeEnter: (to, from, next) => {
       if (sessionStorage.getItem("jwtToken") && sessionStorage.getItem("userId")) {
@@ -136,7 +136,7 @@ const routes = [
   },
   {
     path: "/posts",
-    name: "AllPosts",
+    name: "posts",
     component: () => import('../components/Posts/UserAllPosts.vue'),
     beforeEnter: (to, from, next) => {
       if (sessionStorage.getItem("jwtToken") && sessionStorage.getItem("userId")) {
