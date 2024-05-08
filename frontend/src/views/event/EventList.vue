@@ -3,7 +3,7 @@
     <h1 class="subtitle is-3" v-if="events.length > 0">Check Out Upcoming Events</h1>
     <div v-if="events.length > 0" class="columns is-multiline">
       <div v-for="event in events" :key="event.eventId" class="column is-one-quarter">
-        <EventCard :event="event" @click.native="goToEvent(event.eventId)" />
+        <EventCard :event="event" @image-clicked="goToEvent" />
       </div>
     </div>
     <div v-else class="no-events">
