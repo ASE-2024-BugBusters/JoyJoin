@@ -38,7 +38,7 @@ public class EventController {
      *
      * @param eventService             the service to handle the event logic
      * @param modelMapper              the tool to map between DTOs and entities
-     * @param eventRegistrationService
+     * @param eventRegistrationService the service to handle the event registration logic
      */
     @Autowired
     public EventController(EventService eventService, ModelMapper modelMapper, EventRegistrationService eventRegistrationService) {

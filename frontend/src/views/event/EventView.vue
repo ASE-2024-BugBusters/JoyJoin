@@ -8,24 +8,52 @@
               <h1 class="card-title">{{ event.title }}</h1>
             </div>
             <div class="card-body">
-              <p class="card-text"><i class="bi bi-calendar-check"></i><strong>Time:</strong> {{ formattedDateTime }}</p>
-              <p class="card-text"><i class="bi bi-geo-alt-fill"></i><strong>Location:</strong> {{ event.location.street }} {{ event.location.number }}, {{ event.location.city }}</p>
+              <p class="card-text">
+                <i class="bi bi-calendar-check-fill"></i>
+                <span class="label"><strong>Date</strong></span>
+                <span class="content">{{ formattedDate }}</span>
+              </p>
+              <p class="card-text">
+                <i class="bi bi-alarm-fill"></i>
+                <span class="label"><strong>Time:</strong></span>
+                <span class="content">{{ formattedTime }}</span>
+              </p>
+              <p class="card-text">
+                <i class="bi bi-geo-alt-fill"></i>
+                <span class="label"><strong>Location:</strong></span>
+                <span class="content">
+                  {{ event.location.street }} {{ event.location.number }}, {{ event.location.postalCode }} {{ event.location.city }}
+                </span>
+              </p>
               <div class="card-text">
                 <div class="tags-container">
                   <i class="bi bi-tags-fill"></i>
-                  <strong>Category:</strong>
-                  <div class="tag-badges">
+                  <span class="label"><strong>Category:</strong></span>
+                  <span class="content">
+                                      <div class="tag-badges">
                     <span class="badge" v-for="label in tagLabels" :key="label">{{ label }}</span>
                   </div>
+                  </span>
                 </div>
               </div>
-              <p class="card-text"><i class="bi bi-chat-left-text-fill"></i><strong>Description:</strong> {{ event.description }}</p>
-              <p class="card-text"><i class="bi bi-people-fill"></i><strong>Enrolled Participants:</strong> {{ participants.length }}/{{ event.participationLimit }}</p>
-<!--              <div class="row g-2">-->
-<!--                <div class="card" style="width: 10rem;height: 8rem;" v-for="image in event.images" :key="image.key">-->
-<!--                  <img :src="getImageUrl(image)" :alt="`Event Image ${image.key}`" class="card-img">-->
-<!--                </div>-->
-<!--              </div>-->
+              <p class="card-text">
+                <i class="bi bi-chat-left-text-fill"></i>
+                <span class="label"><strong>Description:</strong></span>
+                <span class="content">
+                  {{ event.description }}
+                </span>
+              </p>
+              <p class="card-text">
+                <i class="bi bi-people-fill"></i>
+                <span class="label"><strong>Participants:</strong></span>
+                <span class="content">
+                  {{ participants.length }} / {{ event.participationLimit }}
+                </span>
+              </p>
+              <p class="card-text">
+                <i class="bi bi-images"></i>
+                <span class="label"><strong>Event Images:</strong></span>
+              </p>
               <div class="row g-2">
                 <div class="image-card" v-for="image in event.images" :key="image.key" @click="isCreator ? toRemoveImage(image.key) : null" :class="{ 'creator-mode': isCreator }">
                   <img :src="getImageUrl(image)" :alt="`Event Image ${image.key}`" class="card-img" :class="{ 'clickable': isCreator }">
@@ -37,7 +65,8 @@
                 <button class="btn btn-outline-warning" type="button" @click="toUnRegisterEvent" v-if="isJoined">Unregister</button>
               </div>
               <div class="d-grid gap-2" v-if="isCreator">
-                <button class="btn btn-outline-secondary" type="button" @click="toUploadImages">Upload Images</button>
+                <button class="btn btn-outline-secondary" type="button" @click="toUploadImages" v-if="event.images.length > 0">Update Images</button>
+                <button class="btn btn-outline-secondary" type="button" @click="toUploadImages" v-if="event.images.length == 0">Upload Images</button>
                 <button class="btn btn-outline-info" type="button" @click="toEditEvent">Edit</button>
                 <button class="btn btn-outline-danger" type="button" @click="toDeleteEvent">Delete</button>
               </div>
@@ -63,12 +92,18 @@ export default {
     };
   },
   computed: {
-    formattedDateTime() {
+    formattedTime() {
       if (!this.event || !this.event.time) return '';
       const date = new Date(this.event.time);
       return date.toLocaleString('en-US', {
-        year: 'numeric', month: 'long', day: 'numeric',
-        hour: '2-digit', minute: '2-digit', hour12: true
+        hour: '2-digit', minute: '2-digit', hour12: false
+      });
+    },
+    formattedDate() {
+      if (!this.event || !this.event.time) return '';
+      const date = new Date(this.event.time);
+      return date.toLocaleString('en-US', {
+        year: 'numeric', month: 'long', day: 'numeric'
       });
     },
     tagLabels() {
@@ -255,8 +290,11 @@ export default {
   width: 80vw;
   max-width: 1200px;
   margin: auto;
+  font-weight: bold;
 }
-
+.col-lg-7 {
+  width: 75%;
+}
 @media (max-width: 768px) {
   .container {
     width: 95vw;
@@ -280,10 +318,11 @@ i {
 
 .card-title {
   color: white;
-  font-size: 2.5em;
+  font-size: 3.5em;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  font-weight: bold;
 }
 
 .card {
@@ -293,9 +332,6 @@ i {
   box-shadow: 0 2px 5px rgba(44, 62, 80, 0.15);
   position: relative;
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .card-body {
@@ -304,10 +340,24 @@ i {
 
 .card-text {
   font-size: 1.3em;
-  margin-bottom: 10px;
   text-align: left;
+  align-items: center;
+}
+.label {
+  font-weight: bold;
+  font-size: 1em;
+  color: #2c3e50;
+  display: inline;
+  margin-right: 0.8em;
+  cursor: default;
 }
 
+.content {
+  color: black;
+  font-size: 1em;
+  font-weight: bold;
+  display: inline;
+}
 .badge {
   background: #2c3e50;
   color: white;

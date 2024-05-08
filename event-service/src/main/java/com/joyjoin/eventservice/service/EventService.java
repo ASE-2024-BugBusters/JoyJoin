@@ -79,7 +79,7 @@ public class EventService {
      */
     @Transactional
     public List<EventDto> getAllEvents() {
-        List<Event> events = eventRepository.findByIsDeletedFalse();
+        List<Event> events = eventRepository.findByIsDeletedFalseAndIsExpiredFalse();
         return events.stream().map(eventPacker::packEvent).collect(Collectors.toList());
     }
 
@@ -92,7 +92,7 @@ public class EventService {
      */
     @Transactional
     public EventDto getEventById(UUID eventId) {
-        var event = eventRepository.findByEventIdAndIsDeletedFalse(eventId)
+        var event = eventRepository.findByEventIdAndIsDeletedFalseAndIsExpiredFalse(eventId)
                 .orElseThrow(() -> new ResourceNotFoundException("Event", "eventId", eventId.toString(),
                         Collections.singletonList("This event may have been deleted or does not exist.")));
         return eventPacker.packEvent(event);
@@ -108,7 +108,7 @@ public class EventService {
      */
     @Transactional
     public EventDto updateEvent(UUID eventId, Event eventDetails) {
-        var existedEvent = eventRepository.findByEventIdAndIsDeletedFalse(eventId)
+        var existedEvent = eventRepository.findByEventIdAndIsDeletedFalseAndIsExpiredFalse(eventId)
                 .orElseThrow(() -> new ResourceNotFoundException("Event", "eventId", eventId.toString(),
                         Collections.singletonList("This event may have been deleted or does not exist.")));
         modelMapper.map(eventDetails, existedEvent);
@@ -126,7 +126,7 @@ public class EventService {
      */
     @Transactional
     public EventDto updateImages(UUID eventId, Event eventDetails) {
-        var existedEvent = eventRepository.findByEventIdAndIsDeletedFalse(eventId)
+        var existedEvent = eventRepository.findByEventIdAndIsDeletedFalseAndIsExpiredFalse(eventId)
                 .orElseThrow(() -> new ResourceNotFoundException("Event", "eventId", eventId.toString(),
                         Collections.singletonList("This event may have been deleted or does not exist.")));
         existedEvent.getImages().clear();
@@ -144,7 +144,7 @@ public class EventService {
      */
     @Transactional
     public EventDto deleteEvent(UUID eventId) {
-        Event event = eventRepository.findByEventIdAndIsDeletedFalse(eventId)
+        Event event = eventRepository.findByEventIdAndIsDeletedFalseAndIsExpiredFalse(eventId)
                 .orElseThrow(() -> new ResourceNotFoundException("Event", "eventId", eventId.toString(),
                         Collections.singletonList("This event may have been deleted or does not exist.")));
         event.setDeleted(true);

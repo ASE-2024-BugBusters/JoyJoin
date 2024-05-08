@@ -1,12 +1,16 @@
 <template>
-  <div class="event-card" @click="$emit('click')">
-    <div class="card-image">
-      <img :src="imageUrl" alt="Event Image">
+  <div class="card">
+    <img class="card-img-top" :src="imageUrl" alt="Event Image" @click="$emit('click')">
+    <div class="card-body">
+      <h4 class="card-title">{{ event.title }}</h4>
     </div>
-    <div class="card-content">
-      <h2 class="event-title">{{ event.title }}</h2>
-      <p class="event-date-time">{{ formattedDateTime }}</p>
-      <p class="event-location">{{ event.location.street }} {{ event.location.number }}, {{ event.location.city }} {{ event.location.postalCode }}</p>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">{{ formattedDateTime }}</li>
+      <li class="list-group-item">{{ event.location.street }} {{ event.location.number }}, {{ event.location.city }} {{ event.location.postalCode }}</li>
+    </ul>
+    <div class="card-body">
+      <span @click="" class="card-link"><i class="bi bi-bookmark-plus-fill"></i></span>
+      <span @click="" class="card-link"><i class="bi bi-share-fill"></i></span>
     </div>
   </div>
 </template>
@@ -30,52 +34,37 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.event-card {
-  border: 1px solid #e0e0e0;
-  border-radius: 10px;
-  overflow: hidden;
-  margin-bottom: 25px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease;
-
-  &:hover {
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    cursor: pointer;
+<style scoped>
+  .card {
+    border: 1.2px solid rgba(0, 0, 0, 0.37);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+    font-weight: bold;
   }
-}
-
-.card-image img {
+  .card:hover {
+   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.8);
+   cursor: pointer;
+  }
+  .card-title {
+    font-size: 1.5em;
+    font-weight: 1000;
+    margin: 0;
+  }
+  .card-img-top {
   width: 100%;
   display: block;
   height: 180px;
   object-fit: cover;
-}
-
-.card-content {
-  padding: 15px;
-  background: #ffffff;
-  text-align: left;
-
-  .event-title {
-    font-size: 1.3em;
-    font-weight: 1000;
-    color: #333;
-    margin-bottom: 8px;
+  border-bottom: solid black 0.5px;
   }
-
-  .event-date, .event-time, .event-location {
-    font-weight: 900;
-    font-size: 1.2em;
-    color: #555;
-    margin: 1px 0;
+  i {
+    margin: 3em;
   }
-
-  .event-location {
-    font-weight: 700;
-    font-size: 1.2em;
-    margin-top: 7px;
+  .card-link > i {
+    font-size: 1.1em; /* 调整为更大的尺寸，您可以根据需要修改这个值 */
   }
-}
 </style>
 
