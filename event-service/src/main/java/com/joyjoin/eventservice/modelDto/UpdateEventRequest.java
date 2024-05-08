@@ -23,7 +23,5 @@ public class UpdateEventRequest {
     private LocationDto location;
     private Integer participationLimit;
     private String description;
-    private List<String> tags;
     private List<ImageRef> images;
-    private List<UUID> participants;
 }

@@ -77,7 +77,8 @@
           </div>
           <div class="field">
             <div class="control">
-              <button class="button is-primary">Publish</button>
+              <button type="button" class="btn btn-outline-secondary"@click="toHomePage">Home Page</button>
+              <button type="button" class="btn btn-outline-success"@click="publish">Publish</button>
             </div>
           </div>
         </form>
@@ -113,6 +114,9 @@ export default {
       let now = new Date();
       return now.toISOString().substring(0, 16); // YYYY-MM-DDTHH:MM format
     });
+    const toHomePage = () => {
+      router.push({path: "/"});
+    };
     const publish = async () => {
         const imagesPayload = uploadedImages.value.length > 0 ? uploadedImages.value.map(image => ({
           bucket: image.bucket,
@@ -149,7 +153,7 @@ export default {
     console.log(createEventUrl);
     const response = await axios.post(createEventUrl, data, {
       headers: {
-        // 'Content-Type': 'application/json',
+        'Content-Type': 'application/json',
         'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
       }
     });
@@ -214,7 +218,7 @@ export default {
 
 
     return {
-      title, time, location, participationLimit, description, publish, multiValue, source,minDateTime
+      title, time, location, participationLimit, description, publish, multiValue, source,minDateTime, toHomePage
     };
   }
 }
@@ -246,5 +250,13 @@ export default {
 .field {
   flex-grow: 1;
   min-width: 300px;
+}
+.control {
+  display: grid;
+  grid-auto-flow: column;
+  gap: 10px;  /* This sets the gap between any grid items */
+}
+.btn {
+  font-weight: bold;
 }
 </style>
