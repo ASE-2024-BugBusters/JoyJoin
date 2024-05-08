@@ -10,7 +10,7 @@
             <div class="card-body">
               <p class="card-text">
                 <i class="bi bi-calendar-check-fill"></i>
-                <span class="label"><strong>Date</strong></span>
+                <span class="label"><strong>Date:</strong></span>
                 <span class="content">{{ formattedDate }}</span>
               </p>
               <p class="card-text">
@@ -50,9 +50,9 @@
                   {{ participants.length }} / {{ event.participationLimit }}
                 </span>
               </p>
-              <p class="card-text">
+              <p class="card-text" v-if="event.images.length > 0">
                 <i class="bi bi-images"></i>
-                <span class="label"><strong>Event Images:</strong></span>
+                <span class="label"><strong>Images:</strong></span>
               </p>
               <div class="row g-2">
                 <div class="image-card" v-for="image in event.images" :key="image.key" @click="isCreator ? toRemoveImage(image.key) : null" :class="{ 'creator-mode': isCreator }">
@@ -291,6 +291,7 @@ export default {
   max-width: 1200px;
   margin: auto;
   font-weight: bold;
+  overflow-y: hidden;
 }
 .col-lg-7 {
   width: 75%;
@@ -298,10 +299,13 @@ export default {
 @media (max-width: 768px) {
   .container {
     width: 95vw;
-    padding: 10px;
+    padding: 8px;
   }
   .add-remove-card {
     font-size: 2em;
+  }
+  .card-title {
+    font-size: 1.5em; /* 在小屏幕上减小字体大小 */
   }
 }
 
@@ -313,16 +317,18 @@ i {
   background: #2c3e50;
   padding: 20px 10px;
   width: 100%;
+  display: flex;
   justify-content: center;
+  flex-wrap: wrap;
 }
 
 .card-title {
   color: white;
-  font-size: 3.5em;
+  font-size: 2.5em;
   overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  font-weight: bold;
+  line-height: 1.2;
+  text-align: center;
+  width: 100%;
 }
 
 .card {
@@ -347,7 +353,7 @@ i {
   font-weight: bold;
   font-size: 1em;
   color: #2c3e50;
-  display: inline;
+  display: inline-flex;
   margin-right: 0.8em;
   cursor: default;
 }
