@@ -50,7 +50,7 @@
                   {{ participants.length }} / {{ event.participationLimit }}
                 </span>
               </p>
-              <p class="card-text">
+              <p class="card-text" v-if="event.images.length > 0">
                 <i class="bi bi-images"></i>
                 <span class="label"><strong>Event Images:</strong></span>
               </p>
