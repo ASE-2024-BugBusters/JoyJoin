@@ -10,7 +10,7 @@
     </ul>
     <div class="card-body">
       <span @click="" class="card-link"><i class="bi bi-bookmark-plus-fill"></i></span>
-      <span @click="" class="card-link"><i class="bi bi-share-fill"></i></span>
+      <span @click="copyLink" class="card-link"><i class="bi bi-share-fill"></i></span>
     </div>
   </div>
 </template>
@@ -30,10 +30,38 @@ export default {
       const timeString = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
       return `${dateString} AT ${timeString}`;
     },
+    shareUrl() {
+      const baseUrl = window.location.origin;
+      return `${baseUrl}/event/${this.event.eventId}`;
+    }
   },
   methods: {
     emitClickEvent() {
       this.$emit('image-clicked', this.event.eventId);
+    },
+    copyLink() {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(this.shareUrl)
+            .then(() => {
+              alert('Share link is copied to the clipboard!');
+            })
+            .catch(err => {
+              console.error('Fail to copy link to clipboard: ', err);
+            });
+      } else {
+        const textArea = document.createElement('textarea');
+        textArea.value = this.shareUrl;
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+          document.execCommand('copy');
+          alert('Share link is copied to the clipboard!');
+        } catch (err) {
+          console.error('Fail to copy link to clipboard: ', err);
+        }
+        document.body.removeChild(textArea);
+      }
     }
   }
 };
