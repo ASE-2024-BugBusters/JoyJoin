@@ -60,6 +60,7 @@ export default {
 .events {
   margin-top: 100px;
   text-align: center;
+  overflow-y: hidden;
 }
 h1 {
   font-weight: bold;
