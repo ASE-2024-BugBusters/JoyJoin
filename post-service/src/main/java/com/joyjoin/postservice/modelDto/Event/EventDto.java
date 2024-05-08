@@ -1,7 +1,6 @@
-package com.joyjoin.postservice.modelDto;
+package com.joyjoin.postservice.modelDto.Event;
 
-import com.joyjoin.eventservice.model.Image;
-import com.joyjoin.eventservice.modelDto.LocationDto;
+import com.joyjoin.postservice.model.Image;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

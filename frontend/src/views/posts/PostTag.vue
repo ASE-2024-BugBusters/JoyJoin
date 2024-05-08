@@ -42,6 +42,7 @@ export default {
   components: { TaggedUsers, AllUsers, PopupModal },
   data(){
     return {
+      currentUser: sessionStorage.getItem('userId'),
       search: '',
       users: [],
       temp_taggedpeople: []
@@ -51,11 +52,13 @@ export default {
     this.getAllUsersAPI();
   },
   computed: {
+    // Method: Display AllUsers (right)
     searchingUsers() {
       if(this.users) {
         return this.users.filter(user => {
-          return user.id.includes(this.search) &&
-              !this.temp_taggedpeople.some(taggedUser => taggedUser.id === user.id);
+          return user.id.includes(this.search) && // AllUser should according to search
+              !this.temp_taggedpeople.some(taggedUser => taggedUser.id === user.id) && // AllUser should not appear in the taggedUser
+              user.id !== this.currentUser; // AllUser should not include currentUser
         });
       }
     }

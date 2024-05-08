@@ -1,5 +1,6 @@
 package com.joyjoin.postservice.modelDto;
 
+import com.joyjoin.postservice.modelDto.User.UserDto;
 import lombok.*;
 
 import java.time.LocalDateTime;

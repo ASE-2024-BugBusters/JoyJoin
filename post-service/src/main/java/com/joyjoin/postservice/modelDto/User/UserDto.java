@@ -1,11 +1,9 @@
-package com.joyjoin.postservice.modelDto;
+package com.joyjoin.postservice.modelDto.User;
 
 
-import com.joyjoin.userservice.model.Image;
-import com.joyjoin.userservice.model.InterestTag;
-import com.joyjoin.userservice.model.ProfileVisibility;
-import com.joyjoin.userservice.modelDto.userPostDto.PostDto;
-import com.joyjoin.userservice.security.model.Role;
+
+import com.joyjoin.postservice.model.Image;
+import com.joyjoin.postservice.modelDto.PostDto;
 import lombok.*;
 
 import java.time.LocalDateTime;

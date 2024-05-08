@@ -9,6 +9,7 @@ import com.joyjoin.postservice.controller.dto.UpdatePostRequest;
 import com.joyjoin.postservice.model.Comment;
 import com.joyjoin.postservice.model.Post;
 import com.joyjoin.postservice.modelDto.*;
+import com.joyjoin.postservice.modelDto.User.UserDto;
 import com.joyjoin.postservice.service.PostService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

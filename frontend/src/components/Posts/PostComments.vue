@@ -5,7 +5,8 @@
       <div v-for="comment in comments" :key="comment.id">
         <div class="post-comment">
           <div class="left-content">
-            <img class="user-image comment-user-image" src="../../assets/camera-icon.png" alt="User Profile Picture"/>
+            <img class="user-image comment-user-image" v-if="!comment.user.avatar" src="../../assets/Default_User_Icon.png" alt="User Profile Picture"/>
+            <img class="user-image comment-user-image" v-else :src="comment.user.avatar.urls[0].url" alt="User Profile Picture"/>
             <div class="user-info comment-font">
               <div class="username">{{ comment.user.id }}</div>
               <div class="post-info">{{ comment.comment }}</div>
@@ -24,7 +25,7 @@
 
   <!--Add a comment-->
   <div class="post-comment post-add-comment">
-    <textarea v-model="leave_comment" placeholder="Leave a comment..." required></textarea>
+    <textarea v-model="leave_comment" placeholder="Leave a comment..." @keydown.enter="submitCommentAPI" required></textarea>
     <button class="button-wrapper" :disabled="!leave_comment">
       <font-awesome-icon :icon="['fas', 'paper-plane']" @click="submitCommentAPI"  />
     </button>
@@ -83,6 +84,7 @@ export default {
           postId: this.postId,
           comment: this.leave_comment
         };
+        this.leave_comment = '' // Clear the comment
         const createCommentUrl = BASE_URL_POST_SERVICE + "/posts/comments/create";
         await axios.post(createCommentUrl, data, {
             headers: {
@@ -90,7 +92,6 @@ export default {
             }
           })
               .then(response => {
-                this.leave_comment = ''
                 this.$nextTick(() => {
                   this.fetchAllCommentsByPostIdAPI("smooth");
                 });

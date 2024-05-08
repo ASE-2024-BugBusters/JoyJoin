@@ -11,8 +11,8 @@
         <!--Username-->
         <div class="left-right-content-container">
           <div class="left-content">
-            <img class="user-image" v-if="!post.user.avatar" src="../../assets/Default_User_Icon.png" alt="User Profile Picture" @click="navigateToUserProfile(post.user.id)">
-            <img class="user-image" v-else :src="post.user.avatar.urls[0].url"  alt="User Profile Picture" @click="navigateToUserProfile(post.user.id)">
+            <img class="user-image" v-if="!post.user.avatar" src="../../assets/Default_User_Icon.png" alt="User Profile Picture" @click="navigateToUserProfile(post.user.id)" />
+            <img class="user-image" v-else :src="post.user.avatar.urls[0].url"  alt="User Profile Picture" @click="navigateToUserProfile(post.user.id)" />
             <div class="user-info">
               <div class="username" v-if="post.user"> {{ post.user.id }}</div>
               <div class="post-info" :class="isEditMode? 'post-info-edit' : ''">
@@ -184,14 +184,16 @@ export default {
             messageIconColor: 'green',
           });
 
+          // Delete the post in database
+          this.deletePostAPI();
+
           // Automatically close success message modal after 3 seconds
           setTimeout(() => {
             this.$refs.confirmDialogue._cancel();
-            this.$router.push({name: 'home'})
+            this.$router.push({name: 'profile'});
           }, 2000);
 
-          // Delete the post in database
-          this.deletePostAPI();
+
 
         }, 0)
       }

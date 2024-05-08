@@ -124,7 +124,7 @@ export default {
           // Automatically close success message modal after 3 seconds
           setTimeout(() => {
             this.$refs.successDialogue._cancel();
-            this.$router.push({name: 'profile'})
+            this.$router.push({name: 'profile'});
           }, 2000);
 
 

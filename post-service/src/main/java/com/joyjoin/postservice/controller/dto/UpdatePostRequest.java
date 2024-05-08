@@ -1,6 +1,5 @@
 package com.joyjoin.postservice.controller.dto;
 
-import com.joyjoin.eventservice.modelDto.LocationDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

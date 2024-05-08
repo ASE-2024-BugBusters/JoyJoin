@@ -5,7 +5,8 @@
             <div class="create-post-div">
                 <div class="left-content">
                     <!-- <img class="user-image" :src="user.image" >  -->
-                    <img class="user-image" src="../../assets/camera-icon.png" alt="User Profile Picture">
+                    <img class="user-image" v-if="!user.avatar" src="../../assets/Default_User_Icon.png" alt="User Profile Picture">
+                    <img class="user-image" v-else :src="user.avatar.urls[0].url" alt="User Profile Picture">
                     <div class="user-info">
                         <div class="username">{{ user.id }}</div>
                         <div class="bios">{{user.biography }}</div>
@@ -62,6 +63,7 @@ export default {
 }
 .right-content{
   min-width: 25px;
+  margin-top: 5px;
 }
 .user-image {
   display: inline-block;
