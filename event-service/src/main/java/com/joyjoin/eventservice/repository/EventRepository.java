@@ -9,6 +9,6 @@ import java.util.UUID;
 
 @Repository
 public interface EventRepository extends JpaRepository<Event, UUID> {
-    List<Event> findByIsDeletedFalse();
-    Optional<Event> findByEventIdAndIsDeletedFalse(UUID eventId);
+    List<Event> findByIsDeletedFalseAndIsExpiredFalse();
+    Optional<Event> findByEventIdAndIsDeletedFalseAndIsExpiredFalse(UUID eventId);
 }

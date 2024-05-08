@@ -5,51 +5,52 @@
         <h1 class="title">Publish Event</h1>
         <form @submit.prevent="publish">
           <div class="field">
-            <label class="label">Title</label>
+            <label class="label">Title*</label>
             <div class="control">
               <input class="input" type="text" v-model="title" placeholder="Enter the event title" required>
             </div>
           </div>
           <div class="field">
-            <label class="label">Time</label>
+            <label class="label">Time*</label>
             <div class="control">
               <input class="input" type="datetime-local" v-model="time" :min="minDateTime" required>
             </div>
           </div>
+          <label class="label">Location</label>
           <div class="flex-row">
             <div class="field">
-              <label class="label">Street</label>
+              <label class="label">Street*</label>
               <div class="control">
                 <input class="input" type="text" v-model="location.street" placeholder="Enter the street name" required>
               </div>
             </div>
             <div class="field">
-              <label class="label">Number</label>
+              <label class="label">Number*</label>
               <div class="control">
                 <input class="input" type="number" v-model="location.number" placeholder="Enter the number" min="1" required>
               </div>
             </div>
             <div class="field">
-              <label class="label">City</label>
+              <label class="label">City*</label>
               <div class="control">
                 <input class="input" type="text" v-model="location.city" placeholder="Enter the city" required>
               </div>
             </div>
             <div class="field">
-              <label class="label">Country</label>
+              <label class="label">PostalCode</label>
               <div class="control">
-                <input class="input" type="text" v-model="location.country" placeholder="Enter the country" required>
+                <input class="input" type="number" v-model="location.postalCode" placeholder="Enter the postal code" min="1">
               </div>
             </div>
           </div>
           <div class="field">
-            <label class="label">Participation Limit</label>
+            <label class="label">Participation Limit*</label>
             <div class="control">
               <input class="input" type="number" v-model="participationLimit" placeholder="Enter the participation limit" min="2"required>
             </div>
           </div>
           <div class="field">
-            <label class="label">Tags</label>
+            <label class="label">Tags*</label>
             <div class="control">
               <Multiselect
                   v-model="multiValue"
@@ -66,15 +67,16 @@
             </div>
           </div>
           <div class="field">
-            <label class="label">Description</label>
+            <label class="label">Description*</label>
             <div class="control">
-              <textarea class="textarea" v-model="description" placeholder="Enter the description" rows="7"></textarea>
+              <textarea class="textarea" v-model="description" placeholder="Enter the description" rows="7" required></textarea>
             </div>
           </div>
           <div class="field">
             <label class="label">Images</label>
             <input type="file" id="filepond" name="filepond" class="filepond" />
           </div>
+          <label class="label">Note: * are mandatory fields</label>
           <div class="field">
             <div class="control">
               <button type="button" class="btn btn-outline-secondary"@click="toHomePage">Home Page</button>
@@ -104,7 +106,7 @@ export default {
     const router = useRouter();
     const title = ref("");
     const time = ref("");
-    const location = reactive({ street: "", number: "", city: "", country: "", postalCode: "" });
+    const location = reactive({ street: "", number: "", city: "", postalCode: "" });
     const participationLimit = ref("");
     const description = ref("");
     const multiValue = ref([]);
@@ -129,8 +131,7 @@ export default {
             street: location.street,
             number: location.number,
             city: location.city,
-            postalCode: location.postalCode,
-            country: location.country
+            postalCode: location.postalCode
             },
             participationLimit: parseInt(participationLimit.value),
             description: description.value,
@@ -138,8 +139,7 @@ export default {
             creatorId: sessionStorage.getItem('userId')
       };
       if (!title.value.trim() || !time.value || !multiValue.value.length ||
-          !location.street.trim() || !location.number || !location.city.trim() ||
-          !location.country.trim() || !participationLimit.value) {
+          !location.street.trim() || !location.number || !location.city.trim() || !participationLimit.value) {
         alert('Please fill all the required fields.');
         return;
       }
@@ -228,10 +228,15 @@ export default {
 @import "@vueform/multiselect/themes/default.css";
 @import 'filepond/dist/filepond.min.css';
 .container {
-  margin-top: 50px;
+  margin: 50px auto 100px auto;
+  overflow-y: hidden;
 }
-.subtitle {
+.title {
+  font-size: 2.3em;
+}
+.label {
   font-weight: bold;
+  font-size: 1.2em;
 }
 .textarea {
   min-height: 150px;
@@ -250,13 +255,17 @@ export default {
 .field {
   flex-grow: 1;
   min-width: 300px;
+  margin-bottom: 1em;
 }
+
 .control {
   display: grid;
   grid-auto-flow: column;
   gap: 10px;  /* This sets the gap between any grid items */
+  /*margin-bottom: 1em;*/
 }
 .btn {
   font-weight: bold;
 }
+
 </style>
