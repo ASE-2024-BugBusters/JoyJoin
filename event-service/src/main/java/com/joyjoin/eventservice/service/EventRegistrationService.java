@@ -4,6 +4,7 @@ import com.joyjoin.eventservice.exception.DuplicateRegistrationException;
 import com.joyjoin.eventservice.exception.EventRegistrationNotFoundException;
 import com.joyjoin.eventservice.model.EventRegistration;
 import com.joyjoin.eventservice.modelDto.EventDto;
+import com.joyjoin.eventservice.repository.EventParticipationCountRepository;
 import com.joyjoin.eventservice.repository.EventRegistrationRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +17,12 @@ import java.util.stream.Collectors;
 public class EventRegistrationService {
     private final EventService eventService;
     private final EventRegistrationRepository eventRegistrationRepository;
+    private final EventParticipationCountRepository participationCountRepository;
     @Autowired
-    public EventRegistrationService(EventService eventService, EventRegistrationRepository eventRegistrationRepository) {
+    public EventRegistrationService(EventService eventService, EventRegistrationRepository eventRegistrationRepository, EventParticipationCountRepository participationCountRepository) {
         this.eventService = eventService;
         this.eventRegistrationRepository = eventRegistrationRepository;
+        this.participationCountRepository = participationCountRepository;
     }
     @Transactional
     public EventRegistration registerUserToEvent(UUID eventId, UUID userId) {
@@ -34,6 +37,7 @@ public class EventRegistrationService {
         EventRegistration eventRegistration = new EventRegistration();
         eventRegistration.setEventId(eventId);
         eventRegistration.setUserId(userId);
+        participationCountRepository.incrementCount(eventId);
         return eventRegistrationRepository.save(eventRegistration);
     }
     @Transactional
@@ -46,6 +50,7 @@ public class EventRegistrationService {
                     Collections.singletonList("User is not registered to the event."));
         });
         eventRegistration.setRegistered(false);
+        participationCountRepository.decrementCount(eventId);
         return eventRegistrationRepository.save(eventRegistration);
     }
     @Transactional

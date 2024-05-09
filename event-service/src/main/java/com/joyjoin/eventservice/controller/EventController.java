@@ -33,8 +33,6 @@ import java.util.stream.Collectors;
 @RequestMapping("api/events")
 public class EventController {
     private final EventService eventService;
-
-    private final EventRepository eventRepository;
     private final ModelMapper modelMapper;
     private  final EventRegistrationService eventRegistrationService;
 
@@ -47,9 +45,8 @@ public class EventController {
      * @param eventRegistrationService the service to handle the event registration logic
      */
     @Autowired
-    public EventController(EventService eventService, EventRepository eventRepository, ModelMapper modelMapper, EventRegistrationService eventRegistrationService) {
+    public EventController(EventService eventService, ModelMapper modelMapper, EventRegistrationService eventRegistrationService) {
         this.eventService = eventService;
-        this.eventRepository = eventRepository;
         this.modelMapper = modelMapper;
         this.eventRegistrationService = eventRegistrationService;
     }
@@ -95,7 +92,8 @@ public class EventController {
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String city,
             @RequestParam(required = false) String time,
-            @RequestParam(required = false) String tags) {
+            @RequestParam(required = false) String tags,
+            @RequestParam(defaultValue = "false") boolean excludeFullEvents) {
 
         LocalDateTime eventTime = null;
         if (time != null && !time.isEmpty()) {
@@ -103,9 +101,10 @@ public class EventController {
         }
         List<String> tagList = tags != null ? Arrays.stream(tags.split(",")).map(String::trim).collect(Collectors.toList()) : null;
 
-        List<EventDto> eventsDto = eventService.getFilteredEvents(title, city, eventTime, tagList);
+        List<EventDto> eventsDto = eventService.getFilteredEvents(title, city, eventTime, tagList, excludeFullEvents);
         return ResponseEntity.ok(eventsDto);
     }
+
 
     /**
      * Retrieves an event by its ID.

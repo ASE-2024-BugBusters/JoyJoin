@@ -1,11 +1,13 @@
 package com.joyjoin.eventservice.service;
 
 import com.joyjoin.eventservice.exception.ResourceNotFoundException;
+import com.joyjoin.eventservice.model.EventParticipationCount;
 import com.joyjoin.eventservice.model.Image;
 import com.joyjoin.eventservice.model.Event;
 import com.joyjoin.eventservice.model.ImageUrl;
 import com.joyjoin.eventservice.modelDto.EventDto;
 import com.joyjoin.eventservice.packer.EventPacker;
+import com.joyjoin.eventservice.repository.EventParticipationCountRepository;
 import com.joyjoin.eventservice.repository.EventRepository;
 import com.joyjoin.eventservice.repository.EventSpecifications;
 import jakarta.transaction.Transactional;
@@ -27,6 +29,7 @@ import java.util.stream.Collectors;
 public class EventService {
 
     private final EventRepository eventRepository;
+    private final EventParticipationCountRepository eventParticipationCountRepository;
     private final ImageService imageService;
     private final EventPacker eventPacker;
     private final ModelMapper modelMapper;
@@ -35,14 +38,16 @@ public class EventService {
     /**
      * Constructs an EventService with necessary dependencies.
      *
-     * @param eventRepository Repository for event data access.
-     * @param imageService Service for handling image-related operations.
-     * @param eventPacker Utility to convert between Event entities and DTOs.
-     * @param modelMapper Utility to map between different object models.
+     * @param eventRepository                   Repository for event data access.
+     * @param eventParticipationCountRepository
+     * @param imageService                      Service for handling image-related operations.
+     * @param eventPacker                       Utility to convert between Event entities and DTOs.
+     * @param modelMapper                       Utility to map between different object models.
      */
     @Autowired
-    public EventService(EventRepository eventRepository, ImageService imageService, EventPacker eventPacker, ModelMapper modelMapper) {
+    public EventService(EventRepository eventRepository, EventParticipationCountRepository eventParticipationCountRepository, ImageService imageService, EventPacker eventPacker, ModelMapper modelMapper) {
         this.eventRepository = eventRepository;
+        this.eventParticipationCountRepository = eventParticipationCountRepository;
         this.imageService = imageService;
         this.eventPacker = eventPacker;
         this.modelMapper = modelMapper;
@@ -71,6 +76,8 @@ public class EventService {
     @Transactional
     public EventDto saveEvent(Event event) {
         Event savedEvent = eventRepository.save(event);
+        EventParticipationCount count = new EventParticipationCount(savedEvent.getEventId(), 0);
+        eventParticipationCountRepository.save(count);
         return eventPacker.packEvent(savedEvent);
     }
 
@@ -85,16 +92,21 @@ public class EventService {
         return events.stream().map(eventPacker::packEvent).collect(Collectors.toList());
     }
 
-    public List<EventDto> getFilteredEvents(String title, String city, LocalDateTime time, List<String> tags) {
-        Specification<Event> spec = EventSpecifications.combine(
-                EventSpecifications.hasTitle(title),
-                EventSpecifications.isInCity(city),
-                EventSpecifications.isAtTime(time),
-                EventSpecifications.hasTags(tags)
-        );
-        List<Event> events = eventRepository.findAll(spec);
+    public List<EventDto> getFilteredEvents(String title, String city, LocalDateTime time, List<String> tags, boolean excludeFullEvents) {
+        List<Specification<Event>> specs = new ArrayList<>();
+        specs.add(EventSpecifications.hasTitle(title));
+        specs.add(EventSpecifications.isInCity(city));
+        specs.add(EventSpecifications.isAtTime(time));
+        specs.add(EventSpecifications.hasTags(tags));
+        if (excludeFullEvents) {
+            specs.add(EventSpecifications.participationLimitNotReached());
+        }
+
+        Specification<Event> combinedSpec = EventSpecifications.combine(specs.toArray(new Specification[0]));
+        List<Event> events = eventRepository.findAll(combinedSpec);
         return events.stream().map(eventPacker::packEvent).collect(Collectors.toList());
     }
+
     /**
      * Retrieves an event by its UUID if it has not been marked as deleted.
      *

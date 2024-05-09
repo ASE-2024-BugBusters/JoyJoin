@@ -1,4 +1,5 @@
 package com.joyjoin.eventservice.repository;
+import com.joyjoin.eventservice.model.EventParticipationCount;
 import com.joyjoin.eventservice.model.Tag;
 import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
@@ -55,16 +56,17 @@ public class EventSpecifications {
 
     public static Specification<Event> participationLimitNotReached() {
         return (root, query, criteriaBuilder) -> {
-            Subquery<Long> subquery = query.subquery(Long.class);
-            Root<Event> eventSubRoot = subquery.correlate(root);
-            Join<Event, UUID> participants = eventSubRoot.join("participants");
+            // 关联事件与参与人数的表
+            Subquery<Integer> participationSubquery = query.subquery(Integer.class);
+            Root<EventParticipationCount> participationRoot = participationSubquery.from(EventParticipationCount.class);
+            participationSubquery.select(participationRoot.get("participantCount"))
+                    .where(criteriaBuilder.equal(participationRoot.get("eventId"), root.get("eventId")));
 
-            subquery.select(criteriaBuilder.count(participants.get("userId")))
-                    .where(criteriaBuilder.equal(participants.get("isRegistered"), true));
-
-            return criteriaBuilder.lessThan(subquery, root.get("participationLimit"));
+            // 比较参与人数是否小于限制
+            return criteriaBuilder.lessThan(participationSubquery, root.get("participationLimit"));
         };
     }
+
 
     public static Specification<Event> combine(Specification<Event>... specs) {
         Specification<Event> result = Specification.where(notDeletedAndNotExpired());
