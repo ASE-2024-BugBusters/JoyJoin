@@ -107,11 +107,13 @@
             <groupId>com.joyjoin</groupId>
             <artifactId>user-service</artifactId>
             <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
 		<dependency>
 			<groupId>com.joyjoin</groupId>
 			<artifactId>event-service</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.joyjoin</groupId>

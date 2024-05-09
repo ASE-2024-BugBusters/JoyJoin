@@ -1,9 +1,10 @@
 <template>
   <div class="events container">
-    <h1 class="subtitle is-3" v-if="events.length > 0">Check Out Upcoming Events</h1>
-    <div v-if="events.length > 0" class="columns is-multiline">
+    <div class="columns is-multiline">
       <div v-for="event in events" :key="event.eventId" class="column is-one-quarter">
-        <EventCard :event="event" @image-clicked="goToEvent" />
+<!--        <EventCard :event="event" @click.native="goToEvent(event.eventId)" />-->
+        <EventCard :event="event" @click.native="goToAction(event)" />
+
       </div>
     </div>
     <div v-else class="no-events">
@@ -17,6 +18,7 @@ import axios from 'axios';
 import EventCard from '@/views/event/EventCard.vue';
 import {BASE_URL_EVENT_SERVICE} from "../../../config/dev.env";
 export default {
+  props: ['isPostAddOrEdit'],
   name: 'EventsList',
   components: {
     EventCard,
@@ -48,9 +50,17 @@ export default {
             });
       }
     },
+    // goToEvent(eventId) {
+    //   this.$router.push({ name: 'EventView', params: { eventId } });
+    // }
+    goToAction(event) {
+      if(this.isPostAddOrEdit){
+        this.$emit('addTaggedEvent', event)
+      }else{
+        const eventId = event.eventId;
+        this.$router.push({ name: 'EventView', params: { eventId } });
+      }
 
-    goToEvent(eventId) {
-      this.$router.push({ name: 'EventView', params: { eventId } });
     }
   }
 };
@@ -58,7 +68,7 @@ export default {
 
 <style lang="scss" scoped>
 .events {
-  margin-top: 100px;
+  margin-top: 20px;
   text-align: center;
   overflow-y: hidden;
 }

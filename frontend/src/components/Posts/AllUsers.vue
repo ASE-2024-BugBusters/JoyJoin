@@ -1,14 +1,14 @@
 <template>
   <div class="all-users-container">
     <div v-if="searchingUsers.length"  >
-        <div v-for="user in searchingUsers" :key="user.username">
+        <div v-for="user in searchingUsers" :key="user.id">
             <div class="create-post-div">
                 <div class="left-content">
                     <!-- <img class="user-image" :src="user.image" >  -->
                     <img class="user-image" src="../../assets/camera-icon.png" alt="User Profile Picture">
                     <div class="user-info">
-                        <div class="username">{{ user.username }}</div>
-                        <div class="bios">{{user.bios }}</div>
+                        <div class="username">{{ user.id }}</div>
+                        <div class="bios">{{user.biography }}</div>
                     </div>
                 </div>
                 <div v-if="isAddOrEdit" class="right-content">

@@ -47,27 +47,40 @@ export default {
       temp_taggedpeople: []
     }
   },
-  mounted(){
-    axios.get(BASE_URL_USER_SERVICE + "/user", {
-      headers: {
-        'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
-      }
-    })
-        .then(data => this.users = data)
-        .catch(err => console.log(err.message))
+  created(){
+    this.getAllUsersAPI();
   },
   computed: {
     searchingUsers() {
-      return this.users.filter(user => {
-        return user.username.includes(this.search) &&
-            !this.temp_taggedpeople.some(taggedUser => taggedUser.username === user.username);
-      });
+      if(this.users) {
+        return this.users.filter(user => {
+          return user.id.includes(this.search) &&
+              !this.temp_taggedpeople.some(taggedUser => taggedUser.id === user.id);
+        });
+      }
     }
   },
   methods: {
+    // Method: Get All User Information
+    async getAllUsersAPI() {
+      const getAllUsersUrl = BASE_URL_USER_SERVICE + "/user" ;
+      await axios.get(getAllUsersUrl, {
+        headers: {
+          'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
+        }
+      })
+          .then(response => {
+            this.users = response.data;
+          })
+          .catch(error => {
+            console.error("[getAllUsersAPI] There was an error getting the all users:", error);
+          });
+    },
+    // Method: Add user into temporarily TaggedUser_list
     addUserIntoTaggedList(user){
       this.temp_taggedpeople.push(user)
     },
+    // Method: Show this PostTag(Modal)
     show(opts = {}) {
       this.search = '';
       if(opts.taggedpeople){
@@ -85,10 +98,12 @@ export default {
       this.$refs.popup.close()
       this.resolvePromise(true)
     },
+    // Method: Close this PostTag(Modal)
     _cancel() {
       this.$refs.popup.close()
       this.resolvePromise(false)
     },
+    // Method: Trigger the saveTags of PostView.vue
     saveTags() {
       this.$emit('saveTags', this.temp_taggedpeople)
     }
