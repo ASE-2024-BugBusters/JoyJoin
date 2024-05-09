@@ -19,5 +19,5 @@ public class LocationDto {
     @NotBlank(message = "City is required")
     private String city;
     @NotBlank(message = "Postal code is required")
-    private String postalCode;
+    private Integer postalCode;
 }

@@ -1,15 +1,17 @@
 package com.joyjoin.eventservice.service;
 
 import com.joyjoin.eventservice.exception.ResourceNotFoundException;
-import com.joyjoin.eventservice.model.Image;
-import com.joyjoin.eventservice.model.Event;
-import com.joyjoin.eventservice.model.ImageUrl;
+import com.joyjoin.eventservice.model.*;
 import com.joyjoin.eventservice.modelDto.EventDto;
 import com.joyjoin.eventservice.packer.EventPacker;
+import com.joyjoin.eventservice.repository.EventParticipationCountRepository;
+import com.joyjoin.eventservice.repository.EventRegistrationRepository;
 import com.joyjoin.eventservice.repository.EventRepository;
+import com.joyjoin.eventservice.repository.EventSpecifications;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -25,6 +27,8 @@ import java.util.stream.Collectors;
 public class EventService {
 
     private final EventRepository eventRepository;
+    private final EventRegistrationRepository eventRegistrationRepository;
+    private final EventParticipationCountRepository eventParticipationCountRepository;
     private final ImageService imageService;
     private final EventPacker eventPacker;
     private final ModelMapper modelMapper;
@@ -33,14 +37,18 @@ public class EventService {
     /**
      * Constructs an EventService with necessary dependencies.
      *
-     * @param eventRepository Repository for event data access.
-     * @param imageService Service for handling image-related operations.
-     * @param eventPacker Utility to convert between Event entities and DTOs.
-     * @param modelMapper Utility to map between different object models.
+     * @param eventRepository                   Repository for event data access.
+     * @param eventRegistrationRepository
+     * @param eventParticipationCountRepository
+     * @param imageService                      Service for handling image-related operations.
+     * @param eventPacker                       Utility to convert between Event entities and DTOs.
+     * @param modelMapper                       Utility to map between different object models.
      */
     @Autowired
-    public EventService(EventRepository eventRepository, ImageService imageService, EventPacker eventPacker, ModelMapper modelMapper) {
+    public EventService(EventRepository eventRepository, EventRegistrationRepository eventRegistrationRepository, EventParticipationCountRepository eventParticipationCountRepository, ImageService imageService, EventPacker eventPacker, ModelMapper modelMapper) {
         this.eventRepository = eventRepository;
+        this.eventRegistrationRepository = eventRegistrationRepository;
+        this.eventParticipationCountRepository = eventParticipationCountRepository;
         this.imageService = imageService;
         this.eventPacker = eventPacker;
         this.modelMapper = modelMapper;
@@ -69,6 +77,8 @@ public class EventService {
     @Transactional
     public EventDto saveEvent(Event event) {
         Event savedEvent = eventRepository.save(event);
+        EventParticipationCount count = new EventParticipationCount(savedEvent.getEventId(), 0, true);
+        eventParticipationCountRepository.save(count);
         return eventPacker.packEvent(savedEvent);
     }
 
@@ -80,6 +90,21 @@ public class EventService {
     @Transactional
     public List<EventDto> getAllEvents() {
         List<Event> events = eventRepository.findByIsDeletedFalseAndIsExpiredFalse();
+        return events.stream().map(eventPacker::packEvent).collect(Collectors.toList());
+    }
+
+    public List<EventDto> getFilteredEvents(String title, String city, LocalDateTime time, List<String> tags, boolean excludeFullEvents) {
+        List<Specification<Event>> specs = new ArrayList<>();
+        specs.add(EventSpecifications.hasTitle(title));
+        specs.add(EventSpecifications.isInCity(city));
+        specs.add(EventSpecifications.isAtTime(time));
+        specs.add(EventSpecifications.hasTags(tags));
+        if (excludeFullEvents) {
+            specs.add(EventSpecifications.participationLimitNotReached());
+        }
+
+        Specification<Event> combinedSpec = EventSpecifications.combine(specs.toArray(new Specification[0]));
+        List<Event> events = eventRepository.findAll(combinedSpec);
         return events.stream().map(eventPacker::packEvent).collect(Collectors.toList());
     }
 
@@ -147,6 +172,18 @@ public class EventService {
         Event event = eventRepository.findByEventIdAndIsDeletedFalseAndIsExpiredFalse(eventId)
                 .orElseThrow(() -> new ResourceNotFoundException("Event", "eventId", eventId.toString(),
                         Collections.singletonList("This event may have been deleted or does not exist.")));
+        List<EventRegistration> eventRegistrations = eventRegistrationRepository.findByEventId(eventId);
+        for (EventRegistration registration : eventRegistrations) {
+            registration.setActive(false);
+        }
+        eventRegistrationRepository.saveAll(eventRegistrations);
+
+        Optional<EventParticipationCount> eventParticipationCount = eventParticipationCountRepository.findByEventId(eventId);
+        eventParticipationCount.ifPresent(count -> {
+            count.setActive(false);
+            eventParticipationCountRepository.save(count);
+        });
+
         event.setDeleted(true);
         eventRepository.save(event);
         return eventPacker.packEvent(event);
