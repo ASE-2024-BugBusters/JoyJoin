@@ -11,10 +11,10 @@
         <!--Username-->
         <div class="left-right-content-container">
           <div class="left-content">
-            <img class="user-image" v-if="!post.user.avatar" src="../../assets/Default_User_Icon.png" alt="User Profile Picture" @click="navigateToUserProfile(post.user.id)" />
-            <img class="user-image" v-else :src="post.user.avatar.urls[0].url"  alt="User Profile Picture" @click="navigateToUserProfile(post.user.id)" />
+            <img class="user-image navigate-info" v-if="!post.user.avatar" src="../../assets/Default_User_Icon.png" alt="User Profile Picture" @click="navigateToUserProfile(post.user.id)" title="Navigate to User Profile" />
+            <img class="user-image navigate-info" v-else :src="post.user.avatar.urls[0].url"  alt="User Profile Picture" @click="navigateToUserProfile(post.user.id)" title="Navigate to User Profile" />
             <div class="user-info">
-              <div class="username" v-if="post.user"> {{ post.user.id }}</div>
+              <div class="username navigate-info" v-if="post.user" @click="navigateToUserProfile(post.user.id)" title="Navigate to User Profile"> {{ post.user.id }}</div>
               <div class="post-info" :class="isEditMode? 'post-info-edit' : ''">
                 <span class="navigate-info" v-if="post.taggedEvent" @click="navigateToEvent(post.taggedEvent.eventId)" title="Navigate to Event Information">{{ post.taggedEvent.title }}</span>
                 <span v-else-if="!post.taggedEvent && isEditMode">No event is binded</span>
@@ -139,13 +139,11 @@ export default {
       if(this.post.taggedUsers.length){
         _tuser = this.post.taggedUsers.map(user => user.id);
       }
-      console.log("_tuser: " + _tuser);
       // Extract the eventId
       var _tevent = "";
       if(this.post.taggedEvent){
         _tevent = this.post.taggedEvent.eventId;
       }
-      console.log("_tevent: " + _tevent);
       const data = {
         caption: this.post.caption,
         postId: this.postId,
@@ -190,7 +188,7 @@ export default {
           // Automatically close success message modal after 3 seconds
           setTimeout(() => {
             this.$refs.confirmDialogue._cancel();
-            this.$router.push({name: 'profile'});
+            this.$router.push({name: 'profile', params:{"user_id": this.currentUser} });
           }, 2000);
 
 
@@ -231,7 +229,7 @@ export default {
     },
     // Method: Navigate to user Profile
     navigateToUserProfile(userId){
-      // this.$router.push({name: 'profile'})
+      this.$router.push({name: 'profile', params:{"user_id": userId} });
     },
     // Method: Navigate to Event's information
     navigateToEvent(eventId){

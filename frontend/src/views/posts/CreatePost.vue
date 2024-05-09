@@ -124,7 +124,7 @@ export default {
           // Automatically close success message modal after 3 seconds
           setTimeout(() => {
             this.$refs.successDialogue._cancel();
-            this.$router.push({name: 'profile'});
+            this.$router.push({name: 'profile', params:{"user_id": this.currentUser} });
           }, 2000);
 
 
@@ -144,8 +144,6 @@ export default {
       if(this.taggedEvent){
         _tevent = this.taggedEvent.eventId;
       }
-
-      console.log("[createNewPostAPI]..... images: " + this.images);
 
       // Creating POST-Json
       const data = {

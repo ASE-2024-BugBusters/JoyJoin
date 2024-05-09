@@ -1,9 +1,6 @@
 package com.joyjoin.postservice.controller.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,6 +10,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class UpdatePostRequest {
     private String caption;
     private List<UUID> taggedUsersId;

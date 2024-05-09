@@ -3,7 +3,7 @@
     <div v-if="searchingUsers.length"  >
         <div v-for="user in searchingUsers" :key="user.id">
             <div class="create-post-div">
-                <div class="left-content">
+                <div class="left-content navigate-info" @click="navigateToUserProfile(user.id)" title="Navigate to User Profile">
                     <!-- <img class="user-image" :src="user.image" >  -->
                     <img class="user-image" v-if="!user.avatar" src="../../assets/Default_User_Icon.png" alt="User Profile Picture">
                     <img class="user-image" v-else :src="user.avatar.urls[0].url" alt="User Profile Picture">
@@ -32,7 +32,11 @@ export default {
             if(this.isAddOrEdit){
                 this.$emit('addTaggedPeople', user)
             }
-        }
+        },
+      // Method: Navigate to user Profile
+      navigateToUserProfile(userId){
+        this.$router.push({name: 'profile', params:{"user_id": userId} });
+      },
     },
     computed(){
 
@@ -98,6 +102,12 @@ export default {
 }
 .post-icon-right{
   margin-right:0;
+}
+.navigate-info{
+  cursor: pointer;
+}
+.navigate-info:hover{
+  font-weight: bold;
 }
 
 </style>

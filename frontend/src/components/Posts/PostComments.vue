@@ -5,10 +5,10 @@
       <div v-for="comment in comments" :key="comment.id">
         <div class="post-comment">
           <div class="left-content">
-            <img class="user-image comment-user-image" v-if="!comment.user.avatar" src="../../assets/Default_User_Icon.png" alt="User Profile Picture"/>
-            <img class="user-image comment-user-image" v-else :src="comment.user.avatar.urls[0].url" alt="User Profile Picture"/>
+            <img class="user-image comment-user-image navigate-info" v-if="!comment.user.avatar" src="../../assets/Default_User_Icon.png" alt="User Profile Picture" @click="navigateToUserProfile(comment.user.id)" title="Navigate to User Profile"/>
+            <img class="user-image comment-user-image navigate-info" v-else :src="comment.user.avatar.urls[0].url" alt="User Profile Picture" @click="navigateToUserProfile(comment.user.id)" title="Navigate to User Profile"/>
             <div class="user-info comment-font">
-              <div class="username">{{ comment.user.id }}</div>
+              <div class="username navigate-info" @click="navigateToUserProfile(comment.user.id)" title="Navigate to User Profile">{{ comment.user.id }}</div>
               <div class="post-info">{{ comment.comment }}</div>
             </div>
           </div>
@@ -120,6 +120,10 @@ export default {
             });
       }
     },
+    // Method: Navigate to user Profile
+    navigateToUserProfile(userId){
+      this.$router.push({name: 'profile', params:{"user_id": userId} });
+    },
   },
 };
 </script>
@@ -169,5 +173,11 @@ textarea {
   justify-content: flex-end;
   border: none;
   background: none;
+}
+.navigate-info{
+  cursor: pointer;
+}
+.navigate-info:hover{
+  font-weight: bold;
 }
 </style>
