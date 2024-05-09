@@ -90,7 +90,7 @@ public class EventController {
     }
 
     @GetMapping("/filter")
-    public ResponseEntity<List<Event>> getFilteredEvents(
+    public ResponseEntity<List<EventDto>> getFilteredEvents(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String city,
             @RequestParam(required = false) String time,
@@ -102,15 +102,8 @@ public class EventController {
         }
         List<String> tagList = tags != null ? List.of(tags.split(",")) : null;
 
-        Specification<Event> spec = EventSpecifications.combine(
-                EventSpecifications.hasTitle(title),
-                EventSpecifications.isInCity(city),
-                EventSpecifications.isAtTime(eventTime),
-                EventSpecifications.hasTags(tagList)
-        );
-
-        List<Event> events = eventRepository.findAll(spec);
-        return ResponseEntity.ok(events);
+        List<EventDto> eventsDto = eventService.getFilteredEvents(title, city, eventTime, tagList);
+        return ResponseEntity.ok(eventsDto);
     }
 
     /**

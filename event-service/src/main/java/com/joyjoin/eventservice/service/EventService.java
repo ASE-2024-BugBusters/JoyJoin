@@ -7,9 +7,11 @@ import com.joyjoin.eventservice.model.ImageUrl;
 import com.joyjoin.eventservice.modelDto.EventDto;
 import com.joyjoin.eventservice.packer.EventPacker;
 import com.joyjoin.eventservice.repository.EventRepository;
+import com.joyjoin.eventservice.repository.EventSpecifications;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -83,6 +85,16 @@ public class EventService {
         return events.stream().map(eventPacker::packEvent).collect(Collectors.toList());
     }
 
+    public List<EventDto> getFilteredEvents(String title, String city, LocalDateTime time, List<String> tags) {
+        Specification<Event> spec = EventSpecifications.combine(
+                EventSpecifications.hasTitle(title),
+                EventSpecifications.isInCity(city),
+                EventSpecifications.isAtTime(time),
+                EventSpecifications.hasTags(tags)
+        );
+        List<Event> events = eventRepository.findAll(spec);
+        return events.stream().map(eventPacker::packEvent).collect(Collectors.toList());
+    }
     /**
      * Retrieves an event by its UUID if it has not been marked as deleted.
      *
