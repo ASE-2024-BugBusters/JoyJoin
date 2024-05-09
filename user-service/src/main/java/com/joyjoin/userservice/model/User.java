@@ -41,7 +41,7 @@ public class User implements UserDetails {
     private String password;
 
     @Column(unique = true)
-    private String userName;
+    private String accountName;
 
     @Temporal(TemporalType.DATE)
     private Date birthDate;

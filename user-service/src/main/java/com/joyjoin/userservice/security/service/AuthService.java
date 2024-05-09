@@ -49,6 +49,7 @@ public class AuthService implements UserDetailsService {
                 .lastName(user.getLastName())
                 .birthDate(user.getBirthDate())
                 .email(user.getEmail())
+                .accountName(user.getAccountName())
                 .password(passwordEncoder.encode(user.getPassword()))
                 .roles(roles)
                 .createdOn(now)
