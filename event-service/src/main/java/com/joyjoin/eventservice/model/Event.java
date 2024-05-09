@@ -1,5 +1,6 @@
 package com.joyjoin.eventservice.model;
 import com.joyjoin.eventservice.model.converter.ImageRefListConverter;
+import com.joyjoin.eventservice.model.converter.TagsConverter;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -51,7 +52,7 @@ public class Event {
     @Column(length = 1000, nullable = false)
     private String description;
 
-    @ElementCollection
+    @Convert(converter = TagsConverter.class)
     private List<Tag> tags;
 
     @Convert(converter = ImageRefListConverter.class)

@@ -1,13 +1,9 @@
 package com.joyjoin.eventservice.repository;
+import com.joyjoin.eventservice.model.Tag;
+import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import com.joyjoin.eventservice.model.Event;
-
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
-import jakarta.persistence.criteria.Subquery;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.CriteriaBuilder;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -42,15 +38,20 @@ public class EventSpecifications {
     }
 
     public static Specification<Event> hasTags(List<String> tags) {
-        if (tags == null || tags.isEmpty()) return null;
-        return (root, query, criteriaBuilder) -> {
-            Predicate[] predicates = new Predicate[tags.size()];
-            for (int i = 0; i < tags.size(); i++) {
-                predicates[i] = criteriaBuilder.isMember(tags.get(i), root.get("tags"));
+        return (root, query, cb) -> {
+            if (tags == null || tags.isEmpty()) {
+                return cb.conjunction(); // 如果没有标签过滤应用，则返回一个始终为真的谓词。
             }
-            return criteriaBuilder.or(predicates);
+            Expression<String> tagsExpression = root.get("tags"); // 假设 tags 是一个以逗号分隔的字符串字段
+            Predicate allTagsMatch = cb.conjunction();
+            for (String tag : tags) {
+                allTagsMatch = cb.and(allTagsMatch, cb.like(tagsExpression, "%" + tag.trim() + "%"));
+            }
+            return allTagsMatch;
         };
     }
+
+
 
     public static Specification<Event> participationLimitNotReached() {
         return (root, query, criteriaBuilder) -> {

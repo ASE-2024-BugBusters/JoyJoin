@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Controller class for handling all event-related actions.
@@ -100,7 +101,7 @@ public class EventController {
         if (time != null && !time.isEmpty()) {
             eventTime = LocalDateTime.parse(time);
         }
-        List<String> tagList = tags != null ? List.of(tags.split(",")) : null;
+        List<String> tagList = tags != null ? Arrays.stream(tags.split(",")).map(String::trim).collect(Collectors.toList()) : null;
 
         List<EventDto> eventsDto = eventService.getFilteredEvents(title, city, eventTime, tagList);
         return ResponseEntity.ok(eventsDto);
