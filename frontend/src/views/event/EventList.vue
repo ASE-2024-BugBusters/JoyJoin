@@ -4,7 +4,11 @@
       <div v-for="event in events" :key="event.eventId" class="column is-one-quarter">
 <!--        <EventCard :event="event" @click.native="goToEvent(event.eventId)" />-->
         <EventCard :event="event" @click.native="goToAction(event)" />
+
       </div>
+    </div>
+    <div v-else class="no-events">
+      No Events
     </div>
   </div>
 </template>
@@ -34,6 +38,7 @@ export default {
         const getAllEventsUrl = BASE_URL_EVENT_SERVICE + "/events"
         axios.get(getAllEventsUrl, {
           headers: {
+            'Content-Type': 'application/json',
             'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
           }
         })
@@ -65,5 +70,14 @@ export default {
 .events {
   margin-top: 20px;
   text-align: center;
+  overflow-y: hidden;
+}
+h1 {
+  font-weight: bold;
+  color: black;
+}
+.no-events {
+  font-size: 1.5em;
+  color: black;
 }
 </style>

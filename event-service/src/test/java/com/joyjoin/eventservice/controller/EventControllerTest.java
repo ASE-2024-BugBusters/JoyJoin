@@ -112,8 +112,6 @@ public class EventControllerTest {
         updateRequest.setLocation(new LocationDto("City Park", 7, "Springville", "445400", "China"));
         updateRequest.setParticipationLimit(250);
         updateRequest.setDescription("Updated description of the annual community spring festival");
-        updateRequest.setTags(List.of("community", "celebration"));
-        updateRequest.setParticipants(List.of(UUID.randomUUID()));
 
         given(eventService.updateEvent(eq(eventDto.getEventId()), any(Event.class))).willReturn(eventDto);
 

@@ -118,6 +118,20 @@ export default {
               console.error("[removeCommentAPI] There was an error deleting the post's comments:", error);
             });
       }
+      //Call Delete Comment API
+      // const deleteCommentUrl = BASE_URL_EVENT_SERVICE + "/posts/comments/" + comment_id;
+      const deleteCommentUrl = this.prefix_url + "/posts/comments/" + comment_id;
+      axios.delete(deleteCommentUrl, {
+        // headers: {
+        //   // 'Content-Type': 'application/json',
+        //   'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
+        // }
+      })
+          .then(response => {
+          })
+          .catch(error => {
+            console.error("There was an error deleting the post's comments:", error);
+          });
     },
   },
 };
@@ -146,7 +160,30 @@ export default {
 .post-add-comment {
   margin-top: 10px;
   border-bottom: 0;
+
 }
+
+.post-no-comments {
+  text-align: center;
+  font-size: 13px;
+  color: darkgray;
+  padding-top: 15px;
+}
+
+.post-comment {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  color: black;
+  border-bottom: 1px solid #ECECEC;
+  margin-bottom: 3px;
+}
+
+.post-add-comment {
+  margin-top: 10px;
+  border-bottom: 0;
+}
+
 .comment-user-image {
   width: 35px;
   height: 35px;
@@ -162,6 +199,7 @@ textarea {
   flex: 1;
   font-size: 13px;
 }
+
 .button-wrapper {
   width: 25px;
   display: flex;
