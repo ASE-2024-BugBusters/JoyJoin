@@ -22,16 +22,8 @@ public class ImagePacker {
         this.imageService = imageService;
     }
 
-//    public List<Image> packImage(List<ImageRef> refs, LocalDateTime expireTime) {
-//        return refs.stream().map(ref -> {
-//            String url = imageService.getPreSignedUrlForDownload(ref.getBucket(), ref.getKey(), Duration.between(LocalDateTime.now(), expireTime));
-//            ImageUrl imageUrl = new ImageUrl(url, expireTime);
-//            return new Image(ref, List.of(imageUrl));
-//        }).collect(Collectors.toList());
-//    }
     public List<Image> packImage(List<ImageRef> refs, LocalDateTime expireTime) {
         if (refs == null) {
-            // Return an empty list or handle the null case as appropriate
             return Collections.emptyList();
         }
         return refs.stream().map(ref -> {

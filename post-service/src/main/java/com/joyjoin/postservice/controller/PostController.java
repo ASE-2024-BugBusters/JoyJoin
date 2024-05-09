@@ -146,8 +146,8 @@ public class PostController {
     }
 
     // =========Below section is related to Post's Comments========
-
     // (10): Create a comment for a specific post
+
     /*{
         "userId": "09f80c29-bf3f-4b4b-a23e-d179eba82802",
             "postId": "2090b128-86ae-4712-a502-0bf5de817fdb",
@@ -179,6 +179,4 @@ public class PostController {
         List<CommentWithUserInfoDto> comments = postService.getAllCommentsForPostId(token, id);
         return new ResponseEntity<>(comments, HttpStatus.OK);
     }
-
-
 }

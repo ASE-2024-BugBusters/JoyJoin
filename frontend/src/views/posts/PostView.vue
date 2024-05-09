@@ -125,6 +125,7 @@ export default {
           });
     },
     // Method: Click to switch between "Edit" or "Save" Mode
+
     editPost(){
       this.isEditMode = !this.isEditMode
       // If it is "Save" Mode
@@ -224,6 +225,7 @@ export default {
       this.post.taggedEvent = structuredClone(toRaw(temp_taggedevent))
       this.$refs.postEventModal._cancel()
     },
+
     openTaggedPeopleModal() {
       return this.$refs.postTaggedPeopleModal.show();
     },

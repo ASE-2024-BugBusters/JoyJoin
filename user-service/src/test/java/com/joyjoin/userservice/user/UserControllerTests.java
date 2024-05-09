@@ -66,7 +66,7 @@ public class UserControllerTests {
             for (int i = 0; i < 5; i++) {
                 User user = User.builder()
                         .firstName("testFirstName" + i)
-                        .userName("testUserName" + i)
+                        .accountName("testUserName" + i)
                         .lastName("testLastName" + i)
                         .email("test@email.com" + i)
                         .password("12345678")
