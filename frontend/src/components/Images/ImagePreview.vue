@@ -153,6 +153,9 @@ export default{
 .container {
   max-width: 1200px;
   width: 95%;
+  margin-top: 0px;
+  margin-left: 15px;
+  margin-right: 15px;
 }
 .slider-wrapper{
   position: relative;
