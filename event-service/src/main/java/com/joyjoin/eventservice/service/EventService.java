@@ -1,13 +1,11 @@
 package com.joyjoin.eventservice.service;
 
 import com.joyjoin.eventservice.exception.ResourceNotFoundException;
-import com.joyjoin.eventservice.model.EventParticipationCount;
-import com.joyjoin.eventservice.model.Image;
-import com.joyjoin.eventservice.model.Event;
-import com.joyjoin.eventservice.model.ImageUrl;
+import com.joyjoin.eventservice.model.*;
 import com.joyjoin.eventservice.modelDto.EventDto;
 import com.joyjoin.eventservice.packer.EventPacker;
 import com.joyjoin.eventservice.repository.EventParticipationCountRepository;
+import com.joyjoin.eventservice.repository.EventRegistrationRepository;
 import com.joyjoin.eventservice.repository.EventRepository;
 import com.joyjoin.eventservice.repository.EventSpecifications;
 import jakarta.transaction.Transactional;
@@ -29,6 +27,7 @@ import java.util.stream.Collectors;
 public class EventService {
 
     private final EventRepository eventRepository;
+    private final EventRegistrationRepository eventRegistrationRepository;
     private final EventParticipationCountRepository eventParticipationCountRepository;
     private final ImageService imageService;
     private final EventPacker eventPacker;
@@ -39,14 +38,16 @@ public class EventService {
      * Constructs an EventService with necessary dependencies.
      *
      * @param eventRepository                   Repository for event data access.
+     * @param eventRegistrationRepository
      * @param eventParticipationCountRepository
      * @param imageService                      Service for handling image-related operations.
      * @param eventPacker                       Utility to convert between Event entities and DTOs.
      * @param modelMapper                       Utility to map between different object models.
      */
     @Autowired
-    public EventService(EventRepository eventRepository, EventParticipationCountRepository eventParticipationCountRepository, ImageService imageService, EventPacker eventPacker, ModelMapper modelMapper) {
+    public EventService(EventRepository eventRepository, EventRegistrationRepository eventRegistrationRepository, EventParticipationCountRepository eventParticipationCountRepository, ImageService imageService, EventPacker eventPacker, ModelMapper modelMapper) {
         this.eventRepository = eventRepository;
+        this.eventRegistrationRepository = eventRegistrationRepository;
         this.eventParticipationCountRepository = eventParticipationCountRepository;
         this.imageService = imageService;
         this.eventPacker = eventPacker;
@@ -76,7 +77,7 @@ public class EventService {
     @Transactional
     public EventDto saveEvent(Event event) {
         Event savedEvent = eventRepository.save(event);
-        EventParticipationCount count = new EventParticipationCount(savedEvent.getEventId(), 0);
+        EventParticipationCount count = new EventParticipationCount(savedEvent.getEventId(), 0, true);
         eventParticipationCountRepository.save(count);
         return eventPacker.packEvent(savedEvent);
     }
@@ -171,6 +172,18 @@ public class EventService {
         Event event = eventRepository.findByEventIdAndIsDeletedFalseAndIsExpiredFalse(eventId)
                 .orElseThrow(() -> new ResourceNotFoundException("Event", "eventId", eventId.toString(),
                         Collections.singletonList("This event may have been deleted or does not exist.")));
+        List<EventRegistration> eventRegistrations = eventRegistrationRepository.findByEventId(eventId);
+        for (EventRegistration registration : eventRegistrations) {
+            registration.setActive(false);
+        }
+        eventRegistrationRepository.saveAll(eventRegistrations);
+
+        Optional<EventParticipationCount> eventParticipationCount = eventParticipationCountRepository.findByEventId(eventId);
+        eventParticipationCount.ifPresent(count -> {
+            count.setActive(false);
+            eventParticipationCountRepository.save(count);
+        });
+
         event.setDeleted(true);
         eventRepository.save(event);
         return eventPacker.packEvent(event);

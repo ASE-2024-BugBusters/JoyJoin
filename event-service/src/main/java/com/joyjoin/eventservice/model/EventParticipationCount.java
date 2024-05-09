@@ -20,4 +20,5 @@ public class EventParticipationCount {
     @Id
     private UUID eventId;
     private Integer participantCount = 0;
+    private boolean isActive = true;
 }
