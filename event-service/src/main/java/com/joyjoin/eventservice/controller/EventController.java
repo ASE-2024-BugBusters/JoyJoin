@@ -75,18 +75,6 @@ public class EventController {
         var expireTime = LocalDateTime.now().plusMinutes(30);
         return new GetImgUploadUrlResponse(eventService.getImgUploadInformation(expireTime));
     }
-
-    /**
-     * Retrieves all events currently available.
-     *
-     * @return a response entity containing a list of all event DTOs
-     */
-    @GetMapping("/all")
-    public ResponseEntity<List<EventDto>> getAllEvents() {
-        List<EventDto> events = eventService.getAllEvents();
-        return new ResponseEntity<>(events, HttpStatus.OK);
-    }
-
     @GetMapping("/filter")
     public ResponseEntity<List<EventDto>> getFilteredEvents(
             @RequestParam(required = false) String title,
@@ -104,6 +92,19 @@ public class EventController {
         List<EventDto> eventsDto = eventService.getFilteredEvents(title, city, eventTime, tagList, excludeFullEvents);
         return ResponseEntity.ok(eventsDto);
     }
+
+    /**
+     * Retrieves all events currently available.
+     *
+     * @return a response entity containing a list of all event DTOs
+     */
+    @GetMapping("/all")
+    public ResponseEntity<List<EventDto>> getAllEvents() {
+        List<EventDto> events = eventService.getAllEvents();
+        return new ResponseEntity<>(events, HttpStatus.OK);
+    }
+
+
 
 
     /**
