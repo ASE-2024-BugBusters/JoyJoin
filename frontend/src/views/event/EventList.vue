@@ -33,7 +33,7 @@ export default {
     fetchEvents() {
       debugger;
       if (sessionStorage.getItem("jwtToken") !== null || sessionStorage.getItem("userId") !== null) {
-        const getAllEventsUrl = BASE_URL_EVENT_SERVICE + "/events"
+        const getAllEventsUrl = BASE_URL_EVENT_SERVICE + "/events/all"
         axios.get(getAllEventsUrl, {
           headers: {
             'Content-Type': 'application/json',

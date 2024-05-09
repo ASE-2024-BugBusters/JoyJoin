@@ -1,17 +1,19 @@
 package com.joyjoin.eventservice.controller;
 
 import com.joyjoin.eventservice.controller.dto.GetImgUploadUrlResponse;
-import com.joyjoin.eventservice.exception.ResourceNotFoundException;
 import com.joyjoin.eventservice.model.Event;
 import com.joyjoin.eventservice.model.EventRegistration;
 import com.joyjoin.eventservice.modelDto.EventDto;
 import com.joyjoin.eventservice.modelDto.EventRegistrationDto;
 import com.joyjoin.eventservice.modelDto.PostEventRequest;
 import com.joyjoin.eventservice.modelDto.UpdateEventRequest;
+import com.joyjoin.eventservice.repository.EventRepository;
+import com.joyjoin.eventservice.repository.EventSpecifications;
 import com.joyjoin.eventservice.service.EventRegistrationService;
 import com.joyjoin.eventservice.service.EventService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +32,8 @@ import java.util.*;
 @RequestMapping("api/events")
 public class EventController {
     private final EventService eventService;
+
+    private final EventRepository eventRepository;
     private final ModelMapper modelMapper;
     private  final EventRegistrationService eventRegistrationService;
 
@@ -37,12 +41,14 @@ public class EventController {
      * Constructs an EventController with the specified EventService and ModelMapper.
      *
      * @param eventService             the service to handle the event logic
+     * @param eventRepository
      * @param modelMapper              the tool to map between DTOs and entities
      * @param eventRegistrationService the service to handle the event registration logic
      */
     @Autowired
-    public EventController(EventService eventService, ModelMapper modelMapper, EventRegistrationService eventRegistrationService) {
+    public EventController(EventService eventService, EventRepository eventRepository, ModelMapper modelMapper, EventRegistrationService eventRegistrationService) {
         this.eventService = eventService;
+        this.eventRepository = eventRepository;
         this.modelMapper = modelMapper;
         this.eventRegistrationService = eventRegistrationService;
     }
@@ -77,10 +83,34 @@ public class EventController {
      *
      * @return a response entity containing a list of all event DTOs
      */
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<EventDto>> getAllEvents() {
         List<EventDto> events = eventService.getAllEvents();
         return new ResponseEntity<>(events, HttpStatus.OK);
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<List<Event>> getFilteredEvents(
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String city,
+            @RequestParam(required = false) String time,
+            @RequestParam(required = false) String tags) {
+
+        LocalDateTime eventTime = null;
+        if (time != null && !time.isEmpty()) {
+            eventTime = LocalDateTime.parse(time);
+        }
+        List<String> tagList = tags != null ? List.of(tags.split(",")) : null;
+
+        Specification<Event> spec = EventSpecifications.combine(
+                EventSpecifications.hasTitle(title),
+                EventSpecifications.isInCity(city),
+                EventSpecifications.isAtTime(eventTime),
+                EventSpecifications.hasTags(tagList)
+        );
+
+        List<Event> events = eventRepository.findAll(spec);
+        return ResponseEntity.ok(events);
     }
 
     /**
