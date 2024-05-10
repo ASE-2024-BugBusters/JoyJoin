@@ -17,13 +17,15 @@
         <label for="formGroupExampleInput">Category</label>
         <Multiselect
             v-model="filters.tags"
+            mode="tags"
             tag-placeholder="Add new tag"
-            placeholder="Select or add tags"
+            placeholder="Search or add tags to filter"
             label="label"
             track-by="value"
             :options="tags"
             :multiple="true"
             :taggable="true"
+            :searchable="true"
             @tag="addTag"
         ></Multiselect>
       </div>
