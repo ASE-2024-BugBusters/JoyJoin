@@ -10,8 +10,8 @@
         <input v-model="filters.city" type="text" class="form-control" id="city" placeholder="Input city to filter events">
       </div>
       <div class="form-group">
-        <label for="formGroupExampleInput">Time</label>
-        <input v-model="filters.time" type="datetime-local" class="form-control" id="time" placeholder="Select title to time events">
+        <label for="formGroupExampleInput">Date</label>
+        <input v-model="filters.date" type="date" class="form-control" id="date" placeholder="Select title to date events">
       </div>
       <div class="form-group">
         <label for="formGroupExampleInput">Category</label>
@@ -40,10 +40,7 @@
   <div class="events container">
     <div class="columns is-multiline" v-if="events.length > 0">
       <div v-for="event in events" :key="event.eventId" class="column is-one-quarter">
-<!--        <EventCard :event="event" @click.native="goToAction(event)" />-->
         <EventCard :event="event" :isPostAddOrEdit = "isPostAddOrEdit" @image-clicked="goToAction" />
-<!--        <EventCard :event="event" @image-clicked="isPostAddOrEdit? goToTagEvent(event) : '' " @image-clicked="goToEvent" />-->
-<!--        <EevntCard :event="event" @image-clicked="goToAction(event)" />-->
       </div>
     </div>
     <div v-else class="no-events">
@@ -71,7 +68,7 @@ export default {
       filters: {
         title: '',
         city: '',
-        time: '',
+        date: '',
         tags: [],
         excludeFullEvents: false
       },
@@ -85,7 +82,6 @@ export default {
     this.fetchEvents();
   },
   watch: {
-    // 监听 filters 对象的变化
     filters: {
       handler: function() {
         this.fetchEvents();
@@ -129,19 +125,11 @@ export default {
         this.$router.push({ name: 'EventView', params: { eventId } });
       }
     },
-    goToEvent(eventId) {
-      if(!this.isPostAddOrEdit){
-        this.$router.push({ name: 'EventView', params: { eventId } });
-      }
-    },
-    goToTagEvent(event){
-      this.$emit('addTaggedEvent', event)
-    },
     clearFilters() {
       this.filters = {
         title: '',
         city: '',
-        time: '',
+        date: '',
         tags: '',
         excludeFullEvents: false
       };

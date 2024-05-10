@@ -19,6 +19,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -74,21 +76,22 @@ public class EventController {
         var expireTime = LocalDateTime.now().plusMinutes(30);
         return new GetImgUploadUrlResponse(eventService.getImgUploadInformation(expireTime));
     }
+
     @GetMapping("/filter")
     public ResponseEntity<List<EventDto>> getFilteredEvents(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String city,
-            @RequestParam(required = false) String time,
+            @RequestParam(required = false) String date,
             @RequestParam(required = false) String tags,
             @RequestParam(defaultValue = "false") boolean excludeFullEvents) {
 
-        LocalDateTime eventTime = null;
-        if (time != null && !time.isEmpty()) {
-            eventTime = LocalDateTime.parse(time);
+        LocalDate eventDate = null;
+        if (date != null && !date.isEmpty()) {
+            eventDate = LocalDate.parse(date);
         }
         List<String> tagList = tags != null ? Arrays.stream(tags.split(",")).map(String::trim).collect(Collectors.toList()) : null;
 
-        List<EventDto> eventsDto = eventService.getFilteredEvents(title, city, eventTime, tagList, excludeFullEvents);
+        List<EventDto> eventsDto = eventService.getFilteredEvents(title, city, eventDate, tagList, excludeFullEvents);
         return ResponseEntity.ok(eventsDto);
     }
 
@@ -102,9 +105,6 @@ public class EventController {
         List<EventDto> events = eventService.getAllEvents();
         return new ResponseEntity<>(events, HttpStatus.OK);
     }
-
-
-
 
     /**
      * Retrieves an event by its ID.
