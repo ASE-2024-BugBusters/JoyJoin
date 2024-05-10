@@ -1,9 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import CreatePost from "../views/posts/CreatePost.vue";
 import NotificationIcon from "@/components/Notification/NotificationIcon.vue";
-import PostView from "@/views/posts/PostView.vue";
 import ProfileView from "@/views/profile/ProfileView.vue";
+
 
 const routes = [
   {
@@ -70,9 +69,9 @@ const routes = [
     component: () => import('../views/register/RegisterView.vue')
   },
   {
-    path: "/post",
-    name: "post",
-    component: CreatePost,
+    path: "/post/create",
+    name: "createPost",
+    component: () => import('../views/posts/CreatePost.vue'),
     beforeEnter: (to, from, next) => {
       if (sessionStorage.getItem("jwtToken") && sessionStorage.getItem("userId")) {
         next();
@@ -99,9 +98,9 @@ const routes = [
     component: NotificationIcon
   },
   {
-    path: "/postview",
-    name: "postview",
-    component: PostView,
+    path: "/post/:id",
+    name: "post",
+    component: () => import('../views/posts/PostView.vue'),
     beforeEnter: (to, from, next) => {
       if (sessionStorage.getItem("jwtToken") && sessionStorage.getItem("userId")) {
         next();
@@ -133,7 +132,19 @@ const routes = [
         next({name: 'home'})
       }
     }
-  }
+  },
+  {
+    path: "/posts",
+    name: "posts",
+    component: () => import('../components/Posts/UserAllPosts.vue'),
+    beforeEnter: (to, from, next) => {
+      if (sessionStorage.getItem("jwtToken") && sessionStorage.getItem("userId")) {
+        next();
+      } else {
+        next({name: 'home'})
+      }
+    }
+  },
 ]
 
 const router = createRouter({

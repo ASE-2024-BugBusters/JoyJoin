@@ -1,5 +1,6 @@
 package com.joyjoin.eventservice.model;
 import com.joyjoin.eventservice.model.converter.ImageRefListConverter;
+import com.joyjoin.eventservice.model.converter.TagsConverter;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -31,7 +32,8 @@ public class Event {
 
     @Column(name = "is_deleted")
     private boolean isDeleted = false;
-
+    @Column(name = "is_expired", nullable = false)
+    private boolean isExpired = false;
     @NotBlank
     @Column(nullable = false)
     private String title;
@@ -50,7 +52,7 @@ public class Event {
     @Column(length = 1000, nullable = false)
     private String description;
 
-    @ElementCollection
+    @Convert(converter = TagsConverter.class)
     private List<Tag> tags;
 
     @Convert(converter = ImageRefListConverter.class)
@@ -65,11 +67,15 @@ public class Event {
     protected void onCreate() {
         createdOn = LocalDateTime.now();
         lastEdited = LocalDateTime.now();
+        checkAndSetExpired();
     }
 
     @PreUpdate
     protected void onUpdate() {
         lastEdited = LocalDateTime.now();
+        checkAndSetExpired();
     }
-
+    private void checkAndSetExpired() {
+        isExpired = LocalDateTime.now().isAfter(this.time);
+    }
 }

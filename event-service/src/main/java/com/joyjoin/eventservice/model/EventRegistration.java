@@ -23,4 +23,5 @@ public class EventRegistration {
     private UUID eventId;
     private UUID userId;
     private boolean isRegistered = true;
+    private boolean isActive = true;
 }

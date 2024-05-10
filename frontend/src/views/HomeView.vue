@@ -15,6 +15,8 @@
         </div>
       </div>
     </section>
+
+    <h2 class="event-title" v-if="jwt">Check out our upcoming events</h2>
     <EventList/>
   </div>
 </template>
@@ -26,6 +28,11 @@ export default {
   name: 'home',
   components: {
     EventList
+  },
+  data() {
+    return {
+      jwt: (sessionStorage.getItem("jwtToken") !== null || sessionStorage.getItem("userId") !== null),
+    }
   },
   computed: {
     isLoggedIn() {
@@ -54,27 +61,38 @@ export default {
   background-repeat: no-repeat;
   height: 400px;
 }
+
 .hero-body .title {
   text-shadow: 4px 4px 4px rgba(0, 0, 0, 0.6);
   padding: 40px 0 20px 0;
   font-size: 60px;
 }
+
 .subtitle {
   text-shadow: 4px 4px 4px rgba(0, 0, 0, 0.7);
   font-size: 30px;
 }
+
 .button-block {
   text-align: center;
   position: absolute;
   bottom: -150px;
   width: 100%;
+
   .button {
     margin-right: 50px;
     padding-left: 50px;
     padding-right: 50px;
   }
 }
+
 .is-xl {
   font-size: 1.7rem;
 }
+
+.event-title {
+  margin-top: 60px;
+  text-align: center;
+}
 </style>
+

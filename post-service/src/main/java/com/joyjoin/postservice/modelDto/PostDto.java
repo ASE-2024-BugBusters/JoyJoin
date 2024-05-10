@@ -3,11 +3,7 @@ package com.joyjoin.postservice.modelDto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.joyjoin.postservice.model.Comment;
 import com.joyjoin.postservice.model.Image;
-import com.joyjoin.postservice.model.template.DefaultProperties;
-import com.joyjoin.userservice.model.User;
 import lombok.*;
-import com.joyjoin.userservice.modelDto.UserDto;
-import com.joyjoin.eventservice.modelDto.EventDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,5 +21,6 @@ public class PostDto {
     private List<UUID> taggedUsersId;
     private UUID taggedEventId;
     private List<UUID> likedUsersId;
-//    private List<Image> images;
+    private List<Image> images;
+    private LocalDateTime createdOn;
 }

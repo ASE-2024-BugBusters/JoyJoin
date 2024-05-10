@@ -10,6 +10,8 @@ import com.joyjoin.userservice.packer.UserAggregator;
 import com.joyjoin.userservice.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 

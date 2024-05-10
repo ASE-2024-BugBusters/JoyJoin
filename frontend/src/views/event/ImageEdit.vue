@@ -47,7 +47,7 @@ export default {
       }
       console.log("Data to be sent:", data);
       try {
-        const updateImagesUrl = BASE_URL_EVENT_SERVICE + `/events/${eventId}`;
+        const updateImagesUrl = BASE_URL_EVENT_SERVICE + `/events/${eventId}/images`;
         console.log(data);
         const response = await axios.patch(updateImagesUrl, data, {
           headers: {
@@ -128,8 +128,15 @@ export default {
 @import 'filepond/dist/filepond.min.css';
 .container {
   margin-top: 50px;
+  overflow-y: hidden;
 }
-
+.title {
+  font-size: 2.3em;
+}
+.label {
+  font-weight: bold;
+  font-size: 1.2em;
+}
 .field {
   flex-grow: 1;
   min-width: 300px;

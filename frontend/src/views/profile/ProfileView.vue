@@ -52,6 +52,9 @@
       </div>
     </div>
   </div>
+
+  <!--User's All Posts-->
+  <UserAllPosts></UserAllPosts>
 </template>
 
 <script>
@@ -59,9 +62,13 @@ import axios from 'axios'
 import {BASE_URL_USER_SERVICE, INTEREST_TAGS} from "../../../config/dev.env";
 import {useRoute} from "vue-router";
 import {computed, ref} from "vue";
+import UserAllPosts from '@/components/Posts/UserAllPosts.vue';
 
 export default {
   name: 'UserProfile',
+  components: {
+    UserAllPosts,
+  },
   setup() {
     const route = useRoute();
     const userId = computed(() => route.params.user_id);
@@ -123,9 +130,6 @@ export default {
   },
   methods: {
     async checkFollowStatus() {
-      try {
-        const 
-      }
     },
     async fetchUserProfile() {
       try {

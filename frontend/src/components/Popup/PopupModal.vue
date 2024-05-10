@@ -65,7 +65,7 @@ export default {
   margin-left: auto;
   margin-right: auto;
   padding: 1rem;
-  width: 95%;
+  width: 95vw;
 }
 .right-button-wrapper {
   min-width: 25px;

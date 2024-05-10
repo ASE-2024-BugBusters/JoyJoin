@@ -1,6 +1,7 @@
 package com.joyjoin.postservice.controller;
 
-import com.joyjoin.eventservice.exception.ResourceNotFoundException;
+import com.joyjoin.postservice.controller.dto.GetImgUploadUrlResponse;
+import com.joyjoin.postservice.exception.ResourceNotFoundException;
 import com.joyjoin.postservice.controller.dto.CreatePostCommentRequest;
 import com.joyjoin.postservice.controller.dto.CreatePostRequest;
 import com.joyjoin.postservice.controller.dto.LikePostRequest;
@@ -8,14 +9,15 @@ import com.joyjoin.postservice.controller.dto.UpdatePostRequest;
 import com.joyjoin.postservice.model.Comment;
 import com.joyjoin.postservice.model.Post;
 import com.joyjoin.postservice.modelDto.*;
+import com.joyjoin.postservice.modelDto.User.UserDto;
 import com.joyjoin.postservice.service.PostService;
-import com.joyjoin.postservice.service.ImageService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,14 +28,12 @@ public class PostController {
 
     private final PostService postService;
 
-    private final ImageService imageService;
 
     private final ModelMapper modelMapper;
 
     @Autowired
-    public PostController(PostService postService, ImageService imageService, ModelMapper modelMapper) {
+    public PostController(PostService postService, ModelMapper modelMapper) {
         this.postService = postService;
-        this.imageService = imageService;
         this.modelMapper = modelMapper;
     }
 
@@ -59,8 +59,8 @@ public class PostController {
 
     // (3) Get Specific Post by PostId
     @GetMapping("/{id}")
-    public ResponseEntity<PostDto> getPostById(@PathVariable UUID id) {
-        PostDto post = postService.getPostById(id);
+    public ResponseEntity<PostWithUserInfoDto> getPostById(@RequestHeader(name="Authorization") String token, @PathVariable UUID id) {
+        PostWithUserInfoDto post = postService.getPostById(token, id);
         return new ResponseEntity<>(post, HttpStatus.OK);
     }
 
@@ -77,6 +77,17 @@ public class PostController {
         Post post = modelMapper.map(request, Post.class);
         PostDto createdPost = postService.createPost(post);
         return new ResponseEntity<>(createdPost, HttpStatus.CREATED);
+    }
+
+    /**
+     * Provides an upload URL for an event image that expires in 30 minutes.
+     *
+     * @return the response containing the URL and expiration information
+     */
+    @GetMapping("/get_upload_image_url")
+    public GetImgUploadUrlResponse getImgUploadUrl() {
+        var expireTime = LocalDateTime.now().plusMinutes(30);
+        return new GetImgUploadUrlResponse(postService.getImgUploadInformation(expireTime));
     }
 
     // (5): Update Post
@@ -121,15 +132,22 @@ public class PostController {
             "likeUsersId": "09f80c29-bf3f-4b4b-a23e-d179eba82823",
             "liked": 0
     }*/
-    @PatchMapping("/likes")
+    @PatchMapping("/likes/create")
     public ResponseEntity<PostDto> likeUnlikePost(@RequestBody LikePostRequest request) {
         PostDto updatedPost = postService.likeUnlikePost(request);
         return new ResponseEntity<>(updatedPost, HttpStatus.OK);
     }
 
-    // =========Below section is related to Post's Comments========
+    // (9): Retrieve all likes under a specific post
+    @GetMapping("/{id}/likes")
+    public ResponseEntity<List<UserDto>> getAllLikesForPostId(@RequestHeader(name="Authorization") String token, @PathVariable UUID id) {
+        List<UserDto> comments = postService.getAllLikesForPostId(token, id);
+        return new ResponseEntity<>(comments, HttpStatus.OK);
+    }
 
-    // (9): Create a comment for a specific post
+    // =========Below section is related to Post's Comments========
+    // (10): Create a comment for a specific post
+
     /*{
         "userId": "09f80c29-bf3f-4b4b-a23e-d179eba82802",
             "postId": "2090b128-86ae-4712-a502-0bf5de817fdb",
@@ -142,7 +160,7 @@ public class PostController {
         return new ResponseEntity<>(createdComment, HttpStatus.CREATED);
     }
 
-    // (10): Delete a specific comment
+    // (11): Delete a specific comment
     @DeleteMapping("/comments/{id}")
     public ResponseEntity<String> deleteComment(@PathVariable UUID id) {
         try {
@@ -155,12 +173,10 @@ public class PostController {
         }
     }
 
-    // (11): Retrieve all comments under a specific post
+    // (12): Retrieve all comments under a specific post
     @GetMapping("/{id}/comments")
-    public ResponseEntity<List<CommentDto>> getAllCommentsForPostId(@PathVariable UUID id) {
-        List<CommentDto> comments = postService.getAllCommentsForPostId(id);
-        // TODO: Call user-service api: Retrieve User's username, bios, and avatar before returning
+    public ResponseEntity<List<CommentWithUserInfoDto>> getAllCommentsForPostId(@RequestHeader(name="Authorization") String token, @PathVariable UUID id) {
+        List<CommentWithUserInfoDto> comments = postService.getAllCommentsForPostId(token, id);
         return new ResponseEntity<>(comments, HttpStatus.OK);
     }
-
 }

@@ -3,7 +3,7 @@ package com.joyjoin.postservice.model.converter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.joyjoin.eventservice.model.ImageRef;
+import com.joyjoin.postservice.model.ImageRef;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import org.slf4j.Logger;
