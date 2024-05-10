@@ -1,17 +1,19 @@
 package com.joyjoin.eventservice.controller;
 
 import com.joyjoin.eventservice.controller.dto.GetImgUploadUrlResponse;
-import com.joyjoin.eventservice.exception.ResourceNotFoundException;
 import com.joyjoin.eventservice.model.Event;
 import com.joyjoin.eventservice.model.EventRegistration;
 import com.joyjoin.eventservice.modelDto.EventDto;
 import com.joyjoin.eventservice.modelDto.EventRegistrationDto;
 import com.joyjoin.eventservice.modelDto.PostEventRequest;
 import com.joyjoin.eventservice.modelDto.UpdateEventRequest;
+import com.joyjoin.eventservice.repository.EventRepository;
+import com.joyjoin.eventservice.repository.EventSpecifications;
 import com.joyjoin.eventservice.service.EventRegistrationService;
 import com.joyjoin.eventservice.service.EventService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Controller class for handling all event-related actions.
@@ -37,6 +40,7 @@ public class EventController {
      * Constructs an EventController with the specified EventService and ModelMapper.
      *
      * @param eventService             the service to handle the event logic
+     * @param eventRepository
      * @param modelMapper              the tool to map between DTOs and entities
      * @param eventRegistrationService the service to handle the event registration logic
      */
@@ -77,11 +81,30 @@ public class EventController {
      *
      * @return a response entity containing a list of all event DTOs
      */
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<EventDto>> getAllEvents() {
         List<EventDto> events = eventService.getAllEvents();
         return new ResponseEntity<>(events, HttpStatus.OK);
     }
+
+    @GetMapping("/filter")
+    public ResponseEntity<List<EventDto>> getFilteredEvents(
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String city,
+            @RequestParam(required = false) String time,
+            @RequestParam(required = false) String tags,
+            @RequestParam(defaultValue = "false") boolean excludeFullEvents) {
+
+        LocalDateTime eventTime = null;
+        if (time != null && !time.isEmpty()) {
+            eventTime = LocalDateTime.parse(time);
+        }
+        List<String> tagList = tags != null ? Arrays.stream(tags.split(",")).map(String::trim).collect(Collectors.toList()) : null;
+
+        List<EventDto> eventsDto = eventService.getFilteredEvents(title, city, eventTime, tagList, excludeFullEvents);
+        return ResponseEntity.ok(eventsDto);
+    }
+
 
     /**
      * Retrieves an event by its ID.
