@@ -14,7 +14,7 @@
             <img class="user-image navigate-info" v-if="!post.user.avatar" src="../../assets/Default_User_Icon.png" alt="User Profile Picture" @click="navigateToUserProfile(post.user.id)" title="Navigate to User Profile" />
             <img class="user-image navigate-info" v-else :src="post.user.avatar.urls[0].url"  alt="User Profile Picture" @click="navigateToUserProfile(post.user.id)" title="Navigate to User Profile" />
             <div class="user-info">
-              <div class="username navigate-info" v-if="post.user" @click="navigateToUserProfile(post.user.id)" title="Navigate to User Profile"> {{ post.user.id }}</div>
+              <div class="username navigate-info" v-if="post.user" @click="navigateToUserProfile(post.user.id)" title="Navigate to User Profile"> {{ post.user.accountName }}</div>
               <div class="post-info" :class="isEditMode? 'post-info-edit' : ''">
                 <span class="navigate-info" v-if="post.taggedEvent" @click="navigateToEvent(post.taggedEvent.eventId)" title="Navigate to Event Information">{{ post.taggedEvent.title }}</span>
                 <span v-else-if="!post.taggedEvent && isEditMode">No event is binded</span>
@@ -241,7 +241,7 @@ export default {
   computed: {
     // Method: Extract username of taggedUsers
     taggedusername() {
-      let username_list = this.post.taggedUsers.map(taggedperson => taggedperson.id).join(", ")
+      let username_list = this.post.taggedUsers.map(taggedperson => taggedperson.accountName).join(", ")
       if (username_list.length >= this.usernameListMaximumLength) {
         username_list = username_list.substring(0, this.usernameListMaximumLength);
         this.taggedUsersSeeMore = true;
@@ -270,6 +270,9 @@ export default {
   display: inline-block;
   margin-right: 10px;
 }
+.user-image:hover{
+  box-shadow: 2px 2px 2px 1px darkgray;
+}
 
 .left-right-content-container {
   display: flex;
@@ -295,6 +298,9 @@ export default {
 .username {
   font-weight: bold;
 }
+.username:hover {
+  font-weight: bolder;
+}
 
 .post-info {
   font-size: 13px;
@@ -304,7 +310,7 @@ export default {
 }
 
 .post-comments-container {
-  padding: 10px;
+  padding: 5px 10px;
 }
 
 textarea {
