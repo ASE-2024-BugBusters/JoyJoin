@@ -3,15 +3,15 @@
     <form>
       <div class="form-group">
         <label for="formGroupExampleInput">Title</label>
-        <input v-model="filters.title" type="text" class="form-control" id="title" placeholder="Input title to filter events">
+        <input v-model="filters.title" type="text" class="form-control" id="title" placeholder="">
       </div>
       <div class="form-group">
         <label for="formGroupExampleInput">City</label>
-        <input v-model="filters.city" type="text" class="form-control" id="city" placeholder="Input city to filter events">
+        <input v-model="filters.city" type="text" class="form-control" id="city" placeholder="">
       </div>
       <div class="form-group">
         <label for="formGroupExampleInput">Date</label>
-        <input v-model="filters.date" type="date" class="form-control" id="date" placeholder="Select title to date events">
+        <input v-model="filters.date" type="date" class="form-control" id="date" placeholder="">
       </div>
       <div class="form-group">
         <label for="formGroupExampleInput">Category</label>
@@ -19,7 +19,7 @@
             v-model="filters.tags"
             mode="tags"
             tag-placeholder="Add new tag"
-            placeholder="Search or add tags to filter"
+            placeholder=""
             label="label"
             track-by="value"
             :options="tags"
@@ -156,34 +156,48 @@ export default {
   overflow-y: hidden;
 }
 .filter {
-  margin: 2em;
-  display: block;
-}
-.field {
-  flex-grow: 1;
-  min-width: 300px;
-  margin-bottom: 1em;
-}
-.no-events {
-  font-size: 1.5em;
-  color: black;
+  margin: 2em auto; // Maintain margin for spacing around
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start; // Align items to the start of the line
+  align-items: flex-start; // Align items to the top
+  max-width: 1200px; // Control maximum width to avoid overly wide forms
 }
 .form-group {
-  align-items: center;
-  width: 30%;
-  margin: 1em;
+  display: flex;
+  flex-direction: column;
+  align-items: center; // Center items for better alignment of checkbox
+  margin: 0.5em;
+  flex: 1 1 220px; // Allows flexibility with starting at 220px
+  min-width: 220px; // Minimum width for smaller screens
+  max-width: 300px; // Maximum width for larger screens
 }
 label {
-  margin-right: 1em;
-  margin-left: 2em;
+  margin-bottom: 0.5em;
+  width: 100%; // Ensure labels align properly over their fields
   font-weight: bold;
 }
 form {
+  width: 100%; // Use full width to manage inner content
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: row; // Set form direction to row for side-by-side layout
+  flex-wrap: wrap; // Allow wrapping
+  justify-content: center; // Center content within form
+  align-items: flex-start; // Align form items at the start vertically
 }
 button {
-  font-weight: bold;
+  flex: 0 1 auto; // Don't allow button to grow but can shrink if necessary
+  margin-top: 1em; // Provide top margin for alignment
+  padding: 0.5em 2em; // Larger padding for better visibility
 }
+.multiselect {
+  width: 100%; // Ensure multiselect fills its container
+}
+input[type="checkbox"] {
+  transform: scale(1.5); // Enlarge checkbox
+  margin: 10px; // Provide margin for better spacing
+  vertical-align: middle; // Align checkbox vertically for aesthetics
+}
+
+
 </style>
