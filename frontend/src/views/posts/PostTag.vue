@@ -56,7 +56,7 @@ export default {
     searchingUsers() {
       if(this.users) {
         return this.users.filter(user => {
-          return user.id.includes(this.search) && // AllUser should according to search
+          return user.accountName.includes(this.search) && // AllUser should according to search
               !this.temp_taggedpeople.some(taggedUser => taggedUser.id === user.id) && // AllUser should not appear in the taggedUser
               user.id !== this.currentUser; // AllUser should not include currentUser
         });
