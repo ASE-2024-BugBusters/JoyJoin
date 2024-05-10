@@ -40,7 +40,6 @@ public class EventController {
      * Constructs an EventController with the specified EventService and ModelMapper.
      *
      * @param eventService             the service to handle the event logic
-     * @param eventRepository
      * @param modelMapper              the tool to map between DTOs and entities
      * @param eventRegistrationService the service to handle the event registration logic
      */
