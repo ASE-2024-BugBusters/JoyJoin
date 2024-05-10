@@ -9,7 +9,7 @@
             <img class="user-image comment-user-image navigate-info" v-else :src="comment.user.avatar.urls[0].url" alt="User Profile Picture" @click="navigateToUserProfile(comment.user.id)" title="Navigate to User Profile"/>
             <div class="user-info comment-font">
               <div class="username navigate-info" @click="navigateToUserProfile(comment.user.id)" title="Navigate to User Profile">{{ comment.user.accountName }}</div>
-              <div class="post-info">{{ comment.comment }}</div>
+              <div class="comment">{{ comment.comment }}</div>
             </div>
           </div>
           <div class="button-wrapper">
@@ -234,5 +234,8 @@ textarea {
 }
 .navigate-info:hover{
   font-weight: bold;
+}
+.comment{
+  word-break: break-word;
 }
 </style>
