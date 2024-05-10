@@ -207,6 +207,10 @@ input[type="checkbox"] {
   margin: 10px; // Provide margin for better spacing
   vertical-align: middle; // Align checkbox vertically for aesthetics
 }
-
+.no-events{
+  font-weight: bold;
+  margin-bottom: 5em;
+  font-size: 2em;
+}
 
 </style>
