@@ -34,7 +34,7 @@
         <input type="checkbox" v-model="filters.excludeFullEvents">
       </div>
       <div class="form-group">
-        <button class="btn btn-outline-dark "@click="clearFilters" type="reset">Clear All Filters</button>
+        <button v-if="hasFilters" class="btn btn-outline-dark "@click="clearFilters" type="reset">Clear All Filters</button>
       </div>
     </form>
 
@@ -91,6 +91,15 @@ export default {
       deep: true
     }
   },
+  computed: {
+    hasFilters() {
+      return this.filters.title !== '' ||
+          this.filters.city !== '' ||
+          this.filters.date !== '' ||
+          this.filters.tags.length > 0 ||
+          this.filters.excludeFullEvents; // Check if checkbox is true
+    }
+  },
   methods: {
     fetchEvents() {
       const params = new URLSearchParams();
@@ -132,7 +141,7 @@ export default {
         title: '',
         city: '',
         date: '',
-        tags: '',
+        tags: [],
         excludeFullEvents: false
       };
     },
