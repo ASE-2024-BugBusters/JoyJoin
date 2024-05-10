@@ -16,7 +16,6 @@
       </div>
     </section>
 
-    <!--Event-->
     <h2 class="event-title" v-if="jwt">Check out our upcoming events</h2>
     <EventList/>
   </div>
