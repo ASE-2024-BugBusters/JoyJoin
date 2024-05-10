@@ -39,7 +39,7 @@ public class PostService {
     private final ModelMapper modelMapper;
     private final PostPacker postPacker;
 
-    static final String POST_BUCKET = "postimg";
+    static final String POST_BUCKET = "post-img";
 
     public PostService(PostRepository postRepository, CommentRepository commentRepository, ModelMapper modelMapper, ImageService imageService, PostPacker postPacker) {
         this.postRepository = postRepository;
