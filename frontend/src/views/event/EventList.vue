@@ -1,7 +1,7 @@
 <template>
   <div class="events container">
-    <div class="columns is-multiline">
-      <div v-for="event in events" :key="event.eventId" class="column is-one-quarter">
+    <div class="columns is-multiline" v-if ="events.length > 0">
+      <div v-for ="event in events" :key="event.eventId" class="column is-one-quarter">
 <!--        <EventCard :event="event" @click.native="goToEvent(event.eventId)" />-->
         <EventCard :event="event" @click.native="goToAction(event)" />
 
