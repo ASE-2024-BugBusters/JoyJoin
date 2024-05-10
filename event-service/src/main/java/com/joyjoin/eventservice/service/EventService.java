@@ -15,6 +15,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -93,11 +94,11 @@ public class EventService {
         return events.stream().map(eventPacker::packEvent).collect(Collectors.toList());
     }
 
-    public List<EventDto> getFilteredEvents(String title, String city, LocalDateTime time, List<String> tags, boolean excludeFullEvents) {
+    public List<EventDto> getFilteredEvents(String title, String city, LocalDate date, List<String> tags, boolean excludeFullEvents) {
         List<Specification<Event>> specs = new ArrayList<>();
         specs.add(EventSpecifications.hasTitle(title));
         specs.add(EventSpecifications.isInCity(city));
-        specs.add(EventSpecifications.isAtTime(time));
+        specs.add(EventSpecifications.isAtDate(date));
         specs.add(EventSpecifications.hasTags(tags));
         if (excludeFullEvents) {
             specs.add(EventSpecifications.participationLimitNotReached());
