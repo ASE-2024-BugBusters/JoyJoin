@@ -34,15 +34,16 @@
       <div class="form-group">
         <button class="btn btn-outline-dark "@click="clearFilters" type="reset">Clear All Filters</button>
       </div>
-<!--      <button class="btn btn-outline-primary" @click="fetchEvents">Filter Events</button>-->
-
     </form>
 
   </div>
   <div class="events container">
     <div class="columns is-multiline" v-if="events.length > 0">
       <div v-for="event in events" :key="event.eventId" class="column is-one-quarter">
-        <EventCard :event="event" @click.native="goToAction(event)" />
+<!--        <EventCard :event="event" @click.native="goToAction(event)" />-->
+        <EventCard :event="event" :isPostAddOrEdit = "isPostAddOrEdit" @image-clicked="goToAction" />
+<!--        <EventCard :event="event" @image-clicked="isPostAddOrEdit? goToTagEvent(event) : '' " @image-clicked="goToEvent" />-->
+<!--        <EevntCard :event="event" @image-clicked="goToAction(event)" />-->
       </div>
     </div>
     <div v-else class="no-events">
@@ -123,9 +124,18 @@ export default {
       if (this.isPostAddOrEdit) {
         this.$emit('addTaggedEvent', event);
       } else {
+        // this.$emit('image-clicked', event.eventId);
         const eventId = event.eventId;
         this.$router.push({ name: 'EventView', params: { eventId } });
       }
+    },
+    goToEvent(eventId) {
+      if(!this.isPostAddOrEdit){
+        this.$router.push({ name: 'EventView', params: { eventId } });
+      }
+    },
+    goToTagEvent(event){
+      this.$emit('addTaggedEvent', event)
     },
     clearFilters() {
       this.filters = {
