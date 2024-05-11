@@ -43,6 +43,7 @@
             <div class="control">
               <input class="input" type="text" v-model="accountName" placeholder="Enter your account name...">
             </div>
+            <p class="help is-danger" v-if="accountNameExists">{{ accountNameErrorMessage }}</p>
           </div>
           <div class="field">
             <label class="label">Email</label>
@@ -83,6 +84,8 @@ import {BASE_URL_USER_SERVICE} from "../../../config/dev.env";
 export default {
   data() {
     return {
+      accountNameErrorMessage: "",
+      accountNameExists: false,
       emailErrorMessage: "",
       emailExists: false,
       showModal: false,
@@ -117,10 +120,16 @@ export default {
         })
             .catch(error => {
               if (error.response.status === 400) {
-                this.emailErrorMessage = error.response.data.errorMessage;
-                this.emailExists = true;
+                if (error.response.data.errorMessage.startsWith("Email")) {
+                  this.emailErrorMessage = error.response.data.errorMessage;
+                  this.emailExists = true;
+                } else {
+                  this.accountNameErrorMessage = error.response.data.errorMessage;
+                  this.accountNameExists = true;
+                }
               } else {
                 this.emailExists = false;
+                this.accountNameExists = false;
                 console.log(error);
               }
             })

@@ -158,7 +158,7 @@ export default{
             // uploadedImages.value.push(image_info); // Store the uploaded image info
           })
 
-          uploadedImages.value.push({ "bucket": "post-img", "key": key }); // Store the uploaded image info
+          uploadedImages.value.push({ "bucket": "joyjoin-post-img", "key": key }); // Store the uploaded image info
 
         }
       } catch (uploadError) {

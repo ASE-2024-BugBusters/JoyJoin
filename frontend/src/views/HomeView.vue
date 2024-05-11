@@ -37,6 +37,7 @@ export default {
   computed: {
     isLoggedIn() {
       // Properly check if both JWT token and user ID exist in sessionStorage
+      console.log(process.env.NODE_ENV);
       return sessionStorage.getItem("jwtToken") !== null && sessionStorage.getItem("userId") !== null;
     }
   },
