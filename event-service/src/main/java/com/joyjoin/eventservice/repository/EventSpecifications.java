@@ -33,18 +33,21 @@ public class EventSpecifications {
                 criteriaBuilder.equal(criteriaBuilder.lower(root.get("location").get("city")), city.toLowerCase());
     }
 
-    public static Specification<Event> isAtTime(LocalDateTime time) {
-        if (time == null) return null;
-        return (root, query, criteriaBuilder) ->
-                criteriaBuilder.equal(root.get("time"), time);
+    public static Specification<Event> isAtDate(LocalDate date) {
+        if (date == null) return null;
+        return (root, query, criteriaBuilder) -> {
+            LocalDateTime startOfDay = date.atStartOfDay();
+            LocalDateTime endOfDay = date.atTime(23, 59, 59);
+            return criteriaBuilder.between(root.get("time"), startOfDay, endOfDay);
+        };
     }
 
     public static Specification<Event> hasTags(List<String> tags) {
         return (root, query, cb) -> {
             if (tags == null || tags.isEmpty()) {
-                return cb.conjunction(); // 如果没有标签过滤应用，则返回一个始终为真的谓词。
+                return cb.conjunction();
             }
-            Expression<String> tagsExpression = root.get("tags"); // 假设 tags 是一个以逗号分隔的字符串字段
+            Expression<String> tagsExpression = root.get("tags");
             Predicate allTagsMatch = cb.conjunction();
             for (String tag : tags) {
                 allTagsMatch = cb.and(allTagsMatch, cb.like(tagsExpression, "%" + tag.trim() + "%"));

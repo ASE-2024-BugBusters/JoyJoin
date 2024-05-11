@@ -7,13 +7,10 @@ import com.joyjoin.eventservice.modelDto.EventDto;
 import com.joyjoin.eventservice.modelDto.EventRegistrationDto;
 import com.joyjoin.eventservice.modelDto.PostEventRequest;
 import com.joyjoin.eventservice.modelDto.UpdateEventRequest;
-import com.joyjoin.eventservice.repository.EventRepository;
-import com.joyjoin.eventservice.repository.EventSpecifications;
 import com.joyjoin.eventservice.service.EventRegistrationService;
 import com.joyjoin.eventservice.service.EventService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -77,6 +74,16 @@ public class EventController {
         return new GetImgUploadUrlResponse(eventService.getImgUploadInformation(expireTime));
     }
 
+    /**
+     * Retrieves a list of events filtered based on optional criteria including title, city, date, tags, and whether to exclude full events.
+     *
+     * @param title Optional parameter to filter events by their title. If provided, will match events containing this substring.
+     * @param city Optional parameter to filter events by city. Events in the specified city will be returned.
+     * @param date Optional parameter to filter events by date. Only events on this specific date will be returned.
+     * @param tags Optional comma-separated list of tags to filter events. Only events containing these tags will be returned.
+     * @param excludeFullEvents Boolean flag to determine if full events should be excluded from the results. Default is false, meaning full events will be included.
+     * @return ResponseEntity containing a list of EventDto objects that match the filters provided. Returns an OK (200) HTTP status code.
+     */
     @GetMapping("/filter")
     public ResponseEntity<List<EventDto>> getFilteredEvents(
             @RequestParam(required = false) String title,
@@ -87,13 +94,14 @@ public class EventController {
 
         LocalDate eventDate = null;
         if (date != null && !date.isEmpty()) {
-            eventDate = LocalDate.parse(date);
+            eventDate = LocalDate.parse(date); // Converts string date to LocalDate object.
         }
         List<String> tagList = tags != null ? Arrays.stream(tags.split(",")).map(String::trim).collect(Collectors.toList()) : null;
 
         List<EventDto> eventsDto = eventService.getFilteredEvents(title, city, eventDate, tagList, excludeFullEvents);
         return ResponseEntity.ok(eventsDto);
     }
+
 
     /**
      * Retrieves all events currently available.
