@@ -21,7 +21,7 @@
         <router-link to="/" class="navbar-item" style="text-decoration: none">Home</router-link>
         <router-link to="/about" class="navbar-item noTextDecoration" style="text-decoration: none">About</router-link>
         <router-link v-if="jwt" to="/profile" class="navbar-item noTextDecoration" style="text-decoration: none">Profile</router-link>
-        <router-link v-if="jwt" to="/post" class="navbar-item noTextDecoration" style="text-decoration: none">Create Post</router-link>
+        <router-link v-if="jwt" to="/post/create" class="navbar-item noTextDecoration" style="text-decoration: none">Create New Post</router-link>
         <router-link v-if="jwt" to="/events/create" class="navbar-item noTextDecoration" style="text-decoration: none">Publish Event</router-link>
       </div>
       <div class="navbar-end">

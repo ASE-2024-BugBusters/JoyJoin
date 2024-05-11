@@ -39,15 +39,21 @@
 
 
 <script>
-import { onUpdated, ref } from 'vue'
+import {onMounted, onUpdated, ref} from 'vue'
+import * as FilePond from "filepond";
+import axios from "axios";
+import {BASE_URL_POST_SERVICE} from "../../../config/dev.env";
+
 export default{
   props: ["images"],
   name: "DisplayImages",
   setup(props) {
-    const images = ref(props.images)
-    const error = ref(null)
-    const maximumImages = ref(5);
+    const images = ref([]);
+    const images_arr = ref([]);
+    const error = ref(null);
+    const maximumImages = ref(9);
     const img_valid = ref(true);
+    const uploadedImages = ref(props.images);
 
     const clickImageSliderBtn = (event) => {
       const imageList = document.querySelector(".slider-wrapper .image-list");
@@ -92,6 +98,7 @@ export default{
 
     const removeImage = (image_index) => {
       images.value.splice(image_index, 1);
+      images_arr.value.splice(image_index, 1);
       removeFileFromFileList(image_index)
       validateImages()
     }
@@ -102,12 +109,13 @@ export default{
 
       if (!(files.length && ((images.value.length + files.length) <= maximumImages.value))) {
         img_valid.value = true
-        error.value = "You can insert maximum of 5 images."
+        error.value = "You can insert maximum of 9 images."
         return;
       }
 
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
+        images_arr.value.push(file);
         const reader = new FileReader();
 
         reader.onload = (e) => {
@@ -132,11 +140,56 @@ export default{
       return valid;
     }
 
+    // Method: Upload images into AWS S3
+    const uploadImages = async () => {
+      try {
+        for (const image of images_arr.value) {
+          const { url, key } = await getUploadUrlAPI(); // Get the URL for upload
+          console.log("[uploadImage] url: " + url);
+          console.log("[uploadImage] key: " + key);
+
+          // Upload the file using axios
+          const response = await axios.put(url, image, {
+            headers: {
+              'Content-Type': 'binary'
+            },
+          }).then(response => {
+            // console.log("image_info: " + image_info);
+            // uploadedImages.value.push(image_info); // Store the uploaded image info
+          })
+
+          uploadedImages.value.push({ "bucket": "joyjoin-post-img", "key": key }); // Store the uploaded image info
+
+        }
+      } catch (uploadError) {
+        console.error("Upload error:", uploadError);
+      }
+    };
+
+    // Method: Fetching upload URL's API
+    const getUploadUrlAPI = async () => {
+      try {
+        const getUploadUrl = BASE_URL_POST_SERVICE +"/posts/get_upload_image_url";
+        const response = await axios.get(getUploadUrl, {
+          headers: {
+            'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
+          },
+        });
+        return {
+          url: response.data.image.urls[0].url,
+          key: response.data.image.key
+        };
+      } catch (error) {
+        console.error("Error fetching upload URL:", error);
+        throw error;
+      }
+    };
+
     onUpdated(() => {
       handleSlideButton();
     });
 
-    return {images, error, img_valid, maximumImages, clickImageSliderBtn, scrollImageList, removeImage, handleFileChange, open_file, validateImages}
+    return {images, error, img_valid, maximumImages, clickImageSliderBtn, scrollImageList, removeImage, handleFileChange, open_file, validateImages, uploadImages}
   },
 
 }
@@ -153,6 +206,9 @@ export default{
 .container {
   max-width: 1200px;
   width: 95%;
+  margin-top: 0px;
+  margin-left: 15px;
+  margin-right: 15px;
 }
 .slider-wrapper{
   position: relative;
@@ -197,7 +253,7 @@ export default{
 .slider-wrapper .image-list {
   display: grid;
   gap: 18px;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(9, 1fr);
   overflow-x: auto;
   scrollbar-width: none;
   margin-top: 20px;

@@ -5,41 +5,43 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joyjoin.eventservice.model.Tag;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Converter
-public class TagsConverter implements AttributeConverter<Set<Tag>, String> {
+public class TagsConverter implements AttributeConverter<List<Tag>, String> {
 
     static final ObjectMapper mapper = new ObjectMapper();
 
     @Override
-    public String convertToDatabaseColumn(Set<Tag> attribute) {
-        if (attribute == null || attribute.isEmpty()) {
-            return "[]";
+    public String convertToDatabaseColumn(List<Tag> from) {
+        if (from == null) {
+            from = List.of();
         }
         try {
-            return mapper.writeValueAsString(attribute);
+            return mapper.writeValueAsString(from);
         } catch (JsonProcessingException e) {
             return "[]";
         }
     }
 
     @Override
-    public Set<Tag> convertToEntityAttribute(String dbData) {
-        if (dbData == null || dbData.isBlank()) {
-            return new HashSet<>();
+    public List<Tag> convertToEntityAttribute(String from) {
+        if (from == null || from.isBlank()) {
+            return List.of();
         }
 
-        Set<Tag> tags = new HashSet<>();
+        List<Tag> tags = new ArrayList<>();
         try {
-            // You need to create a TypeReference for Set<Tag> because Java type erasure
-            Set<String> tagTextSet = mapper.readValue(dbData, mapper.getTypeFactory().constructCollectionType(Set.class, String.class));
-            for (String tagText : tagTextSet) {
-                tags.add(Tag.valueOf(tagText));
+            var tagTextObjectList = mapper.readValue(from, tags.getClass());
+            if (tagTextObjectList == null) {
+                return List.of();
+            }
+            for (Object tagTextObj : tagTextObjectList) {
+                tags.add(Tag.valueOf((String) tagTextObj));
             }
         } catch (JsonProcessingException e) {
-            return new HashSet<>();
+            return tags;
         }
         return tags;
     }

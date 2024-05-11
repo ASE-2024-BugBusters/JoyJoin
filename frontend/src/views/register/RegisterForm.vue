@@ -39,17 +39,18 @@
             </div>
           </div>
           <div class="field">
-            <label class="label">Username</label>
+            <label class="label">Account Name*</label>
             <div class="control">
-              <input class="input" type="text" v-model="username" placeholder="Enter your account name...">
+              <input class="input" type="text" v-model="accountName" placeholder="Enter your account name...">
             </div>
+            <p class="help is-danger" v-if="accountNameExists">{{ accountNameErrorMessage }}</p>
           </div>
           <div class="field">
             <label class="label">Email</label>
             <div class="control">
               <input class="input" type="text" v-model="email" placeholder="Enter your email...">
             </div>
-            <p class="help is-danger" v-if="emailExists">{{ errorMessage }}</p>
+            <p class="help is-danger" v-if="emailExists">{{ emailErrorMessage }}</p>
           </div>
           <div class="field">
             <label class="label">Password</label>
@@ -60,7 +61,8 @@
           <div class="field">
             <label class="label">Verify Password</label>
             <div class="control">
-              <input class="input" style="justify-content: center" type="password" v-model="verifyPassword" placeholder="Verify your password...">
+              <input class="input" style="justify-content: center" type="password" v-model="verifyPassword"
+                     placeholder="Verify your password...">
             </div>
             <p class="help is-danger" v-if="verifyPasswordError">{{ verifyPasswordErrorMessage }}</p>
           </div>
@@ -77,17 +79,20 @@
 
 <script>
 import axios from "axios";
-import {BASE_URL, BASE_URL_USER_SERVICE} from "../../../config/dev.env";
+import {BASE_URL_USER_SERVICE} from "../../../config/dev.env";
 
 export default {
   data() {
     return {
+      accountNameErrorMessage: "",
+      accountNameExists: false,
+      emailErrorMessage: "",
       emailExists: false,
       showModal: false,
       firstName: "",
       lastName: "",
       birthDate: "",
-      username: "",
+      accountName: "",
       usernameError: "",
       email: "",
       password: "",
@@ -105,20 +110,26 @@ export default {
           firstName: this.firstName,
           lastName: this.lastName,
           email: this.email,
-          userName: this.username,
+          accountName: this.accountName,
           password: this.password,
           birthDate: this.birthDate
         };
 
         await axios.post(BASE_URL_USER_SERVICE + "/auth/register", data).then(response => {
-              this.$router.push({path: "/"});
-            })
+          this.$router.push({path: "/"});
+        })
             .catch(error => {
               if (error.response.status === 400) {
-                this.errorMessage = error.response.data.errorMessage;
-                this.emailExists = true;
+                if (error.response.data.errorMessage.startsWith("Email")) {
+                  this.emailErrorMessage = error.response.data.errorMessage;
+                  this.emailExists = true;
+                } else {
+                  this.accountNameErrorMessage = error.response.data.errorMessage;
+                  this.accountNameExists = true;
+                }
               } else {
                 this.emailExists = false;
+                this.accountNameExists = false;
                 console.log(error);
               }
             })
@@ -126,7 +137,6 @@ export default {
         this.verifyPasswordError = true;
       }
     }
-
   }
 }
 </script>

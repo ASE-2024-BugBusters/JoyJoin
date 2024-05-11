@@ -1,5 +1,6 @@
 package com.joyjoin.userservice.security.service;
 
+import com.joyjoin.userservice.exception.AccountNameAlreadyExistsException;
 import com.joyjoin.userservice.exception.EmailAlreadyExistsException;
 import com.joyjoin.userservice.exception.ErrorMessages;
 import com.joyjoin.userservice.exception.ResourceNotFoundException;
@@ -37,9 +38,12 @@ public class AuthService implements UserDetailsService {
      * @return <b>AuthenticationResponse</b> which contains the JWT Token as a String
      */
     public AuthenticationResponse register(User user) throws EmailAlreadyExistsException {
-        User optionalUser = repository.findUserByEmail(user.getEmail());
-        if (optionalUser != null) {
+        User userByEmail = repository.findUserByEmail(user.getEmail());
+        User userByAccountName = repository.findUserByAccountName(user.getAccountName());
+        if (userByEmail != null) {
             throw new EmailAlreadyExistsException(ErrorMessages.USER_EMAIL_ALREADY_EXISTS.getErrorMessage());
+        } else if (userByAccountName != null) {
+            throw new AccountNameAlreadyExistsException(ErrorMessages.USER_ACCOUNT_NAME_EXISTS.getErrorMessage());
         }
         LocalDateTime now = LocalDateTime.now();
         Collection<Role> roles = new ArrayList<>();
@@ -49,6 +53,7 @@ public class AuthService implements UserDetailsService {
                 .lastName(user.getLastName())
                 .birthDate(user.getBirthDate())
                 .email(user.getEmail())
+                .accountName(user.getAccountName())
                 .password(passwordEncoder.encode(user.getPassword()))
                 .roles(roles)
                 .createdOn(now)

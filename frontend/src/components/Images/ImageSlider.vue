@@ -15,21 +15,41 @@ import CarouselItem from './CarouselItem.vue'
 import CarouselIndicators from './CarouselIndicators.vue'
 
 export default {
+  props: ['images'],
   name: "ImageSlider",
   components: {CarouselItem, CarouselControls, CarouselIndicators},
   data() {
     return {
       currentSlide: 0,
-      slides: [
-        require('@/assets/camera-icon.png'),
-        require('@/assets/cross-icon.png'),
-        require('@/assets/camera-icon.png'),
-        require('@/assets/tag-icon.png')
-      ],
+      slides: [],
+      // slides: this.images != null ? this.images.map(image => image.urls[0].url).stream() : [require('@/assets/camera-icon.png')],
       direction: "right",
     }
   },
+  watch: {
+    images: {
+      handler(newVal) {
+        // Check if images prop is provided and contains data
+        if (newVal && newVal.length > 0) {
+          this.slides = newVal.map(image => image.urls[0].url);
+        } else {
+          // Fallback image if no images are provided
+          this.slides = [require('@/assets/camera-icon.png')];
+        }
+      },
+      immediate: true // Trigger handler immediately on component mount
+    }
+  },
   methods: {
+    async loadImages(){
+      if(this.images != null){
+        for( const image of this.images){
+          this.slides.push(image.urls[0].url);
+        }
+      }else{
+        this.slides.push(require('@/assets/camera-icon.png'))
+      }
+    },
     setCurrentSlide(index) {
       this.currentSlide = index;
     },

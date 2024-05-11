@@ -34,23 +34,29 @@
     <!-- </router-link> -->
 
     <!--Add event-->
-    <router-link to="/postevent">
-      <div class="create-post-div">
-        <div class="left-content">
-          <img class="post-icon" alt="Event Tag" src="../../assets/post-event.png" >
-          Add event
+    <div class="create-post-div" @click="openPostEventModal">
+      <div class="left-content">
+        <img class="post-icon" alt="Event Tag" src="../../assets/post-event.png" >
+        <div class="user-info">
+          <div>Add event</div>
+          <div class="post-info">
+            <span v-if="taggedEvent">{{ taggedEvent.title }}</span>
+          </div>
         </div>
-        <div class="right-content">
-          <font-awesome-icon :icon="['fas', 'chevron-right']" class="post-icon post-icon-right"></font-awesome-icon>
-        </div>
+
       </div>
-    </router-link>
+      <div class="right-content">
+        <font-awesome-icon :icon="['fas', 'chevron-right']" class="post-icon post-icon-right"></font-awesome-icon>
+      </div>
+    </div>
 
     <br>
     <!--Submit Button-->
-    <div class="button is-primary" @click="createNewPost" :disabled="!caption">Share</div>
+    <div class="button is-primary" @click="createNewPost">Share</div>
+<!--    <div class="submit" @click="createNewPost">Share</div>-->
   </div>
   <PostTag ref="postTagModal" @saveTags="savedTags"></PostTag>
+  <PostEvent ref="postEventModal" @saveTagEvent="savedTagEvent"></PostEvent>
   <PopupContent ref="successDialogue"></PopupContent>
 </template>
 
@@ -59,14 +65,18 @@ import ImagePreview from '../../components/Images/ImagePreview.vue'
 import PopupContent from '@/components/Popup/PopupContent.vue';
 import PostTag from './PostTag.vue';
 import {toRaw} from "vue";
+import PostEvent from "@/views/posts/PostEvent.vue";
+import {BASE_URL_POST_SERVICE} from "../../../config/dev.env";
+import axios from "axios";
 export default {
-  components: {ImagePreview, PostTag, PopupContent},
+  components: {PostEvent, ImagePreview, PostTag, PopupContent},
   data() {
     return {
+      currentUser: sessionStorage.getItem('userId'),
       images: [],
       caption: '',
-      // taggedpeople: [{username: 'seancheee'}, {username: 'kayannn'}],
       taggedpeople: [],
+      taggedEvent: {},
       images_valid: true,
       caption_valid: true,
       taggedPeopleDisplayMaxiLength: 60,
@@ -91,14 +101,12 @@ export default {
       }
       return valid;
     },
-    createNewPost() {
+    async createNewPost() {
       // Logic to post the data
       const valid = this.validateFields();
       if (valid){
-        //Post API send to database
-        //...
         //Return back to homepage
-        setTimeout(() => {
+        setTimeout(async () => {
           // Show success message modal
           this.$refs.successDialogue.show({
             title: 'Succesfully Create Post',
@@ -106,29 +114,76 @@ export default {
             messageIcon: ['fas', 'check-circle'],
             messageIconColor: 'green',
           });
+
+          // Upload Images into AWS_S3
+          await this.$refs.imagePreview.uploadImages();
+
+          // Post API send to database
+          this.createNewPostAPI();
+
           // Automatically close success message modal after 3 seconds
           setTimeout(() => {
             this.$refs.successDialogue._cancel();
-            this.$router.push({name: 'home'})
+            this.$router.push({name: 'profile', params:{"user_id": this.currentUser} });
           }, 2000);
+
+
+
         }, 0)
       }
+    },
+    // Method: Create New Post API
+    createNewPostAPI(){
+      // Extract the userId
+      var _tuser = [];
+      if(this.taggedpeople.length){
+        _tuser = this.taggedpeople.map(user => user.id);
+      }
+      // Extract the eventId
+      var _tevent = "";
+      if(this.taggedEvent){
+        _tevent = this.taggedEvent.eventId;
+      }
 
+      // Creating POST-Json
+      const data = {
+        userId: this.currentUser,
+        caption: this.caption,
+        taggedUsersId: _tuser,
+        taggedEventId: _tevent,
+        images: this.images,
+      };
+      // Calling the API
+      const createPostUrl = BASE_URL_POST_SERVICE + "/posts/create";
+      axios.post(createPostUrl, data, {
+        headers: {
+          'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
+        }
+      })
+          .then(response => {
+          })
+          .catch(error => {
+            console.error("[createNewPostAPI] There was an error creating the post:", error);
+          });
     },
     async openPostTagModal(){
       await this.$refs.postTagModal.show({taggedpeople: this.taggedpeople});
     },
+    async openPostEventModal(){
+      await this.$refs.postEventModal.show();
+    },
     savedTags(temp_taggedpeople){
-      if(temp_taggedpeople){
-        this.taggedpeople = structuredClone(toRaw(temp_taggedpeople))
-      }
+      this.taggedpeople = structuredClone(toRaw(temp_taggedpeople))
       this.$refs.postTagModal._cancel()
-    }
-
+    },
+    savedTagEvent(temp_taggedevent){
+      this.taggedEvent = structuredClone(toRaw(temp_taggedevent))
+      this.$refs.postEventModal._cancel()
+    },
   },
   computed: {
     taggedusername() {
-      let username_list = this.taggedpeople.map(taggedperson => taggedperson.username).join(", ")
+      let username_list = this.taggedpeople.map(taggedperson => taggedperson.accountName).join(", ")
       if (username_list.length >= this.taggedPeopleDisplayMaxiLength){
         username_list = username_list.substring(0, this.taggedPeopleDisplayMaxiLength) + "...";
       }

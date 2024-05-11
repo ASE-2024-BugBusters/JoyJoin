@@ -1,5 +1,6 @@
 package com.joyjoin.eventservice.modelDto;
 import com.joyjoin.eventservice.model.Image;
+import com.joyjoin.eventservice.model.Tag;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,10 +18,9 @@ public class EventDto {
     private LocationDto location;
     private Integer participationLimit;
     private String description;
-    private List<String> tags;
+    private List<Tag> tags;
     private List<Image> images;
     private LocalDateTime createdOn;
     private LocalDateTime lastEdited;
     private UUID creatorId;
-    private List<UUID> participants;
 }

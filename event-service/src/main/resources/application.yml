@@ -15,7 +15,7 @@ spring:
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
       format_sql: true
 
     properties:
@@ -66,3 +66,4 @@ s3:
   ACCESS_KEY: "test"
   SECRET_KEY: "test"
   REGION: "us-east-1"
+  BUCKET_NAME: "event-img"

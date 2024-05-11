@@ -3,10 +3,11 @@
     <div v-if="taggedpeople.length" class="row row-cols-5">
         <div class="col justify-content-center align-items-center user-tag-container" v-for="user in taggedpeople" :key="user.username">
             <div class="tagged-user-container">
-                <img class="tagged-userimage" src="../../assets/camera-icon.png" alt="User Image">
+                <img class="tagged-userimage" v-if="!user.avatar" src="../../assets/Default_User_Icon.png" alt="User Profile Picture">
+                <img class="tagged-userimage" v-else :src="user.avatar.urls[0].url" alt="User Profile Picture">
                 <button v-if="isAddOrEdit" type="button" class="remove-button btn-close" @click="removeTaggedPeople(user)"></button>
             </div>
-            <div class="tagged-username">{{ user.username }}</div>
+            <div class="tagged-username">{{ user.accountName }}</div>
         </div>
     </div>
     <div v-else>

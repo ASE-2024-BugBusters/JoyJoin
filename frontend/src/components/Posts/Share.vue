@@ -51,7 +51,7 @@ export default {
     padding: 10px 25px;
     border: 1px dotted grey;
     border-radius: 3px;
-    min-width: 300px;
+    min-width: 370px;
     text-align: center;
 }
 .share-icon{

@@ -1,45 +1,50 @@
 <template>
   <div class="all-users-container">
     <div v-if="searchingUsers.length"  >
-        <div v-for="user in searchingUsers" :key="user.username">
-            <div class="create-post-div">
-                <div class="left-content">
-                    <!-- <img class="user-image" :src="user.image" >  -->
-                    <img class="user-image" src="../../assets/camera-icon.png" alt="User Profile Picture">
-                    <div class="user-info">
-                        <div class="username">{{ user.username }}</div>
-                        <div class="bios">{{user.bios }}</div>
-                    </div>
-                </div>
-                <div v-if="isAddOrEdit" class="right-content">
-                    <img class="post-icon post-icon-right" src="../../assets/tag-icon.png" @click="addTaggedPeople(user)" alt="Tag Icon">
-                </div>
+      <div v-for="user in searchingUsers" :key="user.id">
+        <div class="create-post-div" :class="isAddOrEdit?'' : 'navigate-info'" @click="isAddOrEdit? '' : navigateToUserProfile(user.id) " :title="isAddOrEdit? '': 'Navigate to User Profile'">
+          <div class="left-content">
+            <!-- <img class="user-image" :src="user.image" >  -->
+            <img class="user-image" v-if="!user.avatar" src="../../assets/Default_User_Icon.png" alt="User Profile Picture">
+            <img class="user-image" v-else :src="user.avatar.urls[0].url" alt="User Profile Picture">
+            <div class="user-info">
+              <div class="username">{{ user.accountName }}</div>
+              <div class="bios">{{user.biography }}</div>
             </div>
+          </div>
+          <div v-if="isAddOrEdit" class="right-content">
+            <img class="post-icon post-icon-right" src="../../assets/tag-icon.png" @click="addTaggedPeople(user)" alt="Tag Icon" title="Tag User">
+          </div>
         </div>
+      </div>
     </div>
     <div v-else>
-        Couldn't find anymore users.
+      Couldn't find anymore users.
     </div>
   </div>
 </template>
 
 <script>
 export default {
-    props: ['searchingUsers','isAddOrEdit'],
-    methods: {
-        addTaggedPeople(user){
-            if(this.isAddOrEdit){
-                this.$emit('addTaggedPeople', user)
-            }
-        }
+  props: ['searchingUsers','isAddOrEdit'],
+  methods: {
+    addTaggedPeople(user){
+      if(this.isAddOrEdit){
+        this.$emit('addTaggedPeople', user)
+      }
     },
-    computed(){
+    // Method: Navigate to user Profile
+    navigateToUserProfile(userId){
+      this.$router.push({name: 'profile', params:{"user_id": userId} });
+    },
+  },
+  computed(){
 
-    }
+  }
 }
 </script>
 
-<style>
+<style scoped>
 .all-users-container{
   overflow-y: auto;
   overflow-x: hidden;
@@ -62,13 +67,14 @@ export default {
 }
 .right-content{
   min-width: 25px;
+  margin-top: 10px;
 }
 .user-image {
   display: inline-block;
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  margin-right:15px;
+  margin-right: 10px;
   background-repeat: no-repeat;
   background-position: center center;
   background-size: cover;
@@ -80,6 +86,7 @@ export default {
   flex-direction: column;
   align-items: flex-start;
   text-align: left;
+  margin-top: 1px;
 }
 .username {
   font-weight: bold;
@@ -96,6 +103,16 @@ export default {
 }
 .post-icon-right{
   margin-right:0;
+}
+.navigate-info{
+  cursor: pointer;
+}
+.navigate-info:hover{
+  font-weight: bold;
+  font-size: 16.3px;
+}
+.navigate-info:hover .user-image{
+  box-shadow: 2px 2px 2px 1px darkgray
 }
 
 </style>

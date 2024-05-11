@@ -1,5 +1,4 @@
 package com.joyjoin.eventservice.beanConfig;
-
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
@@ -11,6 +10,7 @@ public class MapperConfig {
     public ModelMapper modelMapper() {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
+
         return modelMapper;
     }
 }

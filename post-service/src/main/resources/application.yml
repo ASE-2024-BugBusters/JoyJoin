@@ -12,11 +12,10 @@ spring:
     url: "jdbc:postgresql://localhost:5435/postService"
     username: "postgres"
     password: "bEBaGQk+RLTEBydI"
-
   jpa:
     show-sql: false
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
 
     properties:
       hibernate:
@@ -24,6 +23,12 @@ spring:
 
   aop:
     proxy-target-class: true
+
+  http:
+    cors:
+      allowed-origins: "*"
+      allowed-methods: "*"
+      allowed-headers: "*"
 
 management:
   endpoint:
@@ -52,3 +57,18 @@ eureka:
   client:
     serviceUrl:
       defaultZone: "http://CftYQ29IIX76lbg5:q0XdGl8iEygR311T@localhost:8761/eureka/"
+
+s3:
+  ENDPOINT: "https://s3.localhost.localstack.cloud:4566"
+  ACCESS_KEY: "test"
+  SECRET_KEY: "test"
+  REGION: "us-east-1"
+  BUCKET_NAME: "post-img"
+
+api:
+  API_VERSION: "api"
+  BASE_URL: "http://localhost:9191/"
+  BASE_URL_USER_SERVICE: ${api.BASE_URL}user-service/${api.API_VERSION}
+  BASE_URL_EVENT_SERVICE: ${api.BASE_URL}event-service/${api.API_VERSION}
+  BASE_URL_POST_SERVICE: ${api.BASE_URL}post-service/${api.API_VERSION}
+
