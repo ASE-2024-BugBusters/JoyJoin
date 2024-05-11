@@ -11,6 +11,14 @@ docker run -e "eureka.client.serviceUrl.defaultZone=http://CftYQ29IIX76lbg5:q0Xd
 # Command to run USER-SERVICE docker container in the AWS cloud
 login on user-service server through cmd
 
-# Start postgres db
+# Start USER-SERVICE
 docker pull josip97/user-service
-docker run -d -e "eureka.client.serviceUrl.defaultZone=http://CftYQ29IIX76lbg5:q0XdGl8iEygR311T@172.31.44.185:8761/eureka/" -e "SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-user.c36ussau4w0r.eu-west-3.rds.amazonaws.com:5436/userService" -e "SPRING_DATASOURCE_USERNAME=postgres" -e "SPRING_DATASOURCE_PASSWORD=aHauYoTm56oG7X6u" --network host josip97/user-service
+docker run -d -e "eureka.client.serviceUrl.defaultZone=http://CftYQ29IIX76lbg5:q0XdGl8iEygR311T@172.31.44.185:8761/eureka/" -e "SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-user.c36ussau4w0r.eu-west-3.rds.amazonaws.com:5436/userService" -e "SPRING_DATASOURCE_USERNAME=postgres" -e "SPRING_DATASOURCE_PASSWORD=aHauYoTm56oG7X6u" -e "s3.BUCKET_NAME=joyjoin-avatar" -e "s3-REGION=eu-west-3" -e "s3.ENDPOINT=https://s3.eu-west-3.amazonaws.com/joyjoin-avatar/" --network host josip97/user-service
+
+# Start EVENT-SERVICE
+docker pull josip97/event-service
+docker run -d -e "eureka.client.serviceUrl.defaultZone=http://CftYQ29IIX76lbg5:q0XdGl8iEygR311T@172.31.44.185:8761/eureka/" -e "SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-event.c36ussau4w0r.eu-west-3.rds.amazonaws.com:5432/eventService" -e "SPRING_DATASOURCE_USERNAME=postgres" -e "SPRING_DATASOURCE_PASSWORD=N9LoFoo3GbkEf9vV" -e "s3.BUCKET_NAME=joyjoin-img" -e "s3-REGION=eu-west-3" -e "s3.ENDPOINT=https://s3.eu-west-3.amazonaws.com/joyjoin-img/" --network host josip97/event-service
+
+# Start POST-SERVICE
+docker pull josip97/post-service
+docker run -d -e "eureka.client.serviceUrl.defaultZone=http://CftYQ29IIX76lbg5:q0XdGl8iEygR311T@172.31.44.185:8761/eureka/" -e "SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-post.c36ussau4w0r.eu-west-3.rds.amazonaws.com:5432/postService" -e "SPRING_DATASOURCE_USERNAME=postgres" -e "SPRING_DATASOURCE_PASSWORD=bEBaGQk+RLTEBydI" -e "s3.BUCKET_NAME=joyjoin-postimg" -e "s3-REGION=eu-west-3" -e "s3.ENDPOINT=https://s3.eu-west-3.amazonaws.com/joyjoin-postimg/" --network host josip97/post-service

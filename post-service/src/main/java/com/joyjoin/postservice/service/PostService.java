@@ -17,6 +17,7 @@ import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -38,23 +39,24 @@ public class PostService {
     private final ImageService imageService;
     private final ModelMapper modelMapper;
     private final PostPacker postPacker;
+    private final Environment env;
 
-    static final String POST_BUCKET = "postimg";
 
-    public PostService(PostRepository postRepository, CommentRepository commentRepository, ModelMapper modelMapper, ImageService imageService, PostPacker postPacker) {
+    public PostService(PostRepository postRepository, CommentRepository commentRepository, ModelMapper modelMapper, ImageService imageService, PostPacker postPacker, Environment env) {
         this.postRepository = postRepository;
         this.commentRepository = commentRepository;
         this.modelMapper = modelMapper;
         this.imageService = imageService;
         this.postPacker = postPacker;
+        this.env = env;
     }
 
     public Image getImgUploadInformation(LocalDateTime expireTime) {
         String key = String.valueOf(UUID.randomUUID());
         LocalDateTime now = LocalDateTime.now();
-        String uploadUrl = imageService.getPreSignedUrlForUpload(POST_BUCKET, key, Duration.between(now, expireTime));
+        String uploadUrl = imageService.getPreSignedUrlForUpload(env.getProperty("s3.BUCKET_NAME"), key, Duration.between(now, expireTime));
         ImageUrl imageUploadUrl = new ImageUrl(uploadUrl, expireTime);
-        return new Image(POST_BUCKET, key, List.of(imageUploadUrl));
+        return new Image(env.getProperty("s3.BUCKET_NAME"), key, List.of(imageUploadUrl));
     }
 
     public PostDto createPost(Post post) {

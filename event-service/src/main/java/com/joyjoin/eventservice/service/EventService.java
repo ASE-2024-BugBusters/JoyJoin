@@ -11,6 +11,7 @@ import com.joyjoin.eventservice.repository.EventSpecifications;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +33,7 @@ public class EventService {
     private final ImageService imageService;
     private final EventPacker eventPacker;
     private final ModelMapper modelMapper;
-    static final String EVENT_BUCKET = "img";
+    private final Environment env;
 
     /**
      * Constructs an EventService with necessary dependencies.
@@ -45,13 +46,14 @@ public class EventService {
      * @param modelMapper                       Utility to map between different object models.
      */
     @Autowired
-    public EventService(EventRepository eventRepository, EventRegistrationRepository eventRegistrationRepository, EventParticipationCountRepository eventParticipationCountRepository, ImageService imageService, EventPacker eventPacker, ModelMapper modelMapper) {
+    public EventService(EventRepository eventRepository, EventRegistrationRepository eventRegistrationRepository, EventParticipationCountRepository eventParticipationCountRepository, ImageService imageService, EventPacker eventPacker, ModelMapper modelMapper, Environment env) {
         this.eventRepository = eventRepository;
         this.eventRegistrationRepository = eventRegistrationRepository;
         this.eventParticipationCountRepository = eventParticipationCountRepository;
         this.imageService = imageService;
         this.eventPacker = eventPacker;
         this.modelMapper = modelMapper;
+        this.env = env;
     }
 
     /**
@@ -63,9 +65,9 @@ public class EventService {
     public Image getImgUploadInformation(LocalDateTime expireTime) {
         String key = String.valueOf(UUID.randomUUID());
         LocalDateTime now = LocalDateTime.now();
-        String uploadUrl = imageService.getPreSignedUrlForUpload(EVENT_BUCKET, key, Duration.between(now, expireTime));
+        String uploadUrl = imageService.getPreSignedUrlForUpload(env.getProperty("s3.BUCKET_NAME"), key, Duration.between(now, expireTime));
         ImageUrl imageUploadUrl = new ImageUrl(uploadUrl, expireTime);
-        return new Image(EVENT_BUCKET, key, List.of(imageUploadUrl));
+        return new Image(env.getProperty("s3.BUCKET_NAME"), key, List.of(imageUploadUrl));
     }
 
     /**
