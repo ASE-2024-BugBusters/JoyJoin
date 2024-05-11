@@ -4,31 +4,10 @@
 
 <template>
   <div class="user-profile container" v-if="userProfile">
-    <div>
-      <!-- 模态框 -->
-      <div v-if="showModal" class="modal" style="display: block" tabindex="-1">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">Follower</h5>
-              <button type="button" class="close" @click="closeModal">
-                <span>&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <ul>
-                <li v-for="user in followers" :key="user.id">{{ user.name }}</li>
-              </ul>
-              <div v-if="followers.length === 0">没有关注者。</div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" @click="closeModal">关闭</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div v-if="showModal" class="modal-backdrop"></div>
-    </div>
+    <UserModal id="followers" :visible="showFollowerList" :users="followers" :action_text='"Remove"'
+      @action="handleRemoveFollower" @close="showFollowerList = false"></UserModal>
+    <UserModal id="followings" :visible="showFollowingList" :users="followings" :action_text='"Unfollow"'
+      @action="handleUnfollow" @close="showFollowingList = false"></UserModal>
 
     <div class="row">
       <div class="col-12 col-md-4">
@@ -37,7 +16,6 @@
         </div>
       </div>
       <div class="col-12 col-md-8">
-        <!-- 用户信息 -->
         <h1>{{ userProfile.name }}</h1>
         <h2>{{ userProfile.nickname }}</h2>
         <p><strong>Bio:</strong> {{ userProfile.biography }}</p>
@@ -46,8 +24,8 @@
           <router-link :to="{ name: 'EditProfile' }" class="btn btn-primary" v-if="isSelf">Edit</router-link>
           <button type="button" class="btn btn-primary" v-if="!isSelf" id="follow_btn">Follow Me</button>
           <button type="button" class="btn btn-primary" v-if="!isSelf" id="unfollow_btn">Unfollow</button>
-          <button type="button" class="btn btn-primary" @click="showFollowerList">Followers</button>
-          <button type="button" class="btn btn-primary" @click="showFollowingList">Followings</button>
+          <button type="button" class="btn btn-primary" @click="showFollowerList = true">Followers</button>
+          <button type="button" class="btn btn-primary" @click="showFollowingList = true">Followings</button>
         </div>
       </div>
     </div>
@@ -59,115 +37,119 @@
 
 <script>
 import axios from 'axios'
-import {BASE_URL_USER_SERVICE, INTEREST_TAGS} from "../../../config/dev.env";
-import {useRoute} from "vue-router";
-import {computed, ref} from "vue";
+import { BASE_URL_USER_SERVICE, INTEREST_TAGS } from "../../../config/dev.env";
+import { useRoute } from 'vue-router';
 import UserAllPosts from '@/components/Posts/UserAllPosts.vue';
+import UserModal from '@/components/User/UserModal.vue';
+import { onMounted, ref } from 'vue';
+
 
 export default {
   name: 'UserProfile',
   components: {
     UserAllPosts,
+    UserModal,
   },
   setup() {
-    const route = useRoute();
-    const userId = computed(() => route.params.user_id);
-    const isSelf = sessionStorage.userId === userId.value;
-
-    const showFollowerList = ref(false);
-    const showFollowingList = ref(false);
+    const isLoading = ref(false);
+    const userId = ref("");
+    const isSelf = ref(false);
+    const userProfile = ref(null);
     const followers = ref([]);
     const followings = ref([]);
+    const showFollowerList = ref(false);
+    const showFollowingList = ref(false);
 
-    const openFollowerList = async () => {
-      showFollowerList.value = true;
+    const route = useRoute();
+    userId.value = route.params.user_id;
+    isSelf.value = (userId.value == sessionStorage.userId);
+    console.log(userId.value)
+    console.log(sessionStorage.userId);
+    console.log(userId.value == sessionStorage.userId)
+    console.log(userId.value === sessionStorage.userId)
+
+    const axios_options = {
+      headers: {
+        'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
+      }
+    };
+
+    const fetchUserProfile = async function () {
       try {
-        const response = await axios.get('https://api.example.com/followers');
-        followers.value = response.data; // 假设API直接返回用户列表
+        const getProfileUrl = BASE_URL_USER_SERVICE + "/user/users/" + userId.value;
+        const response = await axios.get(getProfileUrl, axios_options);
+        const data = response.data[0];
+        console.log(data);
+        userProfile.value = {
+          nickname: data.nickname,
+          biography: data.biography
+        };
+        if (data.avatar) {
+          userProfile.value.avatar_url = data.avatar.urls[0].url;
+        }
+        if (data.firstName || data.lastName) {
+          userProfile.value.name = data.firstName + ' ' + data.lastName;
+        }
+        if (data.interestTags) {
+          let interestTags = [];
+          for (const tag of data.interestTags) {
+            for (const pair of INTEREST_TAGS) {
+              if (tag === pair.value) {
+                interestTags.push(pair.label);
+              }
+            }
+          }
+          userProfile.value.interestTags = interestTags.join(', ');
+        }
+      } catch (e) {
+        console.error(e);
+        alert('Failed to fetch user profile');
+      }
+    };
+
+    const fetchFollowers = async function () {
+      const url = BASE_URL_USER_SERVICE + '/user/users/' + userId.value + '/follower';
+      console.log(url);
+      try {
+        const response = await axios.get(url, axios_options);
+        followers.value = response.data;
       } catch (error) {
         console.error('Error fetching followers:', error);
         followers.value = [];
       }
     };
 
-    const openFollowingList = async () => {
-      showFollowerList.value = true;
+    const fetchFollowings = async function () {
+      const url = BASE_URL_USER_SERVICE + '/user/users/' + userId.value + '/followee';
+      console.log(url);
       try {
-        const response = await axios.get('https://api.example.com/followers');
-        followers.value = response.data; // 假设API直接返回用户列表
+        const response = await axios.get(url, axios_options);
+        followers.value = response.data;
       } catch (error) {
         console.error('Error fetching followers:', error);
         followers.value = [];
       }
     };
 
-    const closeFollowerList = () => {
-      showFollowerList.value = false;
-    };
-
-    const closeFollowingList = () => {
-      showFollowingList.value = false;
-    };
+    onMounted(async () => {
+      Promise.all([
+        fetchUserProfile(),
+        fetchFollowers(),
+        fetchFollowings(),
+      ])
+    });
 
     return {
-      userId, isSelf,
+      isLoading,
+      userId,
+      isSelf,
+      userProfile,
       followers,
       followings,
       showFollowerList,
       showFollowingList,
-      closeFollowerList,
-      closeFollowingList
-    };
-  },
-  data() {
-    return {
-      userProfile: null
     }
   },
-  created() {
-    this.checkFollowStatus();
-    this.fetchUserProfile();
-  },
-  methods: {
-    async checkFollowStatus() {
-    },
-    async fetchUserProfile() {
-      try {
-        const getProfileUrl = BASE_URL_USER_SERVICE + "/user/users/" + this.userId
-        const response = await axios.get(getProfileUrl, {
-          headers: {
-            'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
-          }
-        })
-        const data = response.data[0]
-        console.log(data)
-        this.userProfile = {
-          nickname: data.nickname,
-          biography: data.biography
-        }
-        if (data.avatar) {
-          this.userProfile.avatar_url = data.avatar.urls[0].url
-        }
-        if (data.firstName || data.lastName) {
-          this.userProfile.name = data.firstName + ' ' + data.lastName
-        }
-        if (data.interestTags) {
-          let interestTags = []
-          for (const tag of data.interestTags) {
-            for (const pair of INTEREST_TAGS) {
-              if (tag === pair.value) {
-                interestTags.push(pair.label)
-              }
-            }
-          }
-          this.userProfile.interestTags = interestTags.join(', ')
-        }
-      } catch (e) {
-        console.error(e)
-        alert('Failed to fetch user profile')
-      }
-    }
-  }
 }
 </script>
 
@@ -183,33 +165,15 @@ export default {
 }
 
 .avatar {
-  border-radius: 50%; /* 使图片变为圆形 */
-  width: 150px; /* 设置图片大小 */
-  height: 150px; /* 设置图片大小 */
-  object-fit: cover; /* 确保图片完全覆盖容器 */
+  border-radius: 50%;
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
 }
 
 @media (min-width: 768px) {
   .avatar-container {
     justify-content: flex-start;
   }
-}
-
-.modal-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1040;
-}
-
-.modal {
-  position: fixed;
-  top: 10%;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1050;
 }
 </style>
