@@ -1,5 +1,5 @@
 <template>
-  <div class="container" v-if="finishLoaded">
+  <div class="container" v-if="finishLoaded && !pageError">
     <div class="row">
       <!--Left section: Image (Slide images)-->
       <div class="col-md-7 d-flex justify-content-center align-items-center">
@@ -62,6 +62,9 @@
       </div>
     </div>
   </div>
+  <div v-else-if="pageError">
+    <NotFound></NotFound>
+  </div>
   <div v-else>
     <LoadView></LoadView>
   </div>
@@ -84,9 +87,11 @@ import {BASE_URL_POST_SERVICE} from "../../../config/dev.env";
 import axios from "axios";
 import PostEvent from "@/views/posts/PostEvent.vue";
 import LoadView from "../../components/Loader/LoadView.vue";
+import NotFound from "@/views/NotFound.vue";
 
 export default {
   components: {
+    NotFound,
     PostEvent,
     ImageSlider, PopupContent, PostComments, PostTotalLikes, PostTag, AllUsersModal, Share, LoadView
   },
@@ -100,7 +105,8 @@ export default {
       tagpeopleHeader: "Tagged People",
       usernameListMaximumLength: 25,
       post: {},
-      finishLoaded: false
+      finishLoaded: false,
+      pageError: false
     }
   },
   created() {
@@ -113,6 +119,7 @@ export default {
   methods: {
     // Method: Get post's information API
     async fetchPostInfoAPI() {
+      this.pageError = false;
       const getPostInfoUrl = BASE_URL_POST_SERVICE + "/posts/" + this.postId;
       await axios.get(getPostInfoUrl, {
         headers: {
@@ -124,6 +131,7 @@ export default {
             this.finishLoaded = true;
           })
           .catch(error => {
+            this.pageError = true;
             console.error("[fetchPostInfoAPI] There was an error fetching the post's information:", error);
           });
     },
@@ -211,6 +219,7 @@ export default {
       })
           .then(response => {})
           .catch(error => {
+            this.er
             console.error("[removeCommentAPI] There was an error deleting the post's comments:", error);
           });
     },

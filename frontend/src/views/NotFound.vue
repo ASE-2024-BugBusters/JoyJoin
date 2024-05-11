@@ -2,10 +2,10 @@
   <div>
     <h2>
       <font-awesome-icon :icon="['fas', 'exclamation-triangle']" class="error-icon"/>
-      Error 404
+      {{ title }}
     </h2>
     <br>
-    <h5>The page is not found.</h5>
+    <h5>{{ message }}</h5>
     <br/>
     <br/>
     <router-link :to="{name: 'home'}">
@@ -14,11 +14,20 @@
 
   </div>
 </template>
+<script>
+export default{
+  props: ['pageTitle','pageMessage'],
+  data() {
+    return {
+      title: this.pageTitle? this.pageTitle: "Error",
+      message: this.pageMessage? this.pageMessage: "The page is not found."
+    }
+  }
+}
+</script>
 
 <style scoped>
 .error-icon{
   color: #d88d00;
 }
 </style>
-<script setup>
-</script>
