@@ -62,7 +62,7 @@ export default {
     color: #666;
 }
 
-.unfollow-button {
+.action-button {
     margin-left: auto;
     padding: 5px 10px;
     background-color: #f44336;

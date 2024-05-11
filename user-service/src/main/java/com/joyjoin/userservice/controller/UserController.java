@@ -105,6 +105,8 @@ public class UserController {
      */
     @PutMapping("/users/{followerId}/followee/{followeeId}")
     public UserDto addFollowee(@PathVariable UUID followerId, @PathVariable UUID followeeId) {
+        System.out.println(followerId);
+        System.out.println(followeeId);
         return userAggregator.populate(userService.addFollowee(followerId, followeeId));
     }
 

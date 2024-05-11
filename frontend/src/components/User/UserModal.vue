@@ -4,6 +4,7 @@
             <button class="close-button" @click="closeModal">Close</button>
             <div class="user-list" v-if="users != null">
                 <UserCard v-for="user in users" :key="user.id" :user="user" :action_text="action_text" @action="handleAction" />
+                <div v-if="users == null || users.length == 0">No Users</div>
             </div>
         </div>
     </div>

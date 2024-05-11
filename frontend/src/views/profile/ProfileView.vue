@@ -22,8 +22,8 @@
         <p><strong>Tags:</strong> {{ userProfile.interestTags }}</p>
         <div>
           <router-link :to="{ name: 'EditProfile' }" class="btn btn-primary" v-if="isSelf">Edit</router-link>
-          <button type="button" class="btn btn-primary" v-if="!isSelf" id="follow_btn">Follow Me</button>
-          <button type="button" class="btn btn-primary" v-if="!isSelf" id="unfollow_btn">Unfollow</button>
+          <button type="button" class="btn btn-primary" v-if="!isSelf && !isFollowing" id="follow_btn" @click="follow">Follow Me</button>
+          <button type="button" class="btn btn-primary" v-if="!isSelf && isFollowing" id="unfollow_btn" @click="unfollow">Unfollow</button>
           <button type="button" class="btn btn-primary" @click="showFollowerList = true">Followers</button>
           <button type="button" class="btn btn-primary" @click="showFollowingList = true">Followings</button>
         </div>
@@ -41,7 +41,7 @@ import { BASE_URL_USER_SERVICE, INTEREST_TAGS } from "../../../config/dev.env";
 import { useRoute } from 'vue-router';
 import UserAllPosts from '@/components/Posts/UserAllPosts.vue';
 import UserModal from '@/components/User/UserModal.vue';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 
 export default {
@@ -59,6 +59,16 @@ export default {
     const followings = ref([]);
     const showFollowerList = ref(false);
     const showFollowingList = ref(false);
+    const isFollowing = computed({
+      get() {
+        for (let follower in followers.value) {
+          if (follower.userId == userId.value) {
+            return true;
+          }
+        }
+        return false;
+      }
+    });
 
     const route = useRoute();
     userId.value = route.params.user_id;
@@ -75,8 +85,9 @@ export default {
     };
 
     const fetchUserProfile = async function () {
+      const getProfileUrl = BASE_URL_USER_SERVICE + "/user/users/" + userId.value;
+      const default_avatar_url = "https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250";
       try {
-        const getProfileUrl = BASE_URL_USER_SERVICE + "/user/users/" + userId.value;
         const response = await axios.get(getProfileUrl, axios_options);
         const data = response.data[0];
         console.log(data);
@@ -86,6 +97,8 @@ export default {
         };
         if (data.avatar) {
           userProfile.value.avatar_url = data.avatar.urls[0].url;
+        } else {
+          userProfile.value.avatar_url = default_avatar_url;
         }
         if (data.firstName || data.lastName) {
           userProfile.value.name = data.firstName + ' ' + data.lastName;
@@ -131,6 +144,28 @@ export default {
       }
     };
 
+    const follow = async function(e) {
+      const follower_id = sessionStorage.userId;
+      const followee_id = userId.value;
+      const url = BASE_URL_USER_SERVICE + '/user/users/' + follower_id + '/followee/' + followee_id;
+      try {
+        const resp = await axios.put(url, axios_options);
+      } catch(e) {
+        console.error(e)
+        alert("failed to follow user");
+      }
+      await fetchFollowers();
+    };
+    const unfollow = async function(e) {
+      console.log(e)
+    };
+    const handleRemoveFollower = async function(user) {
+      console.log(user);
+    };
+    const handleUnfollow = async function(user) {
+      console.log(user);
+    };
+
     onMounted(async () => {
       Promise.all([
         fetchUserProfile(),
@@ -141,6 +176,7 @@ export default {
 
     return {
       isLoading,
+      isFollowing,
       userId,
       isSelf,
       userProfile,
@@ -148,6 +184,11 @@ export default {
       followings,
       showFollowerList,
       showFollowingList,
+
+      follow,
+      unfollow,
+      handleRemoveFollower,
+      handleUnfollow,
     }
   },
 }
