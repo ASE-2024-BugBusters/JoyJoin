@@ -184,7 +184,7 @@ export default {
                             },
                         });
 
-                        uploadedImages.value.push({ "bucket": "img", "key": key }); // Store the uploaded image info
+                        uploadedImages.value.push({ "bucket": "event-img", "key": key }); // Store the uploaded image info
                         console.log(uploadedImages.value[0]);
                         load(key); // Indicate successful upload
                     } catch (uploadError) {
