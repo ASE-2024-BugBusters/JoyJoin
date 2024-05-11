@@ -5,9 +5,9 @@
 <template>
   <div class="user-profile container" v-if="userProfile">
     <UserModal id="followers" :visible="showFollowerList" :users="followers" :action_text='"Remove"'
-      @action="handleRemoveFollower" @close="showFollowerList = false"></UserModal>
+               @action="handleRemoveFollower" @close="showFollowerList = false"></UserModal>
     <UserModal id="followings" :visible="showFollowingList" :users="followings" :action_text='"Unfollow"'
-      @action="handleUnfollow" @close="showFollowingList = false"></UserModal>
+               @action="handleUnfollow" @close="showFollowingList = false"></UserModal>
 
     <div class="row">
       <div class="col-12 col-md-4">
@@ -22,8 +22,12 @@
         <p><strong>Tags:</strong> {{ userProfile.interestTags }}</p>
         <div>
           <router-link :to="{ name: 'EditProfile' }" class="btn btn-primary" v-if="isSelf">Edit</router-link>
-          <button type="button" class="btn btn-primary" v-if="!isSelf && !isFollowing" id="follow_btn" @click="follow">Follow Me</button>
-          <button type="button" class="btn btn-primary" v-if="!isSelf && isFollowing" id="unfollow_btn" @click="unfollow">Unfollow</button>
+          <button type="button" class="btn btn-primary" v-if="!isSelf && !isFollowing" id="follow_btn" @click="follow">
+            Follow Me
+          </button>
+          <button type="button" class="btn btn-danger" v-if="!isSelf && isFollowing" id="unfollow_btn"
+                  @click="unfollow">Unfollow
+          </button>
           <button type="button" class="btn btn-primary" @click="showFollowerList = true">Followers</button>
           <button type="button" class="btn btn-primary" @click="showFollowingList = true">Followings</button>
         </div>
@@ -37,11 +41,11 @@
 
 <script>
 import axios from 'axios'
-import { BASE_URL_USER_SERVICE, INTEREST_TAGS } from "../../../config/dev.env";
-import { useRoute } from 'vue-router';
+import {BASE_URL_USER_SERVICE, INTEREST_TAGS} from "../../../config/dev.env";
+import {useRoute} from 'vue-router';
 import UserAllPosts from '@/components/Posts/UserAllPosts.vue';
 import UserModal from '@/components/User/UserModal.vue';
-import { computed, onMounted, ref } from 'vue';
+import {computed, onMounted, ref} from 'vue';
 
 
 export default {
@@ -61,8 +65,10 @@ export default {
     const showFollowingList = ref(false);
     const isFollowing = computed({
       get() {
-        for (let follower in followers.value) {
-          if (follower.userId == userId.value) {
+        console.log(followers.value)
+        console.log(sessionStorage)
+        for (let index in followers.value) {
+          if (followers.value[index].id === sessionStorage.userId) {
             return true;
           }
         }
@@ -72,11 +78,7 @@ export default {
 
     const route = useRoute();
     userId.value = route.params.user_id;
-    isSelf.value = (userId.value == sessionStorage.userId);
-    console.log(userId.value)
-    console.log(sessionStorage.userId);
-    console.log(userId.value == sessionStorage.userId)
-    console.log(userId.value === sessionStorage.userId)
+    isSelf.value = (userId.value === sessionStorage.userId);
 
     const axios_options = {
       headers: {
@@ -137,37 +139,48 @@ export default {
       console.log(url);
       try {
         const response = await axios.get(url, axios_options);
-        followers.value = response.data;
+        followings.value = response.data;
       } catch (error) {
         console.error('Error fetching followers:', error);
-        followers.value = [];
+        followings.value = [];
       }
     };
 
-    const follow = async function(e) {
+    const follow = async function (e) {
       const follower_id = sessionStorage.userId;
       const followee_id = userId.value;
       const url = BASE_URL_USER_SERVICE + '/user/users/' + follower_id + '/followee/' + followee_id;
       try {
-        const resp = await axios.put(url, axios_options);
-      } catch(e) {
-        console.error(e)
+        const resp = await axios.put(url, null, axios_options);
+        const new_follower = resp.data;
+        followers.value.push(new_follower);
+      } catch (e) {
+        console.error(e);
         alert("failed to follow user");
       }
-      await fetchFollowers();
     };
-    const unfollow = async function(e) {
-      console.log(e)
+    const unfollow = async function (e) {
+      const follower_id = sessionStorage.userId;
+      const followee_id = userId.value;
+      const url = BASE_URL_USER_SERVICE + '/user/users/' + follower_id + '/followee/' + followee_id;
+      try {
+        const resp = await axios.delete(url, axios_options);
+        const removed_follower = resp.data;
+        followers.value = followers.value.filter(item => item.id !== removed_follower.id);
+      } catch (e) {
+        console.error(e);
+        alert("failed to unfollow user");
+      }
     };
-    const handleRemoveFollower = async function(user) {
+    const handleRemoveFollower = async function (user) {
       console.log(user);
     };
-    const handleUnfollow = async function(user) {
+    const handleUnfollow = async function (user) {
       console.log(user);
     };
 
     onMounted(async () => {
-      Promise.all([
+      await Promise.all([
         fetchUserProfile(),
         fetchFollowers(),
         fetchFollowings(),

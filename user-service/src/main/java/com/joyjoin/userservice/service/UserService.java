@@ -76,7 +76,7 @@ public class UserService {
 
     public User removeFollowee(UUID followerId, UUID followeeId) {
         User follower = userRepository.findById(followerId).orElseThrow(() -> new ResourceNotFoundException("User", "id", followerId.toString()));
-        follower.getFollowee().removeIf(user -> user.getId() == followeeId);
+        follower.getFollowee().removeIf(user -> user.getId().equals(followeeId));
         userRepository.save(follower);
         return follower;
     }
