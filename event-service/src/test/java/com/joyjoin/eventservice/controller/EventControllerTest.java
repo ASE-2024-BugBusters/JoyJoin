@@ -56,7 +56,7 @@ public class EventControllerTest {
         event.setEventId(UUID.randomUUID());
         event.setTitle("Party");
         event.setTime(LocalDateTime.now().plusDays(1));
-        event.setLocation(new Location("Vogelin", 12, "Zurich", "8050", "Switzerland"));
+        event.setLocation(new Location("Vogelin", 12, "Zurich", 8050));
         event.setParticipationLimit(200);
         event.setDescription("This is description.");
         event.setTags(List.of(Tag.Cocktails, Tag.Vegetarianism));
@@ -70,10 +70,9 @@ public class EventControllerTest {
         PostEventRequest postRequest = new PostEventRequest();
         postRequest.setTitle("Spring Festival");
         postRequest.setTime(LocalDateTime.now().plusDays(1));
-        postRequest.setLocation(new LocationDto("Santis", 10, "Zurich", "8050", "Switzerland"));
+        postRequest.setLocation(new LocationDto("Santis", 10, "Zurich", 8050));
         postRequest.setParticipationLimit(300);
         postRequest.setDescription("This is another description.");
-        postRequest.setTags(List.of("Cocktails", "Vegetarianism"));
         postRequest.setCreatorId(UUID.randomUUID());
 
         given(eventService.saveEvent(any(Event.class))).willReturn(eventDto);
@@ -89,7 +88,7 @@ public class EventControllerTest {
     void shouldRetrieveAllEventsSuccessfully() throws Exception {
         given(eventService.getAllEvents()).willReturn(Arrays.asList(eventDto));
 
-        mockMvc.perform(get("/api/events"))
+        mockMvc.perform(get("/api/events/all"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].title", is(eventDto.getTitle())));
@@ -109,7 +108,7 @@ public class EventControllerTest {
         UpdateEventRequest updateRequest = new UpdateEventRequest();
         updateRequest.setTitle("Updated Spring Festival");
         updateRequest.setTime(LocalDateTime.now().plusDays(2));
-        updateRequest.setLocation(new LocationDto("City Park", 7, "Springville", "445400", "China"));
+        updateRequest.setLocation(new LocationDto("City Park", 7, "Springville", 445400));
         updateRequest.setParticipationLimit(250);
         updateRequest.setDescription("Updated description of the annual community spring festival");
 
@@ -121,4 +120,5 @@ public class EventControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title", is(eventDto.getTitle())));
     }
+
 }

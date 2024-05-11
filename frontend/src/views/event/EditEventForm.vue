@@ -57,7 +57,6 @@
           <label class="label">Note: * are mandatory fields</label>
           <div class="field">
             <div class="control">
-<!--              <button class="btn btn-outline-secondary" @click="returnToEventView"><strong>Return</strong></button>-->
               <button class="btn btn-outline-success" @click="editEvent"><strong>Save</strong></button>
             </div>
           </div>
@@ -88,8 +87,6 @@ export default {
       participationLimit: "",
       description: "",
     });
-    const originalEvent = ref({});
-    const dirty = ref(false);
     const loading = ref(true);
 
     const fetchEventData = async () => {
@@ -98,17 +95,12 @@ export default {
           headers: { 'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}` }
         });
         Object.assign(event, response.data);
-        // Object.assign(originalEvent.value, response.data);
       } catch (error) {
         console.error("Error fetching event data:", error);
       } finally {
         loading.value = false;
       }
     };
-
-    // watch(event, (newVal, oldVal) => {
-    //   dirty.value = JSON.stringify(newVal) !== JSON.stringify(originalEvent.value);
-    // }, { deep: true });
 
     const saveChanges = async () => {
       // await nextTick();
@@ -124,8 +116,6 @@ export default {
           headers: { 'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}` }
         });
         console.log("Successfully updated event:", response.data);
-        // Object.assign(originalEvent.value, updatedEvent);
-        // dirty.value = false;
       } catch (error) {
         console.error("Error updating the event:", error);
         throw new Error('Failed to save changes');
@@ -145,18 +135,6 @@ export default {
         alert('Failed to save changes.');
       }
     };
-
-    // const returnToEventView = () => {
-    //   if (dirty.value) {
-    //     if (confirm('You have unsaved changes. Do you want to save them before leaving?')) {
-    //       editEvent(); // Save changes before returning
-    //     } else {
-    //       router.push({name: 'EventView', params: {eventId}}); // Leave without saving
-    //     }
-    //   } else {
-    //     router.push({name: 'EventView', params: {eventId}});
-    //   }
-    // };
 
     onMounted(fetchEventData);
 

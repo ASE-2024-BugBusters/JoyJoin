@@ -16,7 +16,9 @@ import com.joyjoin.postservice.modelDto.User.UserDto;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -38,23 +40,28 @@ public class PostService {
     private final ImageService imageService;
     private final ModelMapper modelMapper;
     private final PostPacker postPacker;
+    private final Environment env;
 
-    static final String POST_BUCKET = "postimg";
+    @Value("${api.BASE_URL_EVENT_SERVICE}")
+    private String eventServiceBaseUrl;
+    @Value("${api.BASE_URL_USER_SERVICE}")
+    private String userServiceBaseUrl;
 
-    public PostService(PostRepository postRepository, CommentRepository commentRepository, ModelMapper modelMapper, ImageService imageService, PostPacker postPacker) {
+    public PostService(PostRepository postRepository, CommentRepository commentRepository, ModelMapper modelMapper, ImageService imageService, PostPacker postPacker, Environment env) {
         this.postRepository = postRepository;
         this.commentRepository = commentRepository;
         this.modelMapper = modelMapper;
         this.imageService = imageService;
         this.postPacker = postPacker;
+        this.env = env;
     }
 
     public Image getImgUploadInformation(LocalDateTime expireTime) {
         String key = String.valueOf(UUID.randomUUID());
         LocalDateTime now = LocalDateTime.now();
-        String uploadUrl = imageService.getPreSignedUrlForUpload(POST_BUCKET, key, Duration.between(now, expireTime));
+        String uploadUrl = imageService.getPreSignedUrlForUpload(env.getProperty("s3.BUCKET_NAME"), key, Duration.between(now, expireTime));
         ImageUrl imageUploadUrl = new ImageUrl(uploadUrl, expireTime);
-        return new Image(POST_BUCKET, key, List.of(imageUploadUrl));
+        return new Image(env.getProperty("s3.BUCKET_NAME"), key, List.of(imageUploadUrl));
     }
 
     public PostDto createPost(Post post) {
@@ -244,7 +251,8 @@ public class PostService {
     }
 
     private List<UserDto> getUsersInfoAPI(String token, String userIds){
-        String getUsersInfoUrl = "http://localhost:9191/user-service/api/user/users/" + userIds;
+//        String getUsersInfoUrl = "http://localhost:9191/user-service/api/user/users/" + userIds;
+        String getUsersInfoUrl = userServiceBaseUrl + "/user/users/" + userIds;
         System.out.println("URL: " + getUsersInfoUrl);
 
         HttpHeaders headers = new HttpHeaders();
@@ -268,7 +276,8 @@ public class PostService {
 
     // Method to retrieve specific event's info
     private EventDto getEventInfoAPI(String token, String eventId){
-        String getEventInfoUrl = "http://localhost:9191/event-service/api/events/" + eventId;
+//        String getEventInfoUrl = "http://localhost:9191/event-service/api/events/" + eventId;
+        String getEventInfoUrl = eventServiceBaseUrl + "/events/" + eventId;
         System.out.println("URL: " + getEventInfoUrl);
 
         HttpHeaders headers = new HttpHeaders();

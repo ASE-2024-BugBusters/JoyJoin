@@ -8,6 +8,7 @@ import com.joyjoin.userservice.repository.UserRepository;
 import com.joyjoin.userservice.service.client.postServiceApi.PostApiClient;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,11 +24,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final ImageService imageService;
+    private final Environment env;
 
-    public UserService(UserRepository userRepository, ModelMapper modelMapper, ImageService imageService) {
+    public UserService(UserRepository userRepository, ModelMapper modelMapper, PostApiClient postApiClient, ImageService imageService, Environment env) {
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
         this.imageService = imageService;
+        this.env = env;
     }
 
     public User updateUser(User partialUser) {
@@ -60,9 +63,9 @@ public class UserService {
     public Image getAvatarUploadInformation(UUID uuid, LocalDateTime expireTime) {
         String key = uuid.toString() + "--" + UUID.randomUUID();
         LocalDateTime now = LocalDateTime.now();
-        String uploadUrl = imageService.getPreSignedUrlForUpload("avatar", key, Duration.between(now, expireTime));
+        String uploadUrl = imageService.getPreSignedUrlForUpload(env.getProperty("s3.BUCKET_NAME"), key, Duration.between(now, expireTime));
         ImageUrl imageUploadUrl = new ImageUrl(uploadUrl, expireTime);
-        String AVATAR_BUCKET = "avatar";
+        String AVATAR_BUCKET = env.getProperty("s3.BUCKET_NAME");
         return new Image(AVATAR_BUCKET, key, List.of(imageUploadUrl));
     }
 

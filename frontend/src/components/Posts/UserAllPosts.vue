@@ -1,5 +1,5 @@
 <template>
-  <div class="container" v-if="finishLoaded">
+  <div class="container" v-if="finishLoaded && !pageError">
     <div class="row" v-if="posts.length">
       <div class="col-4 d-flex justify-content-center align-items-center" v-for="post in posts" :key="post.id" @click="navigateToPost(post.id)">
         <div class="image-container">
@@ -13,6 +13,9 @@
       There is no posts.
     </div>
   </div>
+  <div class="container" v-else-if="pageError">
+    <NotFound></NotFound>
+  </div>
   <div class="container" v-else>
     <LoadView></LoadView>
   </div>
@@ -22,13 +25,15 @@
 import {BASE_URL_POST_SERVICE} from "../../../config/dev.env";
 import axios from "axios";
 import LoadView from "@/components/Loader/LoadView.vue";
+import NotFound from "@/views/NotFound.vue";
 
 export default {
-  components: {LoadView},
+  components: {LoadView, NotFound},
     data() {
         return {
             posts: [],
-            finishLoaded: false
+            finishLoaded: false,
+            pageError: false
         };
     },
     created(){
@@ -39,6 +44,7 @@ export default {
     methods: {
       // Method: Get all post by UserId API
       async fetchAllPostsByUserIdAPI() {
+        this.pageError = false;
         const getAllPostsUrl = BASE_URL_POST_SERVICE + "/posts/user/" + sessionStorage.getItem('userId');
         await axios.get(getAllPostsUrl, {
           headers: {
@@ -50,6 +56,7 @@ export default {
               this.finishLoaded = true;
             })
             .catch(error => {
+              this.pageError = true;
               console.error("[fetchAllPostsByUserIdAPI] There was an error fetching the all posts:", error);
             });
       },

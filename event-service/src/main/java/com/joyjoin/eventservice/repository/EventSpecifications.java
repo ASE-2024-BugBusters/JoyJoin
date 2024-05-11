@@ -42,7 +42,6 @@ public class EventSpecifications {
         };
     }
 
-
     public static Specification<Event> hasTags(List<String> tags) {
         return (root, query, cb) -> {
             if (tags == null || tags.isEmpty()) {
@@ -61,13 +60,13 @@ public class EventSpecifications {
 
     public static Specification<Event> participationLimitNotReached() {
         return (root, query, criteriaBuilder) -> {
-
+            // 关联事件与参与人数的表
             Subquery<Integer> participationSubquery = query.subquery(Integer.class);
             Root<EventParticipationCount> participationRoot = participationSubquery.from(EventParticipationCount.class);
             participationSubquery.select(participationRoot.get("participantCount"))
                     .where(criteriaBuilder.equal(participationRoot.get("eventId"), root.get("eventId")));
 
-
+            // 比较参与人数是否小于限制
             return criteriaBuilder.lessThan(participationSubquery, root.get("participationLimit"));
         };
     }

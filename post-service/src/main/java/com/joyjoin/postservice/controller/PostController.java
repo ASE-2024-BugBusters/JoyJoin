@@ -27,8 +27,6 @@ import java.util.UUID;
 public class PostController {
 
     private final PostService postService;
-
-
     private final ModelMapper modelMapper;
 
     @Autowired

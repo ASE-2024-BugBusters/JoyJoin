@@ -183,7 +183,7 @@ export default {
   },
   computed: {
     taggedusername() {
-      let username_list = this.taggedpeople.map(taggedperson => taggedperson.id).join(", ")
+      let username_list = this.taggedpeople.map(taggedperson => taggedperson.accountName).join(", ")
       if (username_list.length >= this.taggedPeopleDisplayMaxiLength){
         username_list = username_list.substring(0, this.taggedPeopleDisplayMaxiLength) + "...";
       }

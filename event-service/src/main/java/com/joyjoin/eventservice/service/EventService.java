@@ -4,13 +4,11 @@ import com.joyjoin.eventservice.exception.ResourceNotFoundException;
 import com.joyjoin.eventservice.model.*;
 import com.joyjoin.eventservice.modelDto.EventDto;
 import com.joyjoin.eventservice.packer.EventPacker;
-import com.joyjoin.eventservice.repository.EventParticipationCountRepository;
-import com.joyjoin.eventservice.repository.EventRegistrationRepository;
-import com.joyjoin.eventservice.repository.EventRepository;
-import com.joyjoin.eventservice.repository.EventSpecifications;
+import com.joyjoin.eventservice.repository.*;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +19,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Service layer for managing events.
- * Provides operations to manage events including creating, updating, deleting, and querying event data.
+ * Provides comprehensive services for managing events, including creation, update,
+ * deletion, and retrieval of event information, alongside image management for events.
  */
 @Service
 public class EventService {
@@ -33,47 +31,49 @@ public class EventService {
     private final ImageService imageService;
     private final EventPacker eventPacker;
     private final ModelMapper modelMapper;
-    static final String EVENT_BUCKET = "img";
+    private final Environment env;
 
     /**
-     * Constructs an EventService with necessary dependencies.
+     * Constructs an EventService with the necessary components for event management.
      *
-     * @param eventRepository                   Repository for event data access.
-     * @param eventRegistrationRepository
-     * @param eventParticipationCountRepository
-     * @param imageService                      Service for handling image-related operations.
-     * @param eventPacker                       Utility to convert between Event entities and DTOs.
-     * @param modelMapper                       Utility to map between different object models.
+     * @param eventRepository Repository interface for basic CRUD operations on events.
+     * @param eventRegistrationRepository Repository for managing registrations associated with events.
+     * @param eventParticipationCountRepository Repository for tracking the number of participants per event.
+     * @param imageService Service dedicated to handling operations related to event images, such as generating upload URLs.
+     * @param eventPacker Utility that converts between Event entities and their corresponding Data Transfer Objects (DTOs).
+     * @param modelMapper Tool for mapping between domain and DTO objects.
+     * @param env Provides environment-specific configuration (e.g., variables from application properties).
      */
     @Autowired
-    public EventService(EventRepository eventRepository, EventRegistrationRepository eventRegistrationRepository, EventParticipationCountRepository eventParticipationCountRepository, ImageService imageService, EventPacker eventPacker, ModelMapper modelMapper) {
+    public EventService(EventRepository eventRepository, EventRegistrationRepository eventRegistrationRepository, EventParticipationCountRepository eventParticipationCountRepository, ImageService imageService, EventPacker eventPacker, ModelMapper modelMapper, Environment env) {
         this.eventRepository = eventRepository;
         this.eventRegistrationRepository = eventRegistrationRepository;
         this.eventParticipationCountRepository = eventParticipationCountRepository;
         this.imageService = imageService;
         this.eventPacker = eventPacker;
         this.modelMapper = modelMapper;
+        this.env = env;
     }
 
     /**
      * Generates upload information for an image, including a pre-signed URL and expiration time.
      *
      * @param expireTime The expiration time for the upload URL.
-     * @return An Image object containing the bucket name, key, and a single image upload URL.
+     * @return Image object containing the bucket name, key, and a single image upload URL.
      */
     public Image getImgUploadInformation(LocalDateTime expireTime) {
-        String key = String.valueOf(UUID.randomUUID());
+        String key = UUID.randomUUID().toString();
         LocalDateTime now = LocalDateTime.now();
-        String uploadUrl = imageService.getPreSignedUrlForUpload(EVENT_BUCKET, key, Duration.between(now, expireTime));
+        String uploadUrl = imageService.getPreSignedUrlForUpload(env.getProperty("s3.BUCKET_NAME"), key, Duration.between(now, expireTime));
         ImageUrl imageUploadUrl = new ImageUrl(uploadUrl, expireTime);
-        return new Image(EVENT_BUCKET, key, List.of(imageUploadUrl));
+        return new Image(env.getProperty("s3.BUCKET_NAME"), key, List.of(imageUploadUrl));
     }
 
     /**
-     * Saves a new event or updates an existing one in the database.
+     * Saves a new event or updates an existing one in the database, including the registration of initial participation data.
      *
-     * @param event Event object containing the details to be saved.
-     * @return The saved or updated event data as a DTO.
+     * @param event Event object containing the details to be saved or updated.
+     * @return EventDto containing the saved or updated event data.
      */
     @Transactional
     public EventDto saveEvent(Event event) {
@@ -84,9 +84,9 @@ public class EventService {
     }
 
     /**
-     * Retrieves all events that have not been marked as deleted.
+     * Retrieves a list of all events that have not been marked as deleted or expired.
      *
-     * @return A list of Event DTOs.
+     * @return List of EventDto representing all active events.
      */
     @Transactional
     public List<EventDto> getAllEvents() {
@@ -94,6 +94,17 @@ public class EventService {
         return events.stream().map(eventPacker::packEvent).collect(Collectors.toList());
     }
 
+    /**
+     * Retrieves a list of events filtered by specified criteria such as title, city, date, and tags.
+     * Optionally excludes events that are fully booked.
+     *
+     * @param title Optional filter for event titles.
+     * @param city Optional filter for city location of the events.
+     * @param date Optional filter for the event date.
+     * @param tags Optional list of tags to filter the events.
+     * @param excludeFullEvents Boolean indicating whether to exclude events that have reached their participation limit.
+     * @return List of EventDto that match the given filters.
+     */
     public List<EventDto> getFilteredEvents(String title, String city, LocalDate date, List<String> tags, boolean excludeFullEvents) {
         List<Specification<Event>> specs = new ArrayList<>();
         specs.add(EventSpecifications.hasTitle(title));
@@ -110,10 +121,10 @@ public class EventService {
     }
 
     /**
-     * Retrieves an event by its UUID if it has not been marked as deleted.
+     * Retrieves an event by its UUID if it has not been marked as deleted or expired.
      *
-     * @param eventId The UUID of the event.
-     * @return The Event DTO.
+     * @param eventId The UUID of the event to retrieve.
+     * @return EventDto representing the event details.
      * @throws ResourceNotFoundException if the event does not exist or has been deleted.
      */
     @Transactional
@@ -125,11 +136,11 @@ public class EventService {
     }
 
     /**
-     * Updates an existing event's details except for its images.
+     * Updates an existing event's details based on the provided new details except for its images.
      *
      * @param eventId The UUID of the event to update.
-     * @param eventDetails Event object containing the new details.
-     * @return The updated Event DTO.
+     * @param eventDetails Event object containing the new details to be updated.
+     * @return EventDto containing the updated event data.
      * @throws ResourceNotFoundException if the event does not exist or has been deleted.
      */
     @Transactional
@@ -143,11 +154,11 @@ public class EventService {
     }
 
     /**
-     * Updates the images for an existing event.
+     * Updates the images for an existing event based on the provided new image details.
      *
      * @param eventId The UUID of the event to update.
      * @param eventDetails Event object containing the new image details.
-     * @return The updated Event DTO.
+     * @return EventDto containing the updated event data.
      * @throws ResourceNotFoundException if the event does not exist or has been deleted.
      */
     @Transactional
@@ -162,10 +173,10 @@ public class EventService {
     }
 
     /**
-     * Marks an event as deleted based on its UUID.
+     * Marks an event as deleted based on its UUID. Also marks all associated registrations as inactive.
      *
      * @param eventId The UUID of the event to delete.
-     * @return The Event DTO of the deleted event.
+     * @return EventDto of the deleted event.
      * @throws ResourceNotFoundException if the event does not exist or has already been deleted.
      */
     @Transactional
