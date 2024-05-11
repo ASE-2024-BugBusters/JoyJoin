@@ -63,3 +63,11 @@ s3:
   ACCESS_KEY: "test"
   SECRET_KEY: "test"
   REGION: "us-east-1"
+
+api:
+  API_VERSION: "api"
+  BASE_URL: "http://localhost:9191/"
+  BASE_URL_USER_SERVICE: ${api.BASE_URL}user-service/${api.API_VERSION}
+  BASE_URL_EVENT_SERVICE: ${api.BASE_URL}event-service/${api.API_VERSION}
+  BASE_URL_POST_SERVICE: ${api.BASE_URL}post-service/${api.API_VERSION}
+
