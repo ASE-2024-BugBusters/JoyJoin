@@ -7,7 +7,7 @@
                 <img class="tagged-userimage" v-else :src="user.avatar.urls[0].url" alt="User Profile Picture">
                 <button v-if="isAddOrEdit" type="button" class="remove-button btn-close" @click="removeTaggedPeople(user)"></button>
             </div>
-            <div class="tagged-username">{{ user.id }}</div>
+            <div class="tagged-username">{{ user.accountName }}</div>
         </div>
     </div>
     <div v-else>

@@ -1,5 +1,5 @@
 <template>
-  <div class="container" v-if="finishLoaded">
+  <div class="container" v-if="finishLoaded && !pageError">
     <div class="row">
       <!--Left section: Image (Slide images)-->
       <div class="col-md-7 d-flex justify-content-center align-items-center">
@@ -14,15 +14,18 @@
             <img class="user-image navigate-info" v-if="!post.user.avatar" src="../../assets/Default_User_Icon.png" alt="User Profile Picture" @click="navigateToUserProfile(post.user.id)" title="Navigate to User Profile" />
             <img class="user-image navigate-info" v-else :src="post.user.avatar.urls[0].url"  alt="User Profile Picture" @click="navigateToUserProfile(post.user.id)" title="Navigate to User Profile" />
             <div class="user-info">
-              <div class="username navigate-info" v-if="post.user" @click="navigateToUserProfile(post.user.id)" title="Navigate to User Profile"> {{ post.user.id }}</div>
+              <div class="username navigate-info" v-if="post.user" @click="navigateToUserProfile(post.user.id)" title="Navigate to User Profile"> {{ post.user.accountName }}</div>
               <div class="post-info" :class="isEditMode? 'post-info-edit' : ''">
                 <span class="navigate-info" v-if="post.taggedEvent" @click="navigateToEvent(post.taggedEvent.eventId)" title="Navigate to Event Information">{{ post.taggedEvent.title }}</span>
                 <span v-else-if="!post.taggedEvent && isEditMode">No event is binded</span>
                 <font-awesome-icon v-if="isEditMode" class="post-icon post-info-icon" :icon="['fas', 'edit']" title="Edit Event" @click="openPostEventModal"/>
               </div>
               <div class="post-info" v-if="post.taggedUsers" :class="isEditMode? 'post-info-edit' : ''">
-                <span v-if="post.taggedUsers.length">With {{ taggedusername }}
-                  <span class="taggedPeopleMore" v-if="taggedUsersSeeMore" @click="openTaggedPeopleModal">...more</span>
+                <span v-if="post.taggedUsers.length">With
+                  <span @click="openTaggedPeopleModal" class="taggedPeopleSpan" >
+                    {{ taggedusername }}
+                    <span class="taggedPeopleMore" v-if="taggedUsersSeeMore">...more</span>
+                  </span>
                 </span>
                 <span v-if="!post.taggedUsers.length && isEditMode">No one is tagged</span>
                 <font-awesome-icon v-if="isEditMode" class="post-icon post-info-icon" :icon="['fas', 'edit']" title="Edit Tagged People" @click="openPostTagModal"/>
@@ -59,6 +62,9 @@
       </div>
     </div>
   </div>
+  <div v-else-if="pageError">
+    <NotFound></NotFound>
+  </div>
   <div v-else>
     <LoadView></LoadView>
   </div>
@@ -81,9 +87,11 @@ import {BASE_URL_POST_SERVICE} from "../../../config/dev.env";
 import axios from "axios";
 import PostEvent from "@/views/posts/PostEvent.vue";
 import LoadView from "../../components/Loader/LoadView.vue";
+import NotFound from "@/views/NotFound.vue";
 
 export default {
   components: {
+    NotFound,
     PostEvent,
     ImageSlider, PopupContent, PostComments, PostTotalLikes, PostTag, AllUsersModal, Share, LoadView
   },
@@ -97,7 +105,8 @@ export default {
       tagpeopleHeader: "Tagged People",
       usernameListMaximumLength: 25,
       post: {},
-      finishLoaded: false
+      finishLoaded: false,
+      pageError: false
     }
   },
   created() {
@@ -110,6 +119,7 @@ export default {
   methods: {
     // Method: Get post's information API
     async fetchPostInfoAPI() {
+      this.pageError = false;
       const getPostInfoUrl = BASE_URL_POST_SERVICE + "/posts/" + this.postId;
       await axios.get(getPostInfoUrl, {
         headers: {
@@ -121,6 +131,7 @@ export default {
             this.finishLoaded = true;
           })
           .catch(error => {
+            this.pageError = true;
             console.error("[fetchPostInfoAPI] There was an error fetching the post's information:", error);
           });
     },
@@ -208,6 +219,7 @@ export default {
       })
           .then(response => {})
           .catch(error => {
+            this.er
             console.error("[removeCommentAPI] There was an error deleting the post's comments:", error);
           });
     },
@@ -241,7 +253,8 @@ export default {
   computed: {
     // Method: Extract username of taggedUsers
     taggedusername() {
-      let username_list = this.post.taggedUsers.map(taggedperson => taggedperson.id).join(", ")
+      this.taggedUsersSeeMore = false;
+      let username_list = this.post.taggedUsers.map(taggedperson => taggedperson.accountName).join(", ")
       if (username_list.length >= this.usernameListMaximumLength) {
         username_list = username_list.substring(0, this.usernameListMaximumLength);
         this.taggedUsersSeeMore = true;
@@ -270,6 +283,9 @@ export default {
   display: inline-block;
   margin-right: 10px;
 }
+.user-image:hover{
+  box-shadow: 2px 2px 2px 1px darkgray;
+}
 
 .left-right-content-container {
   display: flex;
@@ -295,6 +311,9 @@ export default {
 .username {
   font-weight: bold;
 }
+.username:hover {
+  font-weight: bolder;
+}
 
 .post-info {
   font-size: 13px;
@@ -304,7 +323,7 @@ export default {
 }
 
 .post-comments-container {
-  padding: 10px;
+  padding: 5px 10px;
 }
 
 textarea {
@@ -355,10 +374,15 @@ textarea {
 .post-icon-right {
   margin-right: 0;
 }
+.taggedPeopleSpan{
+  cursor: pointer;
+}
+.taggedPeopleSpan:hover{
+  font-weight: bold;
+}
 
 .taggedPeopleMore {
   font-style: italic;
-  cursor: pointer;
   font-weight: 600;
 }
 

@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import NotificationIcon from "@/components/Notification/NotificationIcon.vue";
 import ProfileView from "@/views/profile/ProfileView.vue";
-
+import NotFound from "../views/NotFound.vue";
 
 const routes = [
   {
@@ -145,6 +145,12 @@ const routes = [
       }
     }
   },
+    //Catch all Error Page
+  {
+    path: "/:catchAll(.*)",
+    name: "NotFound",
+    component: NotFound
+  }
 ]
 
 const router = createRouter({

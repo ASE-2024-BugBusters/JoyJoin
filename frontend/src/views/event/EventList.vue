@@ -3,27 +3,29 @@
     <form>
       <div class="form-group">
         <label for="formGroupExampleInput">Title</label>
-        <input v-model="filters.title" type="text" class="form-control" id="title" placeholder="Input title to filter events">
+        <input v-model="filters.title" type="text" class="form-control" id="title" placeholder="">
       </div>
       <div class="form-group">
         <label for="formGroupExampleInput">City</label>
-        <input v-model="filters.city" type="text" class="form-control" id="city" placeholder="Input city to filter events">
+        <input v-model="filters.city" type="text" class="form-control" id="city" placeholder="">
       </div>
       <div class="form-group">
-        <label for="formGroupExampleInput">Time</label>
-        <input v-model="filters.time" type="datetime-local" class="form-control" id="time" placeholder="Select title to time events">
+        <label for="formGroupExampleInput">Date</label>
+        <input v-model="filters.date" type="date" class="form-control" id="date" placeholder="">
       </div>
       <div class="form-group">
         <label for="formGroupExampleInput">Category</label>
         <Multiselect
             v-model="filters.tags"
+            mode="tags"
             tag-placeholder="Add new tag"
-            placeholder="Select or add tags"
+            placeholder=""
             label="label"
             track-by="value"
             :options="tags"
             :multiple="true"
             :taggable="true"
+            :searchable="true"
             @tag="addTag"
         ></Multiselect>
       </div>
@@ -32,17 +34,15 @@
         <input type="checkbox" v-model="filters.excludeFullEvents">
       </div>
       <div class="form-group">
-        <button class="btn btn-outline-dark "@click="clearFilters" type="reset">Clear All Filters</button>
+        <button v-if="hasFilters" class="btn btn-outline-dark "@click="clearFilters" type="reset">Clear All Filters</button>
       </div>
-<!--      <button class="btn btn-outline-primary" @click="fetchEvents">Filter Events</button>-->
-
     </form>
 
   </div>
   <div class="events container">
     <div class="columns is-multiline" v-if="events.length > 0">
       <div v-for="event in events" :key="event.eventId" class="column is-one-quarter">
-        <EventCard :event="event" @click.native="goToAction(event)" />
+        <EventCard :event="event" :isPostAddOrEdit = "isPostAddOrEdit" @image-clicked="goToAction" />
       </div>
     </div>
     <div v-else class="no-events">
@@ -70,7 +70,7 @@ export default {
       filters: {
         title: '',
         city: '',
-        time: '',
+        date: '',
         tags: [],
         excludeFullEvents: false
       },
@@ -84,12 +84,20 @@ export default {
     this.fetchEvents();
   },
   watch: {
-    // 监听 filters 对象的变化
     filters: {
       handler: function() {
         this.fetchEvents();
       },
       deep: true
+    }
+  },
+  computed: {
+    hasFilters() {
+      return this.filters.title !== '' ||
+          this.filters.city !== '' ||
+          this.filters.date !== '' ||
+          this.filters.tags.length > 0 ||
+          this.filters.excludeFullEvents; // Check if checkbox is true
     }
   },
   methods: {
@@ -123,6 +131,7 @@ export default {
       if (this.isPostAddOrEdit) {
         this.$emit('addTaggedEvent', event);
       } else {
+        // this.$emit('image-clicked', event.eventId);
         const eventId = event.eventId;
         this.$router.push({ name: 'EventView', params: { eventId } });
       }
@@ -131,8 +140,8 @@ export default {
       this.filters = {
         title: '',
         city: '',
-        time: '',
-        tags: '',
+        date: '',
+        tags: [],
         excludeFullEvents: false
       };
     },
@@ -156,34 +165,52 @@ export default {
   overflow-y: hidden;
 }
 .filter {
-  margin: 2em;
-  display: block;
-}
-.field {
-  flex-grow: 1;
-  min-width: 300px;
-  margin-bottom: 1em;
-}
-.no-events {
-  font-size: 1.5em;
-  color: black;
+  margin: 2em auto; // Maintain margin for spacing around
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start; // Align items to the start of the line
+  align-items: flex-start; // Align items to the top
+  max-width: 1200px; // Control maximum width to avoid overly wide forms
 }
 .form-group {
-  align-items: center;
-  width: 30%;
-  margin: 1em;
+  display: flex;
+  flex-direction: column;
+  align-items: center; // Center items for better alignment of checkbox
+  margin: 0.5em;
+  flex: 1 1 220px; // Allows flexibility with starting at 220px
+  min-width: 220px; // Minimum width for smaller screens
+  max-width: 300px; // Maximum width for larger screens
 }
 label {
-  margin-right: 1em;
-  margin-left: 2em;
+  margin-bottom: 0.5em;
+  width: 100%; // Ensure labels align properly over their fields
   font-weight: bold;
 }
 form {
+  width: 100%; // Use full width to manage inner content
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: row; // Set form direction to row for side-by-side layout
+  flex-wrap: wrap; // Allow wrapping
+  justify-content: center; // Center content within form
+  align-items: flex-start; // Align form items at the start vertically
 }
 button {
-  font-weight: bold;
+  flex: 0 1 auto; // Don't allow button to grow but can shrink if necessary
+  margin-top: 1em; // Provide top margin for alignment
+  padding: 0.5em 2em; // Larger padding for better visibility
 }
+.multiselect {
+  width: 100%; // Ensure multiselect fills its container
+}
+input[type="checkbox"] {
+  transform: scale(1.5); // Enlarge checkbox
+  margin: 10px; // Provide margin for better spacing
+  vertical-align: middle; // Align checkbox vertically for aesthetics
+}
+.no-events{
+  font-weight: bold;
+  margin-bottom: 5em;
+  font-size: 2em;
+}
+
 </style>

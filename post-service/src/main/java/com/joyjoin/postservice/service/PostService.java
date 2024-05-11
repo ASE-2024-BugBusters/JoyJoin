@@ -16,6 +16,7 @@ import com.joyjoin.postservice.modelDto.User.UserDto;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
@@ -41,6 +42,10 @@ public class PostService {
     private final PostPacker postPacker;
     private final Environment env;
 
+    @Value("${api.BASE_URL_EVENT_SERVICE}")
+    private String eventServiceBaseUrl;
+    @Value("${api.BASE_URL_USER_SERVICE}")
+    private String userServiceBaseUrl;
 
     public PostService(PostRepository postRepository, CommentRepository commentRepository, ModelMapper modelMapper, ImageService imageService, PostPacker postPacker, Environment env) {
         this.postRepository = postRepository;
@@ -246,7 +251,8 @@ public class PostService {
     }
 
     private List<UserDto> getUsersInfoAPI(String token, String userIds){
-        String getUsersInfoUrl = "http://localhost:9191/user-service/api/user/users/" + userIds;
+//        String getUsersInfoUrl = "http://localhost:9191/user-service/api/user/users/" + userIds;
+        String getUsersInfoUrl = userServiceBaseUrl + "/user/users/" + userIds;
         System.out.println("URL: " + getUsersInfoUrl);
 
         HttpHeaders headers = new HttpHeaders();
@@ -270,7 +276,8 @@ public class PostService {
 
     // Method to retrieve specific event's info
     private EventDto getEventInfoAPI(String token, String eventId){
-        String getEventInfoUrl = "http://localhost:9191/event-service/api/events/" + eventId;
+//        String getEventInfoUrl = "http://localhost:9191/event-service/api/events/" + eventId;
+        String getEventInfoUrl = eventServiceBaseUrl + "/events/" + eventId;
         System.out.println("URL: " + getEventInfoUrl);
 
         HttpHeaders headers = new HttpHeaders();
