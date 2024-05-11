@@ -1,6 +1,6 @@
 // Is used to adjust the variables dynamically and concatenate them
 const API_VERSION = "api"
-const BASE_URL =  "http://localhost:9191/";
+const BASE_URL =  process.env.NODE_ENV === "development" ? "http://localhost:9191/" : "http://ec2-35-181-200-35.eu-west-3.compute.amazonaws.com:9191/";
 const BASE_URL_USER_SERVICE =  BASE_URL + "user-service/" + API_VERSION;
 const BASE_URL_EVENT_SERVICE = BASE_URL + "event-service/" + API_VERSION;
 const BASE_URL_POST_SERVICE =  BASE_URL + "post-service/" + API_VERSION;

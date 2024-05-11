@@ -120,4 +120,5 @@ public class EventControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title", is(eventDto.getTitle())));
     }
+
 }
