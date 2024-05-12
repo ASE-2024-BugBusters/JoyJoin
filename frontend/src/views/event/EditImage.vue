@@ -71,7 +71,7 @@ export default {
         server: {
           process: async (fieldName, file, metadata, load, error, progress, abort) => {
             try {
-              const { url, key } = await getUploadUrl(); // Get the URL for upload
+              const { url, bucket, key } = await getUploadUrl(); // Get the URL for upload
 
               // Upload the file using axios
               const response = await axios.put(url, file, {
@@ -83,7 +83,7 @@ export default {
                 },
               });
 
-              uploadedImages.value.push({ "bucket": "event-img", "key": key }); // Store the uploaded image info
+              uploadedImages.value.push({ "bucket": bucket, "key": key }); // Store the uploaded image info
               console.log(uploadedImages.value[0]);
               load(key); // Indicate successful upload
             } catch (uploadError) {
@@ -107,6 +107,7 @@ export default {
         });
         return {
           url: response.data.image.urls[0].url,
+          bucket: response.data.image.bucket,
           key: response.data.image.key
         };
       } catch (error) {

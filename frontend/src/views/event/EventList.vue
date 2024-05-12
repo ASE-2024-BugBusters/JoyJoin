@@ -1,5 +1,5 @@
 <template>
-  <div class="filter">
+  <div class="filter" v-if="!attendedEvent">
     <form>
       <div class="form-group">
         <label for="formGroupExampleInput">Title</label>
@@ -58,7 +58,7 @@ import Multiselect from '@vueform/multiselect';
 import {BASE_URL_EVENT_SERVICE, INTEREST_TAGS} from "../../../config/dev.env";
 
 export default {
-  props: ['isPostAddOrEdit'],
+  props: ['isPostAddOrEdit', 'attendedEvent'],
   name: 'EventsList',
   components: {
     EventCard,

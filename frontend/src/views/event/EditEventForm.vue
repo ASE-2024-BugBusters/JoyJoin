@@ -128,6 +128,10 @@ export default {
         alert('Please fill all the required fields.');
         return;
       }
+      if (parseInt(event.location.number) < 1 || parseInt(event.participationLimit) < 2) {
+        alert('Please ensure all number inputs meet the minimum requirements.');
+        return;
+      }
       try {
         await saveChanges();
         router.push({name: 'EventView', params: {eventId}});

@@ -23,29 +23,15 @@ import java.util.UUID;
 public class UserService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
-    private final PostApiClient postApiClient;
     private final ImageService imageService;
     private final Environment env;
 
     public UserService(UserRepository userRepository, ModelMapper modelMapper, PostApiClient postApiClient, ImageService imageService, Environment env) {
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
-        this.postApiClient = postApiClient;
         this.imageService = imageService;
         this.env = env;
     }
-
-//    public UserDto saveUser(User user) {
-//        User optionalUser = userRepository.findUserByEmail(user.getEmail());
-//        if (optionalUser != null) {
-//            throw new EmailAlreadyExistsException(ErrorCode.USER_EMAIL_ALREADY_EXISTS.getErrorCode());
-//        }
-//        var now = LocalDateTime.now();
-//        user.setCreatedOn(now);
-//        user.setLastEdited(now);
-//        User savedUser = userRepository.save(user);
-//        return modelMapper.map(savedUser, UserDto.class);
-//    }
 
     public User updateUser(User partialUser) {
         var existedUser = userRepository.findById(partialUser.getId()).orElseThrow(() -> new ResourceNotFoundException("user", "id", partialUser.getId().toString()));
@@ -54,9 +40,7 @@ public class UserService {
         return userRepository.save(existedUser);
     }
 
-
     public List<User> getAllUsers() {
-//        List<PostDto> posts = postApiClient.getAllPosts();
         return userRepository.findAll();
     }
 
@@ -83,5 +67,30 @@ public class UserService {
         ImageUrl imageUploadUrl = new ImageUrl(uploadUrl, expireTime);
         String AVATAR_BUCKET = env.getProperty("s3.BUCKET_NAME");
         return new Image(AVATAR_BUCKET, key, List.of(imageUploadUrl));
+    }
+
+    public User addFollowee(UUID followerId, UUID followeeId) {
+        User follower = userRepository.findById(followerId).orElseThrow(() -> new ResourceNotFoundException("User", "id", followerId.toString()));
+        User followee = userRepository.findById(followeeId).orElseThrow(() -> new ResourceNotFoundException("User", "id", followerId.toString()));
+        follower.getFollowee().add(followee);
+        userRepository.save(follower);
+        return follower;
+    }
+
+    public User removeFollowee(UUID followerId, UUID followeeId) {
+        User follower = userRepository.findById(followerId).orElseThrow(() -> new ResourceNotFoundException("User", "id", followerId.toString()));
+        follower.getFollowee().removeIf(user -> user.getId().equals(followeeId));
+        userRepository.save(follower);
+        return follower;
+    }
+
+    public List<User> getAllFollowee(UUID followerId) {
+        User follower = userRepository.findById(followerId).orElseThrow(() -> new ResourceNotFoundException("User", "id", followerId.toString()));
+        return follower.getFollowee().stream().toList();
+    }
+
+    public List<User> getAllFollower(UUID followeeId) {
+        User followee = userRepository.findById(followeeId).orElseThrow(() -> new ResourceNotFoundException("User", "id", followeeId.toString()));
+        return followee.getFollower().stream().toList();
     }
 }

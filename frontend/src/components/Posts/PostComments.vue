@@ -121,7 +121,7 @@ export default {
       }
       //Call Delete Comment API
       // const deleteCommentUrl = BASE_URL_EVENT_SERVICE + "/posts/comments/" + comment_id;
-      const deleteCommentUrl = this.prefix_url + "/posts/comments/" + comment_id;
+      const deleteCommentUrl = BASE_URL_POST_SERVICE + "/posts/comments/" + comment_id;
       axios.delete(deleteCommentUrl, {
         // headers: {
         //   // 'Content-Type': 'application/json',

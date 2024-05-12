@@ -46,9 +46,9 @@ const routes = [
     }
   },
   {
-    path: "/event/:eventId/image-edit",
+    path: "/event/:eventId/edit-image",
     name: "EditImage",
-    component: () => import('../views/event/ImageEdit.vue'),
+    component: () => import('../views/event/EditImage.vue'),
     beforeEnter: (to, from, next) => {
       if (sessionStorage.getItem("jwtToken") && sessionStorage.getItem("userId")) {
         next();
@@ -110,7 +110,7 @@ const routes = [
     }
   },
   {
-    path: "/profile",
+    path: "/profile/:user_id",
     name: "profile",
     component: ProfileView,
     beforeEnter: (to, from, next) => {

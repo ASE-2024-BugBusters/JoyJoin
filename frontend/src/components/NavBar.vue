@@ -20,7 +20,7 @@
       <div class="navbar-start">
         <router-link to="/" class="navbar-item" style="text-decoration: none">Home</router-link>
         <router-link to="/about" class="navbar-item noTextDecoration" style="text-decoration: none">About</router-link>
-        <router-link v-if="jwt" to="/profile" class="navbar-item noTextDecoration" style="text-decoration: none">Profile</router-link>
+        <router-link v-if="jwt" :to="userProfilePath()" class="navbar-item noTextDecoration" style="text-decoration: none">Profile</router-link>
         <router-link v-if="jwt" to="/post/create" class="navbar-item noTextDecoration" style="text-decoration: none">Create New Post</router-link>
         <router-link v-if="jwt" to="/events/create" class="navbar-item noTextDecoration" style="text-decoration: none">Publish Event</router-link>
       </div>
@@ -93,6 +93,10 @@ export default {
 
     checkJwt() {
       this.jwt = (sessionStorage.getItem("jwtToken") !== null || sessionStorage.getItem("userId") !== null);
+    },
+
+    userProfilePath() {
+      return `/profile/${sessionStorage.userId}`;
     }
   },
   watch: {

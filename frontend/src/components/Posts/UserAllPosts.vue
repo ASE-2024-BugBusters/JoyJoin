@@ -1,23 +1,35 @@
 <template>
-  <div class="container" v-if="finishLoaded && !pageError">
-    <div class="row" v-if="posts.length">
-      <div class="col-4 d-flex justify-content-center align-items-center" v-for="post in posts" :key="post.id" @click="navigateToPost(post.id)">
-        <div class="image-container">
-          <div style="cursor:pointer">
-            <img :src="post.images[0].urls[0].url" class="img-fluid mb-3" alt="Image">
+  <div v-if="finishLoaded && !pageError">
+    <div class="container">
+      <h2 class="subtitle">
+        Your Posts:
+      </h2>
+      <div class="row" v-if="posts.length">
+        <div class="col-3 d-flex justify-content-center align-items-center" v-for="post in posts" :key="post.id" @click="navigateToPost(post.id)">
+          <div class="image-container">
+            <div style="cursor:pointer">
+              <img :src="post.images[0].urls[0].url" class="img-fluid mb-3" alt="Image">
+            </div>
           </div>
         </div>
       </div>
+      <div v-else class="no-posts">
+        There is no posts.
+      </div>
     </div>
-    <div v-else class="no-posts">
-      There is no posts.
+    <h2 class="subtitle" style="margin-top: 30px; margin-bottom:-40px;">
+      Attended Events:
+    </h2>
+    <div class="container">
+      <EventsList :attended-event="true"/>
     </div>
   </div>
+
   <div class="container" v-else-if="pageError">
-    <NotFound></NotFound>
+    <NotFound/>
   </div>
   <div class="container" v-else>
-    <LoadView></LoadView>
+    <LoadView/>
   </div>
 </template>
 
@@ -26,26 +38,27 @@ import {BASE_URL_POST_SERVICE} from "../../../config/dev.env";
 import axios from "axios";
 import LoadView from "@/components/Loader/LoadView.vue";
 import NotFound from "@/views/NotFound.vue";
+import EventsList from "@/views/event/EventList.vue";
 
 export default {
-  components: {LoadView, NotFound},
+  props: ["userId"],
+  components: {EventsList, LoadView, NotFound},
     data() {
         return {
+            targetUser: this.userId ? this.userId : sessionStorage.getItem('userId'),
             posts: [],
             finishLoaded: false,
             pageError: false
         };
     },
     created(){
-      console.log("Token: " + sessionStorage.getItem("jwtToken"));
-      console.log("userId: " + sessionStorage.getItem('userId'));
       this.fetchAllPostsByUserIdAPI();
     },
     methods: {
       // Method: Get all post by UserId API
       async fetchAllPostsByUserIdAPI() {
         this.pageError = false;
-        const getAllPostsUrl = BASE_URL_POST_SERVICE + "/posts/user/" + sessionStorage.getItem('userId');
+        const getAllPostsUrl = BASE_URL_POST_SERVICE + "/posts/user/" + this.targetUser;
         await axios.get(getAllPostsUrl, {
           headers: {
             'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
@@ -64,9 +77,7 @@ export default {
       navigateToPost(postId) {
         this.$router.push({ name: 'post', params: { id: postId } });
       },
-
     }
-
 }
 </script>
 
@@ -102,5 +113,11 @@ export default {
   font-size: 20px;
   color: darkgray;
   padding-top: 15px;
+}
+
+.container {
+  max-height: 350px; /* Set the max height for the container */
+  overflow-y: auto;
+  margin-top: 50px;/* Enable vertical scrolling */
 }
 </style>

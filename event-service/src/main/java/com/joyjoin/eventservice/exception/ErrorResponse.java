@@ -19,5 +19,10 @@ public class ErrorResponse {
         this.details = details;
     }
 
+    public ErrorResponse(HttpStatus status, String message) {
+        this.status = status;
+        this.message = message;
+    }
+
 }
 
