@@ -3,16 +3,16 @@
 </script>
 
 <template>
-  <div class="user-profile container" v-if="userProfile">
-    <UserModal id="followers" :visible="showFollowerList" :users="followers" :action_text='"Remove"'
-               @action="handleRemoveFollower" @close="showFollowerList = false"></UserModal>
-    <UserModal id="followings" :visible="showFollowingList" :users="followings" :action_text='"Unfollow"'
-               @action="handleUnfollow" @close="showFollowingList = false"></UserModal>
+  <div v-if="userProfile" class="user-profile container">
+    <UserModal id="followers" :action_text='"Remove"' :users="followers" :visible="showFollowerList"
+               @action="handleRemoveFollower" @close="showFollowerList = false" @navigate="handleNavigate"></UserModal>
+    <UserModal id="followings" :action_text='"Unfollow"' :users="followings" :visible="showFollowingList"
+               @action="handleUnfollow" @close="showFollowingList = false" @navigate="handleNavigate"></UserModal>
 
     <div class="row">
       <div class="col-12 col-md-4">
         <div class="avatar-container">
-          <img class="avatar" :src="userProfile.avatar_url" alt="User Avatar">
+          <img :src="userProfile.avatar_url" alt="User Avatar" class="avatar">
         </div>
       </div>
       <div class="col-12 col-md-8">
@@ -21,15 +21,16 @@
         <p><strong>Bio:</strong> {{ userProfile.biography }}</p>
         <p><strong>Tags:</strong> {{ userProfile.interestTags }}</p>
         <div>
-          <router-link :to="{ name: 'EditProfile' }" class="btn btn-primary" v-if="isSelf">Edit</router-link>
-          <button type="button" class="btn btn-primary" v-if="!isSelf && !isFollowing" id="follow_btn" @click="follow">
-            Follow Me
+          <router-link v-if="isSelf()" :to="{ name: 'EditProfile' }" class="btn btn-primary">Edit</router-link>
+          <button v-if="!isSelf() && !isFollowing()" id="follow_btn" class="btn btn-primary" type="button"
+                  @click="follow">
+            Follow
           </button>
-          <button type="button" class="btn btn-danger" v-if="!isSelf && isFollowing" id="unfollow_btn"
+          <button v-if="!isSelf() && isFollowing()" id="unfollow_btn" class="btn btn-danger" type="button"
                   @click="unfollow">Unfollow
           </button>
-          <button type="button" class="btn btn-primary" @click="showFollowerList = true">Followers</button>
-          <button type="button" class="btn btn-primary" @click="showFollowingList = true">Followings</button>
+          <button class="btn btn-primary" type="button" @click="showFollowerList = true">Followers</button>
+          <button class="btn btn-primary" type="button" @click="showFollowingList = true">Followings</button>
         </div>
       </div>
     </div>
@@ -42,10 +43,10 @@
 <script>
 import axios from 'axios'
 import {BASE_URL_USER_SERVICE, INTEREST_TAGS} from "../../../config/dev.env";
-import {useRoute} from 'vue-router';
+import {useRoute, useRouter} from 'vue-router';
 import UserAllPosts from '@/components/Posts/UserAllPosts.vue';
 import UserModal from '@/components/User/UserModal.vue';
-import {computed, onMounted, ref} from 'vue';
+import {onMounted, ref, watch} from 'vue';
 
 
 export default {
@@ -57,28 +58,26 @@ export default {
   setup() {
     const isLoading = ref(false);
     const userId = ref("");
-    const isSelf = ref(false);
     const userProfile = ref(null);
     const followers = ref([]);
     const followings = ref([]);
     const showFollowerList = ref(false);
     const showFollowingList = ref(false);
-    const isFollowing = computed({
-      get() {
-        console.log(followers.value)
-        console.log(sessionStorage)
-        for (let index in followers.value) {
-          if (followers.value[index].id === sessionStorage.userId) {
-            return true;
-          }
-        }
-        return false;
-      }
-    });
 
     const route = useRoute();
     userId.value = route.params.user_id;
-    isSelf.value = (userId.value === sessionStorage.userId);
+
+    const isFollowing = () => {
+      for (const index in followers.value) {
+        const follower = followers.value[index];
+        if (follower.id === sessionStorage.userId) {
+          return true;
+        }
+      }
+      return false;
+    };
+
+    const isSelf = () => userId.value === sessionStorage.userId
 
     const axios_options = {
       headers: {
@@ -146,10 +145,12 @@ export default {
       }
     };
 
+    const followee_resource_url = (follower_id, followee_id) => {
+      return BASE_URL_USER_SERVICE + '/user/users/' + follower_id + '/followee/' + followee_id;
+    }
+
     const follow = async function (e) {
-      const follower_id = sessionStorage.userId;
-      const followee_id = userId.value;
-      const url = BASE_URL_USER_SERVICE + '/user/users/' + follower_id + '/followee/' + followee_id;
+      const url = followee_resource_url(sessionStorage.userId, userId.value);
       try {
         const resp = await axios.put(url, null, axios_options);
         const new_follower = resp.data;
@@ -160,9 +161,7 @@ export default {
       }
     };
     const unfollow = async function (e) {
-      const follower_id = sessionStorage.userId;
-      const followee_id = userId.value;
-      const url = BASE_URL_USER_SERVICE + '/user/users/' + follower_id + '/followee/' + followee_id;
+      const url = followee_resource_url(sessionStorage.userId, userId.value);
       try {
         const resp = await axios.delete(url, axios_options);
         const removed_follower = resp.data;
@@ -173,35 +172,67 @@ export default {
       }
     };
     const handleRemoveFollower = async function (user) {
-      console.log(user);
+      const url = followee_resource_url(user.id, userId.value);
+      try {
+        const resp = await axios.delete(url, axios_options);
+        const removed_follower = resp.data;
+        followers.value = followers.value.filter(item => item.id !== removed_follower.id);
+      } catch (e) {
+        console.error(e);
+        alert("failed to remove follower");
+      }
     };
     const handleUnfollow = async function (user) {
-      console.log(user);
+      const url = followee_resource_url(userId.value, user.id);
+      try {
+        const resp = await axios.delete(url, axios_options);
+        const removed_followee = resp.data;
+        followings.value = followings.value.filter(item => item.id !== removed_followee.id);
+      } catch (e) {
+        console.error(e);
+        alert("failed to unfollow user");
+      }
     };
 
-    onMounted(async () => {
+    const router = useRouter();
+    const handleNavigate = async function (user) {
+      await router.push(user.id);
+    }
+
+    const init = async () => {
       await Promise.all([
         fetchUserProfile(),
         fetchFollowers(),
         fetchFollowings(),
       ])
+    }
+
+    watch(() => route.params.user_id, (new_id) => {
+      console.log(new_id);
+      userId.value = new_id;
+      showFollowerList.value = false;
+      showFollowingList.value = false;
+      init();
     });
+
+    onMounted(init);
 
     return {
       isLoading,
-      isFollowing,
       userId,
-      isSelf,
       userProfile,
       followers,
       followings,
       showFollowerList,
       showFollowingList,
+      isFollowing,
+      isSelf,
 
       follow,
       unfollow,
       handleRemoveFollower,
       handleUnfollow,
+      handleNavigate,
     }
   },
 }
