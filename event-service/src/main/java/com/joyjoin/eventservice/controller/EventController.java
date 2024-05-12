@@ -12,23 +12,21 @@ import com.joyjoin.eventservice.service.EventRegistrationService;
 import com.joyjoin.eventservice.service.EventService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Controller class for handling all event-related actions.
- * This class handles requests to create, update, delete, and fetch events,
- * as well as register or unregister users from events.
+ * Handles all web requests for operations related to events,
+ * including creation, modification, deletion, and retrieval of events,
+ * as well as managing event registrations.
  */
 @RestController
 @CrossOrigin(allowedHeaders = "*", originPatterns = "/**")
@@ -36,14 +34,14 @@ import java.util.stream.Collectors;
 public class EventController {
     private final EventService eventService;
     private final ModelMapper modelMapper;
-    private  final EventRegistrationService eventRegistrationService;
+    private final EventRegistrationService eventRegistrationService;
 
     /**
-     * Constructs an EventController with the specified EventService and ModelMapper.
+     * Constructs an instance with required services for event management.
      *
-     * @param eventService             the service to handle the event logic
-     * @param modelMapper              the tool to map between DTOs and entities
-     * @param eventRegistrationService the service to handle the event registration logic
+     * @param eventService the business logic service for event operations
+     * @param modelMapper tool for converting entities to DTOs and vice versa
+     * @param eventRegistrationService handles the registration of users to events
      */
     @Autowired
     public EventController(EventService eventService, ModelMapper modelMapper, EventRegistrationService eventRegistrationService) {
@@ -53,10 +51,10 @@ public class EventController {
     }
 
     /**
-     * Creates a new event based on the provided request data.
+     * Creates an event based on request data.
      *
-     * @param request the event creation request with event details
-     * @return the created event data transfer object
+     * @param request Details for creating a new event
+     * @return A ResponseEntity containing the newly created EventDto and HTTP status
      */
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
@@ -67,9 +65,9 @@ public class EventController {
     }
 
     /**
-     * Provides an upload URL for an event image that expires in 30 minutes.
+     * Generates and retrieves a pre-signed image upload URL with a 30-minute expiry.
      *
-     * @return the response containing the URL and expiration information
+     * @return The upload URL and expiration details
      */
     @GetMapping("/get_upload_image_url")
     public GetImgUploadUrlResponse getImgUploadUrl() {
@@ -78,14 +76,15 @@ public class EventController {
     }
 
     /**
-     * Retrieves a list of events filtered based on optional criteria including title, city, date, tags, and whether to exclude full events.
+     * Fetches events filtered by specified criteria such as title, city, date, and tags.
+     * Optionally excludes fully booked events.
      *
-     * @param title Optional parameter to filter events by their title. If provided, will match events containing this substring.
-     * @param city Optional parameter to filter events by city. Events in the specified city will be returned.
-     * @param date Optional parameter to filter events by date. Only events on this specific date will be returned.
-     * @param tags Optional comma-separated list of tags to filter events. Only events containing these tags will be returned.
-     * @param excludeFullEvents Boolean flag to determine if full events should be excluded from the results. Default is false, meaning full events will be included.
-     * @return ResponseEntity containing a list of EventDto objects that match the filters provided. Returns an OK (200) HTTP status code.
+     * @param title Optional title filter
+     * @param city Optional city filter
+     * @param date Optional date filter
+     * @param tags Optional tags filter
+     * @param excludeFullEvents If true, fully booked events are excluded
+     * @return A list of events matching the specified criteria
      */
     @GetMapping("/filter")
     public ResponseEntity<List<EventDto>> getFilteredEvents(
@@ -97,7 +96,7 @@ public class EventController {
 
         LocalDate eventDate = null;
         if (date != null && !date.isEmpty()) {
-            eventDate = LocalDate.parse(date); // Converts string date to LocalDate object.
+            eventDate = LocalDate.parse(date);
         }
         List<String> tagList = tags != null ? Arrays.stream(tags.split(",")).map(String::trim).collect(Collectors.toList()) : null;
 
@@ -105,11 +104,10 @@ public class EventController {
         return ResponseEntity.ok(eventsDto);
     }
 
-
     /**
-     * Retrieves all events currently available.
+     * Retrieves all currently active events.
      *
-     * @return a response entity containing a list of all event DTOs
+     * @return All active events wrapped in a ResponseEntity
      */
     @GetMapping("/all")
     public ResponseEntity<List<EventDto>> getAllEvents() {
@@ -118,10 +116,10 @@ public class EventController {
     }
 
     /**
-     * Retrieves an event by its ID.
+     * Gets the details of a specific event by its ID.
      *
-     * @param eventId the UUID of the event to retrieve
-     * @return the requested event DTO if found
+     * @param eventId The UUID of the event to retrieve
+     * @return The EventDto if found, wrapped in a ResponseEntity
      */
     @GetMapping("/{eventId}")
     public ResponseEntity<EventDto> getEventById(@PathVariable UUID eventId) {
@@ -130,11 +128,11 @@ public class EventController {
     }
 
     /**
-     * Updates an existing event with the specified ID based on the provided request data.
+     * Updates an event's details based on the provided data.
      *
-     * @param eventId the UUID of the event to update
-     * @param request the update event request with new event details
-     * @return a response entity containing the updated event DTO
+     * @param eventId The UUID of the event to update
+     * @param request The new details for the event
+     * @return The updated EventDto wrapped in a ResponseEntity
      */
     @PatchMapping("/{eventId}")
     public ResponseEntity<EventDto> updateEvent(@PathVariable UUID eventId, @RequestBody UpdateEventRequest request) {
@@ -143,14 +141,11 @@ public class EventController {
     }
 
     /**
-     * Updates the images associated with a specific event.
+     * Updates the images associated with an event.
      *
-     * This method receives an event ID and an update request object, and it uses these to update the event's images.
-     * The {@code @PatchMapping} annotation indicates that this method will respond to HTTP PATCH requests at the specified URI.
-     *
-     * @param eventId The UUID of the event to update.
-     * @param request The request body containing updates for the event, typically including new images.
-     * @return A {@link ResponseEntity} containing the updated {@link EventDto} and the HTTP status.
+     * @param eventId The UUID of the event to update
+     * @param request Contains new image details for the event
+     * @return The updated EventDto with new images
      */
     @PatchMapping("/{eventId}/images")
     public ResponseEntity<EventDto> updateImages(@PathVariable UUID eventId, @RequestBody UpdateEventRequest request) {
@@ -161,8 +156,8 @@ public class EventController {
     /**
      * Deletes an event by its ID.
      *
-     * @param eventId the UUID of the event to delete
-     * @return a response entity containing the deleted event DTO
+     * @param eventId The UUID of the event to delete
+     * @return The EventDto of the deleted event, wrapped in a ResponseEntity
      */
     @DeleteMapping("/{eventId}")
     public ResponseEntity<EventDto> deleteEvent(@PathVariable UUID eventId) {
@@ -171,17 +166,15 @@ public class EventController {
     }
 
     /**
-     * Registers a user to an event by their IDs.
+     * Registers a user to an event using their respective UUIDs.
      *
-     * @param eventId the UUID of the event
-     * @param userId the UUID of the user to register
-     * @return a response entity containing the eventRegistration DTO after registration
+     * @param eventId The UUID of the event
+     * @param userId The UUID of the user
+     * @return The EventRegistrationDto after registration, wrapped in a ResponseEntity
      */
     @PostMapping("/{eventId}/register/{userId}")
     public ResponseEntity<EventRegistrationDto> registerEvent(@PathVariable UUID eventId, @PathVariable UUID userId) {
-        EventRegistration registration = eventRegistrationService.registerUserToEvent(eventId, userId);
-        EventRegistrationDto registrationDto = modelMapper.map(registration, EventRegistrationDto.class);
-        return new ResponseEntity<>(registrationDto, HttpStatus.OK);
+        return new ResponseEntity<>(eventRegistrationService.registerUserToEvent(eventId, userId), HttpStatus.OK);
     }
 
     /**
@@ -193,18 +186,14 @@ public class EventController {
      */
     @DeleteMapping("/{eventId}/remove/{userId}")
     public ResponseEntity<EventRegistrationDto> unregisterEvent(@PathVariable UUID eventId, @PathVariable UUID userId) {
-        EventRegistration registration = eventRegistrationService.removeUserToEvent(eventId, userId);
-        EventRegistrationDto registrationDto = modelMapper.map(registration, EventRegistrationDto.class);
-        return new ResponseEntity<>(registrationDto, HttpStatus.OK);
+        return new ResponseEntity<>(eventRegistrationService.removeUserToEvent(eventId, userId), HttpStatus.OK);
     }
 
     /**
-     * Retrieves a list of participant UUIDs for a given event.
-     * This method responds to a GET request at the path '/{eventId}/participants'.
-     * It calls the service layer to fetch all participants registered for the specified event.
+     * Retrieves a list of participants' UUIDs for a specified event.
      *
-     * @param eventId The unique identifier of the event for which participants are being queried.
-     * @return A list of UUIDs representing the participants of the event. The list is empty if no participants are found.
+     * @param eventId The UUID of the event to query
+     * @return A list of participant UUIDs
      */
     @GetMapping("/{eventId}/participants")
     public List<UUID> getParticipantsByEventId(@PathVariable UUID eventId) {
@@ -213,10 +202,10 @@ public class EventController {
     }
 
     /**
-     * Retrieves a list of all events that a specific user has registered for.
+     * Retrieves a list of events that a specific user has registered for.
      *
-     * @param userId The UUID of the user whose registered events are to be retrieved.
-     * @return A ResponseEntity containing a list of EventDto objects for the registered events.
+     * @param userId The UUID of the user whose event registrations are queried
+     * @return A list of EventDto objects representing the events the user is registered for
      */
     @GetMapping("/by-userId")
     public ResponseEntity<List<EventDto>> getEventsByUserId(@RequestParam UUID userId) {
@@ -225,9 +214,9 @@ public class EventController {
     }
 
     /**
-     * A simple test endpoint to check if the service is running.
+     * Simple endpoint to test if the service is operational.
      *
-     * @return a string "test" indicating the service is operational
+     * @return A string "test" indicating the service is operational
      */
     @GetMapping("/test")
     public String test() {

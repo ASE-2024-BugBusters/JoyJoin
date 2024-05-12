@@ -66,4 +66,4 @@ s3:
   ACCESS_KEY: "test"
   SECRET_KEY: "test"
   REGION: "us-east-1"
-  BUCKET_NAME: "event-img"
+  BUCKET_NAME: "joyjoin-event-img"

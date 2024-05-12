@@ -1,6 +1,7 @@
 services:
 
-### Databases ###
+### Infrastructures ###
+## Databases ##
   postgres-event:
     container_name: postgres-event
     image: postgres
@@ -52,6 +53,7 @@ services:
     command: -p 5436
     restart: unless-stopped
 
+## LocalStack (AWS) ##
   localstack:
     container_name: "${LOCALSTACK_DOCKER_NAME:-localstack-main}"
     image: localstack/localstack
@@ -66,7 +68,7 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock"
 
 
-#### Micro Services ###
+### Micro Services ###
   registry-service:
     image: josip97/registry-service:latest
     container_name: registry-service
