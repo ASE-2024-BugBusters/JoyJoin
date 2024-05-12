@@ -7,12 +7,9 @@ import com.joyjoin.userservice.controller.dto.UpdateUserRequest;
 import com.joyjoin.userservice.model.User;
 import com.joyjoin.userservice.modelDto.UserDto;
 import com.joyjoin.userservice.packer.UserAggregator;
-import com.joyjoin.userservice.service.ImageService;
 import com.joyjoin.userservice.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -76,17 +73,6 @@ public class UserController {
         return new GetAvatarUploadUrlResponse(userService.getAvatarUploadInformation(uuid, expireTime));
     }
 
-//    /**
-//     * getUserByUUID returns the information of user with specified uuid
-//     *
-//     * @param uuid uuid of the desired user
-//     * @return user information
-//     */
-//    @GetMapping("/users/{uuid}")
-//    public UserDto getUserByUUID(@PathVariable UUID uuid) {
-//        return userAggregator.aggregate(uuid);
-//    }
-
     /**
      * getUsers returns the information of a batch of users with specified uuids
      *
@@ -108,5 +94,51 @@ public class UserController {
     public UserDto getUserByEmail(@RequestParam String email) {
         User user = userService.getUserByEmail(email);
         return userAggregator.populate(user);
+    }
+
+    /**
+     * Add a following relation between the follower and the followee.
+     *
+     * @param followerId the user id of the follower
+     * @param followeeId the user id of the followee
+     * @return user information of the follower.
+     */
+    @PutMapping("/users/{followerId}/followee/{followeeId}")
+    public UserDto addFollowee(@PathVariable UUID followerId, @PathVariable UUID followeeId) {
+        return userAggregator.populate(userService.addFollowee(followerId, followeeId));
+    }
+
+    /**
+     * Remove the following relation between the follower and the followee.
+     *
+     * @param followerId user id of the follower
+     * @param followeeId user id of the followee
+     * @return user information of the follower.
+     */
+    @DeleteMapping("/users/{followerId}/followee/{followeeId}")
+    public UserDto deleteFollowee(@PathVariable UUID followerId, @PathVariable UUID followeeId) {
+        return userAggregator.populate(userService.removeFollowee(followerId, followeeId));
+    }
+
+    /**
+     * Get all following users of a certain user.
+     *
+     * @param uuid user id of this certain user.
+     * @return a list of followee.
+     */
+    @GetMapping("/users/{uuid}/followee")
+    public List<UserDto> getAllFollowee(@PathVariable UUID uuid) {
+        return userAggregator.batchedPopulate(userService.getAllFollowee(uuid));
+    }
+
+    /**
+     * Get all users that is following a certain user.
+     *
+     * @param uuid user id of this certain user.
+     * @return a list of follower.
+     */
+    @GetMapping("/users/{uuid}/follower")
+    public List<UserDto> getAllFollower(@PathVariable UUID uuid) {
+        return userAggregator.batchedPopulate(userService.getAllFollower(uuid));
     }
 }

@@ -110,7 +110,7 @@ const routes = [
     }
   },
   {
-    path: "/profile",
+    path: "/profile/:user_id",
     name: "profile",
     component: ProfileView,
     beforeEnter: (to, from, next) => {
