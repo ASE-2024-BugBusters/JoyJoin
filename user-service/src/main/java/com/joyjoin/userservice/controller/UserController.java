@@ -74,17 +74,6 @@ public class UserController {
     }
 
     /**
-     * getUserByUUID returns the information of user with specified uuid
-     *
-     * @param uuid uuid of the desired user
-     * @return user information
-     */
-    @GetMapping("/users/{uuid}")
-    public UserDto getUserByUUID(@PathVariable UUID uuid) {
-        return userAggregator.aggregate(uuid);
-    }
-
-    /**
      * getUsers returns the information of a batch of users with specified uuids
      *
      * @param uuids a list of uuids of the desired users
