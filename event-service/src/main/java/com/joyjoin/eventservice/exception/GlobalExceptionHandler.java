@@ -76,6 +76,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         );
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(EventNotExpiredException.class)
+    public ResponseEntity<ErrorResponse> handleEventNotExpiredException(EventNotExpiredException ex) {
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.NOT_ACCEPTABLE,
+                ex.getMessage()
+        );
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
     @ExceptionHandler(DuplicateRegistrationException.class)
     public ResponseEntity<Map<String, Object>> handleDuplicateRegistration(DuplicateRegistrationException ex) {
         Map<String, Object> errorDetails = new HashMap<>();

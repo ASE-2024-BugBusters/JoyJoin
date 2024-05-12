@@ -1,3 +1,7 @@
+# Access Application
+It is possible to use this link: `https://joy-join.vercel.app/` to access the deployed Application.
+
+
 # Running the Application Locally
 
 **Warning:** Directly bringing up the services defined in the `docker-compose.yml` is NOT sufficient to have the project

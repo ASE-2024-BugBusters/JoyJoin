@@ -76,16 +76,16 @@ public class UserController {
         return new GetAvatarUploadUrlResponse(userService.getAvatarUploadInformation(uuid, expireTime));
     }
 
-//    /**
-//     * getUserByUUID returns the information of user with specified uuid
-//     *
-//     * @param uuid uuid of the desired user
-//     * @return user information
-//     */
-//    @GetMapping("/users/{uuid}")
-//    public UserDto getUserByUUID(@PathVariable UUID uuid) {
-//        return userAggregator.aggregate(uuid);
-//    }
+    /**
+     * getUserByUUID returns the information of user with specified uuid
+     *
+     * @param uuid uuid of the desired user
+     * @return user information
+     */
+    @GetMapping("/users/{uuid}")
+    public UserDto getUserByUUID(@PathVariable UUID uuid) {
+        return userAggregator.aggregate(uuid);
+    }
 
     /**
      * getUsers returns the information of a batch of users with specified uuids

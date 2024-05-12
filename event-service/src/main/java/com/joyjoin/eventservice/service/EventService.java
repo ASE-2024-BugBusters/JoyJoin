@@ -1,20 +1,22 @@
 package com.joyjoin.eventservice.service;
 
+import com.joyjoin.eventservice.exception.EventNotExpiredException;
 import com.joyjoin.eventservice.exception.ResourceNotFoundException;
 import com.joyjoin.eventservice.model.*;
 import com.joyjoin.eventservice.modelDto.EventDto;
 import com.joyjoin.eventservice.packer.EventPacker;
-import com.joyjoin.eventservice.repository.EventParticipationCountRepository;
-import com.joyjoin.eventservice.repository.EventRegistrationRepository;
-import com.joyjoin.eventservice.repository.EventRepository;
-import com.joyjoin.eventservice.repository.EventSpecifications;
+import com.joyjoin.eventservice.repository.*;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -31,6 +33,7 @@ public class EventService {
     private final EventRepository eventRepository;
     private final EventRegistrationRepository eventRegistrationRepository;
     private final EventParticipationCountRepository eventParticipationCountRepository;
+    private final EventRatingRepository eventRatingRepository;
     private final ImageService imageService;
     private final EventPacker eventPacker;
     private final ModelMapper modelMapper;
@@ -47,10 +50,11 @@ public class EventService {
      * @param modelMapper                       Utility to map between different object models.
      */
     @Autowired
-    public EventService(EventRepository eventRepository, EventRegistrationRepository eventRegistrationRepository, EventParticipationCountRepository eventParticipationCountRepository, ImageService imageService, EventPacker eventPacker, ModelMapper modelMapper, Environment env) {
+    public EventService(EventRepository eventRepository, EventRegistrationRepository eventRegistrationRepository, EventParticipationCountRepository eventParticipationCountRepository, EventRatingRepository eventRatingRepository, ImageService imageService, EventPacker eventPacker, ModelMapper modelMapper, Environment env) {
         this.eventRepository = eventRepository;
         this.eventRegistrationRepository = eventRegistrationRepository;
         this.eventParticipationCountRepository = eventParticipationCountRepository;
+        this.eventRatingRepository = eventRatingRepository;
         this.imageService = imageService;
         this.eventPacker = eventPacker;
         this.modelMapper = modelMapper;
@@ -190,5 +194,23 @@ public class EventService {
         event.setDeleted(true);
         eventRepository.save(event);
         return eventPacker.packEvent(event);
+    }
+
+    public Rating rateEvent(Rating rating) {
+        Event event = eventRepository.findById(rating.getEventId()).orElseThrow(() -> new ResourceNotFoundException("Event", "eventId", rating.getEventId().toString(),
+                Collections.singletonList("This event may have been deleted or does not exist.")));
+        if (event.isExpired()) {
+            return eventRatingRepository.save(rating);
+        } else {
+            throw new EventNotExpiredException("The event did not happened yet, therefor it can't be rated.");
+        }
+    }
+
+    public List<Rating> getRatingsByEventId(UUID eventId) {
+        return eventRatingRepository.findRatingByEventId(eventId);
+    }
+
+    public List<Rating> getAllRatings() {
+        return eventRatingRepository.findAll();
     }
 }

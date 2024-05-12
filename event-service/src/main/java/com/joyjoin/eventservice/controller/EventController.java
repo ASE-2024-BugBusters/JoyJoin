@@ -3,6 +3,7 @@ package com.joyjoin.eventservice.controller;
 import com.joyjoin.eventservice.controller.dto.GetImgUploadUrlResponse;
 import com.joyjoin.eventservice.model.Event;
 import com.joyjoin.eventservice.model.EventRegistration;
+import com.joyjoin.eventservice.model.Rating;
 import com.joyjoin.eventservice.modelDto.EventDto;
 import com.joyjoin.eventservice.modelDto.EventRegistrationDto;
 import com.joyjoin.eventservice.modelDto.PostEventRequest;
@@ -11,12 +12,14 @@ import com.joyjoin.eventservice.service.EventRegistrationService;
 import com.joyjoin.eventservice.service.EventService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -229,5 +232,20 @@ public class EventController {
     @GetMapping("/test")
     public String test() {
         return "testss";
+    }
+
+    @PostMapping("/rating")
+    public Rating rating(@Valid @RequestBody Rating rating) {
+        return eventService.rateEvent(rating);
+    }
+
+    @GetMapping("/rating/{eventId}")
+    public List<Rating> getRatingByEventId(@PathVariable UUID eventId) {
+        return eventService.getRatingsByEventId(eventId);
+    }
+
+    @GetMapping("/rating")
+    public List<Rating> getAllRatings() {
+        return eventService.getAllRatings();
     }
 }
