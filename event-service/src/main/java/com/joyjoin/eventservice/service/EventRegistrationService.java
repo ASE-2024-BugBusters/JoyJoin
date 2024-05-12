@@ -85,8 +85,4 @@ public class EventRegistrationService {
 
         return eventDtos;
     }
-
-    public List<Event> getAttendedEvents(UUID userId) {
-        return eventRepository.findByCreatorIdAndIsDeletedFalseAndIsExpiredTrue(userId);
-    }
 }

@@ -1,6 +1,6 @@
 <template>
   <div v-if="finishLoaded && !pageError">
-    <div class="container" >
+    <div class="container">
       <h2 class="subtitle">
         Your Posts:
       </h2>
@@ -17,9 +17,12 @@
         There is no posts.
       </div>
     </div>
-    <h2 class="subtitle" style="margin-top: 30px">
+    <h2 class="subtitle" style="margin-top: 30px; margin-bottom:-40px;">
       Attended Events:
     </h2>
+    <div class="container">
+      <EventsList :attended-event="true"/>
+    </div>
   </div>
 
   <div class="container" v-else-if="pageError">
@@ -47,8 +50,6 @@ export default {
         };
     },
     created(){
-      console.log("Token: " + sessionStorage.getItem("jwtToken"));
-      console.log("userId: " + sessionStorage.getItem('userId'));
       this.fetchAllPostsByUserIdAPI();
     },
     methods: {
@@ -74,9 +75,7 @@ export default {
       navigateToPost(postId) {
         this.$router.push({ name: 'post', params: { id: postId } });
       },
-
     }
-
 }
 </script>
 
@@ -116,6 +115,7 @@ export default {
 
 .container {
   max-height: 350px; /* Set the max height for the container */
-  overflow-y: auto; /* Enable vertical scrolling */
+  overflow-y: auto;
+  margin-top: 50px;/* Enable vertical scrolling */
 }
 </style>

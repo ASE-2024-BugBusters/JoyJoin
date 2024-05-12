@@ -213,9 +213,14 @@ public class EventController {
         return new ResponseEntity<>(events, HttpStatus.OK);
     }
 
+    /**
+     * Get all Events which are attended by the user and is expired and not Deleted
+     * @param usedId
+     * @return
+     */
     @GetMapping("/attended/{usedId}")
     public ResponseEntity<List<Event>> getExpiredEvents(@PathVariable UUID usedId) {
-        return new ResponseEntity<>(eventRegistrationService.getAttendedEvents(usedId), HttpStatus.OK);
+        return new ResponseEntity<>(eventService.getAttendedEvents(usedId), HttpStatus.OK);
     }
 
     /**
