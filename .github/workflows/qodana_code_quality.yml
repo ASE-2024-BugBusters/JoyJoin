@@ -1,12 +1,12 @@
 ### Due to the expiration of our Free trial we were not able to use this for our final sprints since the build fails
 
-#name: Qodana
-#on:
-#  workflow_dispatch:
-#  push:
-#    branches:
-#      - main
-#
+name: Qodana
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
 #jobs:
 #  qodana-user-service-code-inspection:
 #    runs-on: ubuntu-latest
