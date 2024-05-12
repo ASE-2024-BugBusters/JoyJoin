@@ -9,7 +9,6 @@
       <li class="list-group-item">{{ event.location.street }} {{ event.location.number }}, {{ event.location.city }} {{ event.location.postalCode }}</li>
     </ul>
     <div class="card-body" v-if="!isPostAddOrEdit">
-      <span @click="" class="card-link" aria-label="Add to bookmarks"><i class="bi bi-bookmark-plus-fill"></i></span>
       <span @click="copyLink" class="card-link" aria-label="Share event link"><i class="bi bi-share-fill"></i></span>
     </div>
   </div>
@@ -84,11 +83,11 @@ img:hover {
   border-bottom: solid black 0.5px;
 }
 i {
-  margin: 2em;
+  margin: 1em;
   cursor: pointer;
 }
 .card-link > i {
-  font-size: 1.4em;
+  font-size: 1.2em;
 }
 </style>
 

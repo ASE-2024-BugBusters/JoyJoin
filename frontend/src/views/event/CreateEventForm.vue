@@ -148,6 +148,10 @@ export default {
         alert('Please fill all the required fields.');
         return;
       }
+      if (parseInt(location.number) < 1 || parseInt(participationLimit.value) < 2) {
+        alert('Please ensure all number inputs meet the minimum requirements.');
+        return;
+      }
       if (imagesPayload !== undefined) {
         data.images = imagesPayload;
       }
