@@ -1,9 +1,9 @@
 <template>
   <div v-if="finishLoaded && !pageError">
+    <h2 class="subtitle">
+      Your Posts:
+    </h2>
     <div class="container">
-      <h2 class="subtitle">
-        Your Posts:
-      </h2>
       <div class="row" v-if="posts.length">
         <div class="col-3 d-flex justify-content-center align-items-center" v-for="post in posts" :key="post.id" @click="navigateToPost(post.id)">
           <div class="image-container">
