@@ -9,6 +9,7 @@ import com.joyjoin.postservice.model.ImageUrl;
 import com.joyjoin.postservice.model.Post;
 import com.joyjoin.postservice.modelDto.*;
 import com.joyjoin.postservice.modelDto.Event.EventDto;
+import com.joyjoin.postservice.packer.CommentPacker;
 import com.joyjoin.postservice.packer.PostPacker;
 import com.joyjoin.postservice.repository.CommentRepository;
 import com.joyjoin.postservice.repository.PostRepository;
@@ -40,6 +41,7 @@ public class PostService {
     private final ImageService imageService;
     private final ModelMapper modelMapper;
     private final PostPacker postPacker;
+    private final CommentPacker commentPacker;
     private final Environment env;
 
     @Value("${api.BASE_URL_EVENT_SERVICE}")
@@ -47,12 +49,13 @@ public class PostService {
     @Value("${api.BASE_URL_USER_SERVICE}")
     private String userServiceBaseUrl;
 
-    public PostService(PostRepository postRepository, CommentRepository commentRepository, ModelMapper modelMapper, ImageService imageService, PostPacker postPacker, Environment env) {
+    public PostService(PostRepository postRepository, CommentRepository commentRepository, ModelMapper modelMapper, ImageService imageService, PostPacker postPacker, CommentPacker commentPacker, Environment env) {
         this.postRepository = postRepository;
         this.commentRepository = commentRepository;
         this.modelMapper = modelMapper;
         this.imageService = imageService;
         this.postPacker = postPacker;
+        this.commentPacker = commentPacker;
         this.env = env;
     }
 
@@ -101,6 +104,12 @@ public class PostService {
     public String deletePost(UUID id){
         if (postRepository.existsById(id)) {
             postRepository.deleteById(id);
+            // Retrieve comments by post ID
+            List<Comment> comments = commentRepository.findCommentsByPostId(id);
+            // Delete each comment
+            for (Comment comment : comments) {
+                commentRepository.deleteById(comment.getId());
+            }
             return "Post with ID " + id + " deleted successfully";
         } else {
             throw new ResourceNotFoundException("Post", "id", id.toString());
@@ -187,7 +196,7 @@ public class PostService {
 
     public CommentDto createComment(Comment comment) {
         Comment savedComment = commentRepository.save(comment);
-        return postPacker.packComment(savedComment);
+        return commentPacker.packComment(savedComment);
     }
 
     public String deleteComment(UUID id){
@@ -224,10 +233,10 @@ public class PostService {
             // Step3: Map user information to each Comment object
             for (Comment comment : comments) {
                 UserDto _userInfo = findUserById(usersInfo, comment.getUserId());
-                if (_userInfo != null) {
-                    CommentWithUserInfoDto commentWithUser = new CommentWithUserInfoDto(comment.getId(), _userInfo, comment.getPostId(), comment.getComment(), comment.getCreatedOn());
-                    result.add(commentWithUser);
-                }
+
+                CommentWithUserInfoDto commentWithUser = new CommentWithUserInfoDto(comment.getId(), _userInfo, comment.getPostId(), comment.getComment(), comment.getCreatedOn());
+                result.add(commentWithUser);
+
             }
         }
 
@@ -251,18 +260,22 @@ public class PostService {
     }
 
     private List<UserDto> getUsersInfoAPI(String token, String userIds){
-//        String getUsersInfoUrl = "http://localhost:9191/user-service/api/user/users/" + userIds;
+        List<UserDto> usersInfo = new ArrayList<>();
+
         String getUsersInfoUrl = userServiceBaseUrl + "/user/users/" + userIds;
         System.out.println("URL: " + getUsersInfoUrl);
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", token);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", token);
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+            ResponseEntity<List<UserDto>> responseEntity =
+                    restTemplate.exchange(getUsersInfoUrl, HttpMethod.GET, entity, new ParameterizedTypeReference<List<UserDto>>() {
+                    });
+            usersInfo = responseEntity.getBody();
+        }catch(Exception ex){
 
-        HttpEntity<String> entity = new HttpEntity<String>(headers);
-        ResponseEntity<List<UserDto>> responseEntity =
-                restTemplate.exchange(getUsersInfoUrl, HttpMethod.GET, entity, new ParameterizedTypeReference<List<UserDto>>() {});
-        List<UserDto> usersInfo = responseEntity.getBody();
-
+        }
         return usersInfo;
     }
 
@@ -276,17 +289,23 @@ public class PostService {
 
     // Method to retrieve specific event's info
     private EventDto getEventInfoAPI(String token, String eventId){
-//        String getEventInfoUrl = "http://localhost:9191/event-service/api/events/" + eventId;
+        EventDto eventInfo = new EventDto();
+
         String getEventInfoUrl = eventServiceBaseUrl + "/events/" + eventId;
         System.out.println("URL: " + getEventInfoUrl);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", token);
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", token);
 
-        HttpEntity<String> entity = new HttpEntity<String>(headers);
-        ResponseEntity<EventDto> responseEntity =
-                restTemplate.exchange(getEventInfoUrl, HttpMethod.GET, entity, new ParameterizedTypeReference<EventDto>() {});
-        EventDto eventInfo = responseEntity.getBody();
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+            ResponseEntity<EventDto> responseEntity =
+                    restTemplate.exchange(getEventInfoUrl, HttpMethod.GET, entity, new ParameterizedTypeReference<EventDto>() {
+                    });
+            eventInfo = responseEntity.getBody();
+        }catch(Exception ex){
+
+        }
 
         return eventInfo;
     }

@@ -1,17 +1,11 @@
 package com.joyjoin.postservice.model;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.joyjoin.postservice.model.ImageRef;
 import com.joyjoin.postservice.model.converter.ImageRefListConverter;
 import com.joyjoin.postservice.model.template.DefaultProperties;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 

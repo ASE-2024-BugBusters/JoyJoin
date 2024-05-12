@@ -2,10 +2,6 @@ package com.joyjoin.postservice.packer;
 
 import com.joyjoin.postservice.model.Post;
 import com.joyjoin.postservice.modelDto.PostDto;
-import com.joyjoin.postservice.model.Comment;
-import com.joyjoin.postservice.modelDto.CommentDto;
-import com.joyjoin.postservice.packer.ImagePacker;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -37,8 +33,4 @@ public class PostPacker {
         return res;
     }
 
-    public CommentDto packComment(Comment comment) {
-        CommentDto res = modelMapper.map(comment, CommentDto.class);
-        return res;
-    }
 }

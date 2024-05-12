@@ -2,7 +2,6 @@ package com.joyjoin.postservice.controller.dto;
 
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 

@@ -1,14 +1,13 @@
 package com.joyjoin.postservice.controller;
 
-import com.joyjoin.postservice.controller.dto.GetImgUploadUrlResponse;
+import com.joyjoin.postservice.controller.dto.*;
 import com.joyjoin.postservice.exception.ResourceNotFoundException;
-import com.joyjoin.postservice.controller.dto.CreatePostCommentRequest;
-import com.joyjoin.postservice.controller.dto.CreatePostRequest;
-import com.joyjoin.postservice.controller.dto.LikePostRequest;
-import com.joyjoin.postservice.controller.dto.UpdatePostRequest;
 import com.joyjoin.postservice.model.Comment;
 import com.joyjoin.postservice.model.Post;
-import com.joyjoin.postservice.modelDto.*;
+import com.joyjoin.postservice.modelDto.CommentDto;
+import com.joyjoin.postservice.modelDto.CommentWithUserInfoDto;
+import com.joyjoin.postservice.modelDto.PostDto;
+import com.joyjoin.postservice.modelDto.PostWithUserInfoDto;
 import com.joyjoin.postservice.modelDto.User.UserDto;
 import com.joyjoin.postservice.service.PostService;
 import org.modelmapper.ModelMapper;
@@ -35,11 +34,16 @@ public class PostController {
         this.modelMapper = modelMapper;
     }
 
-//    @GetMapping("/get_upload_image_url")
-//    public GetImgUploadUrlResponse getImgUploadUrl() {
-//        var expireTime = LocalDateTime.now().plusMinutes(30);
-//        return new GetImgUploadUrlResponse(postService.getImgUploadInformation(expireTime));
-//    }
+    /**
+     * Provides an upload URL for an event image that expires in 30 minutes.
+     *
+     * @return the response containing the URL and expiration information
+     */
+    @GetMapping("/get_upload_image_url")
+    public GetImgUploadUrlResponse getImgUploadUrl() {
+        var expireTime = LocalDateTime.now().plusMinutes(30);
+        return new GetImgUploadUrlResponse(postService.getImgUploadInformation(expireTime));
+    }
 
     // (1) Get All Posts
     @GetMapping
@@ -77,16 +81,6 @@ public class PostController {
         return new ResponseEntity<>(createdPost, HttpStatus.CREATED);
     }
 
-    /**
-     * Provides an upload URL for an event image that expires in 30 minutes.
-     *
-     * @return the response containing the URL and expiration information
-     */
-    @GetMapping("/get_upload_image_url")
-    public GetImgUploadUrlResponse getImgUploadUrl() {
-        var expireTime = LocalDateTime.now().plusMinutes(30);
-        return new GetImgUploadUrlResponse(postService.getImgUploadInformation(expireTime));
-    }
 
     // (5): Update Post
     /*{
