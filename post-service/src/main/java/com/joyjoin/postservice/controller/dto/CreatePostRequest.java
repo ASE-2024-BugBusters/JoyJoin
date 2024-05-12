@@ -3,10 +3,8 @@ package com.joyjoin.postservice.controller.dto;
 import com.joyjoin.postservice.model.ImageRef;
 import lombok.*;
 
-import javax.validation.constraints.*;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.UUID;
 
