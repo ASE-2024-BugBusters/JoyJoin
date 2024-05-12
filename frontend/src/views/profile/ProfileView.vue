@@ -37,7 +37,7 @@
   </div>
 
   <!--User's All Posts-->
-  <UserAllPosts/>
+  <UserAllPosts :userId="userId"/>
 </template>
 
 <script>
