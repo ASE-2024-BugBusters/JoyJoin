@@ -213,6 +213,11 @@ public class EventController {
         return new ResponseEntity<>(events, HttpStatus.OK);
     }
 
+    @GetMapping("/attended/{usedId}")
+    public ResponseEntity<List<Event>> getExpiredEvents(@PathVariable UUID usedId) {
+        return new ResponseEntity<>(eventRegistrationService.getAttendedEvents(usedId), HttpStatus.OK);
+    }
+
     /**
      * Simple endpoint to test if the service is operational.
      *

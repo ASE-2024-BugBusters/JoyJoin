@@ -2,11 +2,13 @@ package com.joyjoin.eventservice.service;
 
 import com.joyjoin.eventservice.exception.DuplicateRegistrationException;
 import com.joyjoin.eventservice.exception.EventRegistrationNotFoundException;
+import com.joyjoin.eventservice.model.Event;
 import com.joyjoin.eventservice.model.EventRegistration;
 import com.joyjoin.eventservice.modelDto.EventDto;
 import com.joyjoin.eventservice.modelDto.EventRegistrationDto;
 import com.joyjoin.eventservice.repository.EventParticipationCountRepository;
 import com.joyjoin.eventservice.repository.EventRegistrationRepository;
+import com.joyjoin.eventservice.repository.EventRepository;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +23,15 @@ public class EventRegistrationService {
     private final ModelMapper modelMapper;
     private final EventRegistrationRepository eventRegistrationRepository;
     private final EventParticipationCountRepository participationCountRepository;
+    private final EventRepository eventRepository;
+
     @Autowired
-    public EventRegistrationService(EventService eventService, ModelMapper modelMapper, EventRegistrationRepository eventRegistrationRepository, EventParticipationCountRepository participationCountRepository) {
+    public EventRegistrationService(EventService eventService, ModelMapper modelMapper, EventRegistrationRepository eventRegistrationRepository, EventParticipationCountRepository participationCountRepository, EventRepository eventRepository) {
         this.eventService = eventService;
         this.modelMapper = modelMapper;
         this.eventRegistrationRepository = eventRegistrationRepository;
         this.participationCountRepository = participationCountRepository;
+        this.eventRepository = eventRepository;
     }
     @Transactional
     public EventRegistrationDto registerUserToEvent(UUID eventId, UUID userId) {
@@ -79,5 +84,9 @@ public class EventRegistrationService {
                 .collect(Collectors.toList());
 
         return eventDtos;
+    }
+
+    public List<Event> getAttendedEvents(UUID userId) {
+        return eventRepository.findByCreatorIdAndIsDeletedFalseAndIsExpiredTrue(userId);
     }
 }

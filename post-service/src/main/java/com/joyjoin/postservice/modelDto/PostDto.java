@@ -1,7 +1,5 @@
 package com.joyjoin.postservice.modelDto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.joyjoin.postservice.model.Comment;
 import com.joyjoin.postservice.model.Image;
 import lombok.*;
 

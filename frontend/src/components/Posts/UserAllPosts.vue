@@ -1,23 +1,32 @@
 <template>
-  <div class="container" v-if="finishLoaded && !pageError">
-    <div class="row" v-if="posts.length">
-      <div class="col-4 d-flex justify-content-center align-items-center" v-for="post in posts" :key="post.id" @click="navigateToPost(post.id)">
-        <div class="image-container">
-          <div style="cursor:pointer">
-            <img :src="post.images[0].urls[0].url" class="img-fluid mb-3" alt="Image">
+  <div v-if="finishLoaded && !pageError">
+    <div class="container" >
+      <h2 class="subtitle">
+        Your Posts:
+      </h2>
+      <div class="row" v-if="posts.length">
+        <div class="col-3 d-flex justify-content-center align-items-center" v-for="post in posts" :key="post.id" @click="navigateToPost(post.id)">
+          <div class="image-container">
+            <div style="cursor:pointer">
+              <img :src="post.images[0].urls[0].url" class="img-fluid mb-3" alt="Image">
+            </div>
           </div>
         </div>
       </div>
+      <div v-else class="no-posts">
+        There is no posts.
+      </div>
     </div>
-    <div v-else class="no-posts">
-      There is no posts.
-    </div>
+    <h2 class="subtitle" style="margin-top: 30px">
+      Attended Events:
+    </h2>
   </div>
+
   <div class="container" v-else-if="pageError">
-    <NotFound></NotFound>
+    <NotFound/>
   </div>
   <div class="container" v-else>
-    <LoadView></LoadView>
+    <LoadView/>
   </div>
 </template>
 
@@ -26,9 +35,10 @@ import {BASE_URL_POST_SERVICE} from "../../../config/dev.env";
 import axios from "axios";
 import LoadView from "@/components/Loader/LoadView.vue";
 import NotFound from "@/views/NotFound.vue";
+import EventsList from "@/views/event/EventList.vue";
 
 export default {
-  components: {LoadView, NotFound},
+  components: {EventsList, LoadView, NotFound},
     data() {
         return {
             posts: [],
@@ -102,5 +112,10 @@ export default {
   font-size: 20px;
   color: darkgray;
   padding-top: 15px;
+}
+
+.container {
+  max-height: 350px; /* Set the max height for the container */
+  overflow-y: auto; /* Enable vertical scrolling */
 }
 </style>
