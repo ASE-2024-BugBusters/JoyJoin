@@ -202,36 +202,28 @@ public class EventController {
     }
 
     /**
-     * Retrieves a list of events that a specific user has registered for.
+     * Retrieves a list of attended events which are still valid for a specified user.
      *
-     * @param userId The UUID of the user whose event registrations are queried
-     * @return A list of EventDto objects representing the events the user is registered for
+     * @param userId The UUID of the user to query
+     * @return A list of eventDto
      */
-    @GetMapping("/by-userId")
-    public ResponseEntity<List<EventDto>> getEventsByUserId(@RequestParam UUID userId) {
-        List<EventDto> events = eventRegistrationService.getEventsByUserId(userId);
-        return new ResponseEntity<>(events, HttpStatus.OK);
+
+    @GetMapping("/valid/{userId}")
+    public ResponseEntity<List<EventDto>> getValidEvents(@PathVariable UUID userId) {
+        return new ResponseEntity<>(eventRegistrationService.getValidEventsByUserId(userId), HttpStatus.OK);
     }
 
     /**
-     * Get all Events which are attended by the user and is expired and not Deleted
-     * @param usedId
-     * @return
+     * Retrieves a list of attended events which are expired for a specified user.
+     *
+     * @param userId The UUID of the user to query
+     * @return A list of eventDto
      */
-    @GetMapping("/attended/{usedId}")
-    public ResponseEntity<List<Event>> getExpiredEvents(@PathVariable UUID usedId) {
-        return new ResponseEntity<>(eventService.getAttendedEvents(usedId), HttpStatus.OK);
+    @GetMapping("/expired/{userId}")
+    public ResponseEntity<List<EventDto>> getExpiredEvents(@PathVariable UUID userId) {
+        return new ResponseEntity<>(eventRegistrationService.getExpiredEventsByUserId(userId), HttpStatus.OK);
     }
 
-    /**
-     * Simple endpoint to test if the service is operational.
-     *
-     * @return A string "test" indicating the service is operational
-     */
-    @GetMapping("/test")
-    public String test() {
-        return "testss";
-    }
 
     @PostMapping("/rating")
     public Rating rating(@Valid @RequestBody Rating rating) {
