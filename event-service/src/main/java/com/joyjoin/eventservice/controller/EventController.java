@@ -207,6 +207,7 @@ public class EventController {
      * @param userId The UUID of the user to query
      * @return A list of eventDto
      */
+
     @GetMapping("/valid/{userId}")
     public ResponseEntity<List<EventDto>> getValidEvents(@PathVariable UUID userId) {
         return new ResponseEntity<>(eventRegistrationService.getValidEventsByUserId(userId), HttpStatus.OK);

@@ -225,4 +225,8 @@ public class EventService {
     public List<Rating> getAllRatings() {
         return eventRatingRepository.findAll();
     }
+
+    public List<Event> getAttendedEvents(UUID userId) {
+        return eventRepository.findByCreatorIdAndIsDeletedFalseAndIsExpiredTrue(userId);
+    }
 }
