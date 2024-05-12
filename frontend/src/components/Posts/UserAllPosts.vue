@@ -38,9 +38,11 @@ import NotFound from "@/views/NotFound.vue";
 import EventsList from "@/views/event/EventList.vue";
 
 export default {
+  props: ["userId"],
   components: {EventsList, LoadView, NotFound},
     data() {
         return {
+            targetUser: this.userId ? this.userId : sessionStorage.getItem('userId'),
             posts: [],
             finishLoaded: false,
             pageError: false
@@ -55,7 +57,7 @@ export default {
       // Method: Get all post by UserId API
       async fetchAllPostsByUserIdAPI() {
         this.pageError = false;
-        const getAllPostsUrl = BASE_URL_POST_SERVICE + "/posts/user/" + sessionStorage.getItem('userId');
+        const getAllPostsUrl = BASE_URL_POST_SERVICE + "/posts/user/" + this.targetUser;
         await axios.get(getAllPostsUrl, {
           headers: {
             'Authorization': `Bearer ${sessionStorage.getItem("jwtToken")}`
