@@ -12,4 +12,5 @@ import java.util.UUID;
 public interface EventRepository extends JpaRepository<Event, UUID>, JpaSpecificationExecutor<Event> {
     List<Event> findByIsDeletedFalseAndIsExpiredFalse();
     Optional<Event> findByEventIdAndIsDeletedFalseAndIsExpiredFalse(UUID eventId);
+    List<Event> findByCreatorIdAndIsDeletedFalseAndIsExpiredTrue(UUID creatorId);
 }

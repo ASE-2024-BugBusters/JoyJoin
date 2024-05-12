@@ -21,23 +21,23 @@
         <p><strong>Bio:</strong> {{ userProfile.biography }}</p>
         <p><strong>Tags:</strong> {{ userProfile.interestTags }}</p>
         <div>
-          <router-link v-if="isSelf()" :to="{ name: 'EditProfile' }" class="btn btn-primary">Edit</router-link>
-          <button v-if="!isSelf() && !isFollowing()" id="follow_btn" class="btn btn-primary" type="button"
+          <router-link v-if="isSelf()" :to="{ name: 'EditProfile' }" class="btn btn-primary button-space">Edit</router-link>
+          <button v-if="!isSelf() && !isFollowing()" id="follow_btn" class="btn btn-primary button-space" type="button"
                   @click="follow">
             Follow
           </button>
           <button v-if="!isSelf() && isFollowing()" id="unfollow_btn" class="btn btn-danger" type="button"
                   @click="unfollow">Unfollow
           </button>
-          <button class="btn btn-primary" type="button" @click="showFollowerList = true">Followers</button>
-          <button class="btn btn-primary" type="button" @click="showFollowingList = true">Followings</button>
+          <button class="btn btn-primary button-space" type="button" @click="showFollowerList = true">Followers</button>
+          <button class="btn btn-primary button-space" type="button" @click="showFollowingList = true">Followings</button>
         </div>
       </div>
     </div>
   </div>
 
   <!--User's All Posts-->
-  <UserAllPosts></UserAllPosts>
+  <UserAllPosts/>
 </template>
 
 <script>
@@ -254,6 +254,11 @@ export default {
   width: 150px;
   height: 150px;
   object-fit: cover;
+}
+
+.button-space {
+  margin-left: 2.5px;
+  margin-right: 2.5px;
 }
 
 @media (min-width: 768px) {
