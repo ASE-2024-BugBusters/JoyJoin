@@ -17,7 +17,7 @@
       </div>
       <div class="col-12 col-md-8">
         <h1>{{ userProfile.name }}</h1>
-        <h2>{{ userProfile.nickname }}</h2>
+        <h2>{{ userProfile.accountName }}</h2>
         <p><strong>Bio:</strong> {{ userProfile.biography }}</p>
         <p><strong>Tags:</strong> {{ userProfile.interestTags }}</p>
         <div>
@@ -87,12 +87,12 @@ export default {
 
     const fetchUserProfile = async function () {
       const getProfileUrl = BASE_URL_USER_SERVICE + "/user/users/" + userId.value;
-      const default_avatar_url = "https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250";
+      const default_avatar_url = require('@/assets/Default_User_Icon.png');
       try {
         const response = await axios.get(getProfileUrl, axios_options);
         const data = response.data[0];
         userProfile.value = {
-          nickname: data.nickname,
+          accountName: data.accountName,
           biography: data.biography
         };
         if (data.avatar) {

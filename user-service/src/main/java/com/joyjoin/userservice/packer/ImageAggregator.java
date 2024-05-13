@@ -45,7 +45,7 @@ public class ImageAggregator {
      * @return the DTO
      */
     public Image aggregate(ImageRef ref, LocalDateTime expireTime) {
-        if (ref == null) {
+        if (ref == null || ref.getBucket() == null || ref.getBucket().isBlank() || ref.getKey() == null || ref.getKey().isBlank()) {
             return null;
         }
         LocalDateTime now = LocalDateTime.now();

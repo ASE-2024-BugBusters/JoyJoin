@@ -202,49 +202,62 @@ public class EventController {
     }
 
     /**
-     * Retrieves a list of events that a specific user has registered for.
+     * Retrieves a list of attended events which are still valid for a specified user.
      *
-     * @param userId The UUID of the user whose event registrations are queried
-     * @return A list of EventDto objects representing the events the user is registered for
+     * @param userId The UUID of the user to query
+     * @return A list of eventDto
      */
-    @GetMapping("/by-userId")
-    public ResponseEntity<List<EventDto>> getEventsByUserId(@RequestParam UUID userId) {
-        List<EventDto> events = eventRegistrationService.getEventsByUserId(userId);
-        return new ResponseEntity<>(events, HttpStatus.OK);
+
+    @GetMapping("/valid/{userId}")
+    public ResponseEntity<List<EventDto>> getValidEvents(@PathVariable UUID userId) {
+        return new ResponseEntity<>(eventRegistrationService.getValidEventsByUserId(userId), HttpStatus.OK);
     }
 
     /**
-     * Get all Events which are attended by the user and is expired and not Deleted
-     * @param usedId
-     * @return
+     * Retrieves a list of attended events which are expired for a specified user.
+     *
+     * @param userId The UUID of the user to query
+     * @return A list of eventDto
      */
-    @GetMapping("/attended/{usedId}")
-    public ResponseEntity<List<Event>> getExpiredEvents(@PathVariable UUID usedId) {
-        return new ResponseEntity<>(eventService.getAttendedEvents(usedId), HttpStatus.OK);
+    @GetMapping("/expired/{userId}")
+    public ResponseEntity<List<EventDto>> getExpiredEvents(@PathVariable UUID userId) {
+        return new ResponseEntity<>(eventRegistrationService.getExpiredEventsByUserId(userId), HttpStatus.OK);
     }
+
 
     /**
-     * Simple endpoint to test if the service is operational.
+     * Submits a new rating for an event.
+     * This method accepts a rating object, validates it, and processes it to store the rating.
      *
-     * @return A string "test" indicating the service is operational
+     * @param rating the {@link Rating} object populated from the POST request body, must be valid as per JSR-303 annotations
+     * @return the saved {@link Rating} object
      */
-    @GetMapping("/test")
-    public String test() {
-        return "testss";
-    }
-
     @PostMapping("/rating")
     public Rating rating(@Valid @RequestBody Rating rating) {
         return eventService.rateEvent(rating);
     }
 
+    /**
+     * Retrieves all ratings for a specific event identified by its UUID.
+     * This method fetches and returns a list of {@link Rating} objects associated with the given event ID.
+     *
+     * @param eventId the UUID of the event for which ratings are being requested
+     * @return a list of {@link Rating} objects for the specified event
+     */
     @GetMapping("/rating/{eventId}")
     public List<Rating> getRatingByEventId(@PathVariable UUID eventId) {
         return eventService.getRatingsByEventId(eventId);
     }
 
+    /**
+     * Retrieves ratings for all events.
+     * This method fetches and returns a list of all {@link Rating} objects available in the system.
+     *
+     * @return a list of all {@link Rating} objects
+     */
     @GetMapping("/rating")
     public List<Rating> getAllRatings() {
         return eventService.getAllRatings();
     }
+
 }
