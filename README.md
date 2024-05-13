@@ -12,7 +12,7 @@ In Progress: Once a team member begins working on a task, its status is updated 
 - Done: Tasks transition to the “Done” column upon completion and successful testing by the developer. However, it’s important to note that our team, comprising four developers responsible for independent modules, does not explicitly utilize an “In Review/Testing” phase. Instead, developers conduct internal unit testing before pushing their features to the development branch.
 - In Review: A different developer has to review the code to check if there are errors that the other may made.
 - QA Not OK: In the event of integration errors or failed unit tests, tasks are moved to the “QA Not OK” column. Developers are then responsible for addressing these issues promptly to ensure the quality and integrity of the project.
-Ready for Deployment: In this step after testing and Code review we know that this task is ready to be deployed
+- Ready for Deployment: In this step after testing and Code review we know that this task is ready to be deployed
 
 ## Workflow Overview:
 - Initiation Phase: During this phase, tasks primarily involve project setup, planning, and environment configuration. Key deliverables include defining project scope, setting up repositories, and establishing development guidelines.
