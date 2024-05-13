@@ -1,8 +1,8 @@
 <template>
   <div class="user-card">
-    <img :src="avatar_url()" :alt="user.nickname" class="avatar" @click="navigateToUser">
+    <img :src="avatar_url()" :alt="user.accountName" class="avatar" @click="navigateToUser">
     <div class="user-info">
-      <h3 @click="navigateToUser">{{ user.nickname }}</h3>
+      <h3 @click="navigateToUser">{{ user.accountName }}</h3>
     </div>
     <button @click="action" class="action-button"> {{ action_text }}</button>
   </div>
@@ -17,10 +17,8 @@ const props = defineProps({
 })
 const emit = defineEmits(['action', 'navigate'])
 
-const router = useRouter();
-
 function avatar_url() {
-  const default_avatar_url = "https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250";
+  const default_avatar_url = require('@/assets/Default_User_Icon.png');
   if (!props.user || !props.user.avatar || !props.user.avatar.urls || !props.user.avatar.urls[0] || !props.user.avatar.urls[0].url) {
     return default_avatar_url;
   }

@@ -5,9 +5,9 @@
         <h1 class="title">Edit Profile</h1>
         <form @submit.prevent="publish">
           <div class="field">
-            <label class="label">Nickname</label>
+            <label class="label">Account Name</label>
             <div class="control">
-              <input class="input" type="text" v-model="nickName" placeholder="Enter your nickname">
+              <input class="input" type="text" v-model="accountName" placeholder="Enter your account name">
             </div>
           </div>
           <div class="field">
@@ -85,7 +85,7 @@ export default {
           }
         });
         const data = response.data[0];
-        this.nickName = data.nickname
+        this.accountName = data.accountName
         this.firstName = data.firstName
         this.lastName = data.lastName
         this.biography = data.biography
@@ -117,7 +117,7 @@ export default {
 
   setup() {
     const router = useRouter();
-    const nickName = ref("");
+    const accountName = ref("");
     const firstName = ref("");
     const lastName = ref("");
     const biography = ref("");
@@ -131,7 +131,7 @@ export default {
 
     const publish = async () => {
       const data = {
-        nickname: nickName.value,
+        accountName: accountName.value,
         firstName: firstName.value,
         lastName: lastName.value,
         biography: biography.value,
@@ -145,11 +145,11 @@ export default {
         const response = await axios.patch(url_update_profile, data, {
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${sessionStorage.getItem("jwtToken")}`
+            "Authorization": `Bearer ${sessionStorage.jwtToken}`
           }
         });
         console.log("Successfully published:", response.data);
-        await router.push({path: "/profile"});
+        await router.push({path: "/profile/" + sessionStorage.userId});
       } catch (error) {
         console.error("Error: ", error);
       }
@@ -207,7 +207,7 @@ export default {
     };
 
     return {
-      nickName, firstName, lastName, biography, interestTags, avatar, publish, source
+      accountName, firstName, lastName, biography, interestTags, avatar, publish, source
     };
   }
 }
