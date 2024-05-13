@@ -1,6 +1,27 @@
-# Deployment Frontend
-The Frontend is deployed on AWS and can be accessed: http://13.38.253.17:3005/
+# Project Organization
+## Task Scheduling and Project Management
+- Tools: Github Projects, have a look at `images/GithubProjects.png`
+- Process: Tasks organized into user stories and added to the backlog.
+Sprint planning meetings held at the beginning of each sprint.
+2 times a week stand-up meetings conducted for progress tracking.
+Sprint reviews held at the end of each sprint.
+Timeline Overview: Gantt chart used for visualization.
 
+## Versioning and Git Branching
+Version Control: Git
+
+Branching Model: Gitflow
+
+Main Branches:
+- main
+- development
+- Feature Branches: Created for each new feature or user story.
+- Pull Requests: Integral part of the workflow for code review and collaboration.
+Each feature or bug fix developed on a feature branch.
+Code review and testing conducted before merging into the main branch.
+
+# Deployment Frontend
+The Frontend is deployed on AWS and can be accessed: http://13.38.253.17:3005/, have a look at `images/FrontendOnAWS.png`
 # Deployment Microservices on AWS
 1. For each Microservice create an EC2 instance
 2. The FRONTEND, REGISTRY-SERVICE and the API-GATEWAY need an elastic IP address, which means they get a fixed public IP address in the VPC. This is required to know where to connect to and where to send the requests on startup of the ther service
@@ -13,6 +34,7 @@ The Frontend is deployed on AWS and can be accessed: http://13.38.253.17:3005/
 9. Create ACCESS_KEY and SECRET_KEY to be able to connect to the s3 Buckets
 10. Connect to each MS through the cmd and install docker on it
 
+Have a look at `images/RunningAwsMS.png`
 ## Run this commands for each MS
 ### REGISTRY-SERVICE
 `docker pull josip97/registry-service`
