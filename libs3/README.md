@@ -1,7 +1,3 @@
-以下是一个适合你的项目的 README 样例，其中包括项目描述、安装步骤、使用示例等关键信息。
-
----
-
 # JoyJoin S3 Library
 
 This Java library provides easy-to-use interfaces to interact with AWS S3 for storing and retrieving images securely using pre-signed URLs.
