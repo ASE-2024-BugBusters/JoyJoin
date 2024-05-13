@@ -17,19 +17,31 @@ The Event Service microservice manages all aspects of event handling within our 
 - Java 8 or higher
 - Maven for dependency management
 
+## External Dependencies
+
+### Database
+
+The database is used for persisting application data including user information, transaction records, and other operational data critical for service functionality.
+
+Database configurations are specified in the `application.yml` file. By default, the service expects a PostgreSQL database named `eventService` running at port `5434`. The default username and password can be found in the configuration file.
+
+### Amazon S3 Storage
+
+Amazon S3 is used for storing large files, such as event images uploaded by users, that are part of the application’s data.
+
+S3 configurations are specified in the `application.yml` file as well.
+
+Interactions with S3 utilized a stand-alone library named `libs3`, which can be found at `/path/to/JoyJoin/libs3/`.
+
 ## Installation
 
 To set up the Event Service Microservice on your local development machine, follow these steps:
 
 1. Navigate to the service directory:
    ```shell
-   cd path/to/event-service
+   cd /path/to/JoyJoin/event-service/
    ```
-2. Compile the project:
-   ```shell
-   mvn clean install
-   ```
-3. Start the service:
+2. Start the service:
    ```shell
    mvn spring-boot:run
    ```
@@ -82,20 +94,6 @@ Handles all HTTP requests related to events, including CRUD operations and regis
 ### Security
 
 Configures web security features of the microservice, including CORS rules.
-
-## Integration with Spring Boot
-
-The microservice is designed to integrate seamlessly with Spring Boot, utilizing its configuration and security features to enhance the management and operational security of event data.
-
-## Development
-
-### Build and Deployment
-
-To publish updates or changes, use the following Maven command:
-
-```shell
-mvn deploy
-```
 
 
 ## API Documentation
