@@ -70,6 +70,11 @@ running this application:
 
 Simply execute `dev_setup.sh`
 
+# Documentation
+## API Documentation
+For the API Documentation we used Swagger. To see the documentation you need to run it locally with docker-compose.
+Then for each MS you need to get the PORT from the log, since they are dynamically assigned and then go to the page: `http://localhost:{PORT}/swagger-ui/index.html#/`
+Replace `{PORT}` with the corresponding port number for the microservice you wish to access. This will direct you to the Swagger UI interface, where you can explore and interact with the API documentation seamlessly.
 
 # Testing and continuous integration
 ## Testing approach
@@ -111,3 +116,4 @@ By embracing these best practices and conventions, we strive to maintain code qu
 
 ## Consideration During Development
 Throughout the development process, we placed a strong emphasis on maintaining code quality, reliability, and scalability. Quality checks were integrated into our workflow from the outset, ensuring that every code change underwent thorough scrutiny before being merged into the main codebase. Additionally, the continuous integration flow facilitated seamless integration of code changes while maintaining the integrity of the overall system. Overall, our approach prioritized quality, collaboration, and accountability, ensuring the delivery of high-quality and reliable software solutions, even under tight deadlines.
+

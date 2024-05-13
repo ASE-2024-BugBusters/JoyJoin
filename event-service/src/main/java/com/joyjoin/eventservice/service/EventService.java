@@ -11,12 +11,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -226,7 +222,4 @@ public class EventService {
         return eventRatingRepository.findAll();
     }
 
-    public List<Event> getAttendedEvents(UUID userId) {
-        return eventRepository.findByCreatorIdAndIsDeletedFalseAndIsExpiredTrue(userId);
-    }
 }

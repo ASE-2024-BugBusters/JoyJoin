@@ -113,7 +113,7 @@ export default {
           }
         }
       }
-      const getAllEventsUrl = `${BASE_URL_EVENT_SERVICE}/events/filter?${params.toString()}`;
+      const getAllEventsUrl = this.attendedEvent ? `${BASE_URL_EVENT_SERVICE}/events/expired/${sessionStorage.userId}` : `${BASE_URL_EVENT_SERVICE}/events/filter?${params.toString()}`;
       axios.get(getAllEventsUrl, {
         headers: {
           'Content-Type': 'application/json',

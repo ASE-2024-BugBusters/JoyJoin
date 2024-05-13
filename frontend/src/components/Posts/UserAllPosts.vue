@@ -1,6 +1,6 @@
 <template>
   <div v-if="finishLoaded && !pageError">
-    <h2 class="subtitle">
+    <h2 class="subtitle" style="margin-top: 30px;">
       Your Posts:
     </h2>
     <div class="container">
