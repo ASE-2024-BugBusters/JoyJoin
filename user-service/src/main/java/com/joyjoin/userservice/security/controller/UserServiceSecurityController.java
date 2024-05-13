@@ -22,11 +22,25 @@ public class UserServiceSecurityController {
         this.authService = authService;
     }
 
+    /**
+     * registerUser let new user for our platform create his account to use our service.
+     *
+     * @param user information of this user, including email, password, accountName, etc.
+     * @return user ID and his JWT token
+     * @throws EmailAlreadyExistsException if existing email is used here
+     */
     @PostMapping("/register")
     public AuthenticationResponse registerUser(@RequestBody @Valid User user) throws EmailAlreadyExistsException {
         return authService.register(user);
     }
 
+    /**
+     * loginUser let the user with correct credentials login to use our services.
+     *
+     * @param request email and password of the user
+     * @return user ID and his JWT token
+     * @throws ResourceNotFoundException if no such user exists
+     */
     @PostMapping("/login")
     public AuthenticationResponse loginUser(@RequestBody AuthenticationRequest request) throws ResourceNotFoundException {
         return authService.login(request);
