@@ -4,10 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joyjoin.eventservice.model.Event;
 import com.joyjoin.eventservice.model.Location;
 import com.joyjoin.eventservice.model.Tag;
-import com.joyjoin.eventservice.modelDto.EventDto;
-import com.joyjoin.eventservice.modelDto.LocationDto;
-import com.joyjoin.eventservice.modelDto.PostEventRequest;
-import com.joyjoin.eventservice.modelDto.UpdateEventRequest;
+import com.joyjoin.eventservice.modelDto.*;
+import com.joyjoin.eventservice.service.EventRegistrationService;
 import com.joyjoin.eventservice.service.EventService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,6 +38,9 @@ public class EventControllerTest {
 
     @MockBean
     private EventService eventService;
+
+    @MockBean
+    private EventRegistrationService eventRegistrationService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -120,5 +121,82 @@ public class EventControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title", is(eventDto.getTitle())));
     }
+    @Test
+    void shouldDeleteEventSuccessfully() throws Exception {
+        UUID eventId = eventDto.getEventId();
+        given(eventService.deleteEvent(eventId)).willReturn(eventDto);
 
+        mockMvc.perform(delete("/api/events/" + eventId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title", is(eventDto.getTitle())));
+    }
+    @Test
+    void shouldRegisterUserToEventSuccessfully() throws Exception {
+        UUID eventId = UUID.randomUUID();
+        UUID userId = UUID.randomUUID();
+        EventRegistrationDto registrationDto = new EventRegistrationDto();
+        registrationDto.setEventId(UUID.fromString(eventId.toString()));
+        registrationDto.setUserId(UUID.fromString(userId.toString()));
+        given(eventRegistrationService.registerUserToEvent(eventId, userId)).willReturn(registrationDto);
+
+        mockMvc.perform(post("/api/events/" + eventId + "/register/" + userId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.eventId", is(eventId.toString())))
+                .andExpect(jsonPath("$.userId", is(userId.toString())));
+    }
+    @Test
+    void shouldUnregisterUserFromEventSuccessfully() throws Exception {
+        UUID eventId = UUID.randomUUID();
+        UUID userId = UUID.randomUUID();
+        EventRegistrationDto registrationDto = new EventRegistrationDto();
+        registrationDto.setEventId(UUID.fromString(eventId.toString()));
+        registrationDto.setUserId(UUID.fromString(userId.toString()));
+
+        given(eventRegistrationService.removeUserToEvent(eventId, userId)).willReturn(registrationDto);
+
+        mockMvc.perform(delete("/api/events/" + eventId + "/remove/" + userId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.eventId", is(eventId.toString())))
+                .andExpect(jsonPath("$.userId", is(userId.toString())));
+    }
+    @Test
+    void shouldFilterEventsSuccessfully() throws Exception {
+        List<EventDto> filteredEvents = Arrays.asList(eventDto);
+        String title = "Party";
+        String city = "Zurich";
+
+        given(eventService.getFilteredEvents(title, city, null, null, false)).willReturn(filteredEvents);
+
+        mockMvc.perform(get("/api/events/filter")
+                        .param("title", title)
+                        .param("city", city))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].title", is(eventDto.getTitle())));
+    }
+    @Test
+    void shouldGetValidEventsByUserIdSuccessfully() throws Exception {
+        UUID userId = UUID.randomUUID();
+        List<EventDto> validEvents = Arrays.asList(eventDto);
+
+        given(eventRegistrationService.getValidEventsByUserId(userId)).willReturn(validEvents);
+
+        mockMvc.perform(get("/api/events/valid/" + userId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].title", is(eventDto.getTitle())));
+    }
+
+    @Test
+    void shouldGetExpiredEventsByUserIdSuccessfully() throws Exception {
+        UUID userId = UUID.randomUUID();
+        List<EventDto> expiredEvents = Arrays.asList(eventDto);
+
+        given(eventRegistrationService.getExpiredEventsByUserId(userId)).willReturn(expiredEvents);
+
+        mockMvc.perform(get("/api/events/expired/" + userId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].title", is(eventDto.getTitle())));
+    }
 }
