@@ -1,11 +1,31 @@
 # Project Organization
+## Introduction
+This documentation outlines the adapted Scrum methodology utilized by our team for project management. We have employed Git Scrum boards to organize tasks and facilitate collaboration among team members. Our approach involves dividing the project into three distinct phases, each marked by specific deliverables. This documentation provides an overview of our process and workflow.
+## Scrum Board Structure
+Our Scrum board is organized around three key phases:
+- Initiation: Tasks in this phase involve project setup, initial planning, and establishing the development environment.
+- Development: This phase encompasses the core development work, where individual modules are built and integrated into the project.
+- Refinement: The final phase focuses on fine-tuning and optimizing the project, addressing any remaining issues, and preparing for deployment.
+## Task Lifecycle
+- To-Do: Tasks are initially listed as “To-Do” when they are identified and prioritized for implementation.
+In Progress: Once a team member begins working on a task, its status is updated to “In Progress” to indicate active development.
+- Done: Tasks transition to the “Done” column upon completion and successful testing by the developer. However, it’s important to note that our team, comprising four developers responsible for independent modules, does not explicitly utilize an “In Review/Testing” phase. Instead, developers conduct internal unit testing before pushing their features to the development branch.
+- In Review: A different developer has to review the code to check if there are errors that the other may made.
+- QA Not OK: In the event of integration errors or failed unit tests, tasks are moved to the “QA Not OK” column. Developers are then responsible for addressing these issues promptly to ensure the quality and integrity of the project.
+Ready for Deployment: In this step after testing and Code review we know that this task is ready to be deployed
+
+## Workflow Overview:
+- Initiation Phase: During this phase, tasks primarily involve project setup, planning, and environment configuration. Key deliverables include defining project scope, setting up repositories, and establishing development guidelines.
+- Development Phase: The core development work takes place in this phase, with each team member focusing on their respective modules. Tasks are moved from “To-Do” to “In Progress” as developers begin implementing features. Once development is complete, tasks are transitioned to “Done” after successful unit testing.
+- Refinement Phase: In the final phase, the project undergoes fine-tuning and optimization. Tasks may involve bug fixes, performance enhancements, and documentation updates. Any issues identified during integration testing are addressed promptly to ensure a stable release.
+
 ## Task Scheduling and Project Management
 - Tools: Github Projects, have a look at `images/GithubProjects.png`
 - Process: Tasks organized into user stories and added to the backlog.
 Sprint planning meetings held at the beginning of each sprint.
 2 times a week stand-up meetings conducted for progress tracking.
 Sprint reviews held at the end of each sprint.
-Timeline Overview: Gantt chart used for visualization.
+- Timeline Overview: Gantt chart used for visualization.
 
 ## Versioning and Git Branching
 Version Control: Git
