@@ -14,6 +14,8 @@ This Java library provides easy-to-use interfaces to interact with AWS S3 for st
 
 ## Installation
 
+This library is hosted on GitHub package. As a result, you need to configure your maven to use GitHub Maven Registry as well when trying to fetch package information. Please follow the steps in this [official document](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-apache-maven-registry). 
+
 To include this library in your Java project, add the following dependency to your project's `pom.xml` file:
 
 ```xml
