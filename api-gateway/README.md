@@ -48,4 +48,4 @@ This project is documented with JavaDoc. To view the javadoc, run the following 
 mvn javadoc:javadoc
 ```
 
-and then the site can be found in `target/site`.
+and then the site can be found in `target/site/apidocs/`.
