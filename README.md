@@ -71,10 +71,32 @@ running this application:
 Simply execute `dev_setup.sh`
 
 # Documentation
+## Technologies
+- Backend - Springboot, Spring Cloud
+- Frontend - Vuejs
+- Database - PostgreSQL
+- Containerization - Docker
+- CI/CD - Github Actions and Qodana
+- Deployment Frontend - Vercel
+- Deployment Backend - AWS
+- API Documentation - Swagger
+
+## Architecture
+Our Architecture consists of a Registry-Service which is responsible to check which services are available, nothing else.
+The Api-Gateway which does the work of a loadbalancer and forwards the requests made to the corresponding MS
+A User-Service, Event-Service and a Post-Service, where each of them has its own Postgres DB.
+The services communicate through API requests through the Api-Gateway. They don't know anything about each other.
+Since we deploy our services on random ports and we have a the Api-Gateway and Registry-Service it is easy to deploy multiple instances of the same Service.
+If one goes down or is not available for some reason the Api-Gateway forwards it to the other MS without any problems. 
+This makes our Application highly scalable. The other thing that makes our Application scalable are the s3 buckets.
+All of our choices are made to make our application easy scalable.
+Have a look at the `images/Architecture.png`
+
 ## API Documentation
 For the API Documentation we used Swagger. To see the documentation you need to run it locally with docker-compose.
 Then for each MS you need to get the PORT from the log, since they are dynamically assigned and then go to the page: `http://localhost:{PORT}/swagger-ui/index.html#/`
 Replace `{PORT}` with the corresponding port number for the microservice you wish to access. This will direct you to the Swagger UI interface, where you can explore and interact with the API documentation seamlessly.
+Have a look at `images/SwaggerExample.png`
 
 # Testing and continuous integration
 ## Testing approach
@@ -93,7 +115,7 @@ Our continuous integration (CI) flow was integral to our development process, pr
 ### Integration Testing
 Integration tests, as mentioned earlier, were performed to validate the interaction between different components of the system, especially at the endpoint level.
 ### Static Code Analysis
-We integrated static code analysis tools, such as Qodana, into our CI pipeline to automatically check our code for potential issues and improvements. This proactive approach enabled us to maintain code quality and catch issues early in the development process.
+We integrated static code analysis tools, such as Qodana, into our CI pipeline to automatically check our code for potential issues and improvements. This proactive approach enabled us to maintain code quality and catch issues early in the development process. Have a look at `images/QodanaExample.png`
 
 ## Quality Check Steps
 Quality checks were an integral part of our development workflow, ensuring that our code adhered to established standards and best practices. These steps were incorporated into our CI pipeline and development process:
