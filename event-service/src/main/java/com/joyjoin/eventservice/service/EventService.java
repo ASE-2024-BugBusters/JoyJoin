@@ -11,12 +11,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -136,7 +132,7 @@ public class EventService {
      */
     @Transactional
     public EventDto getEventById(UUID eventId) {
-        var event = eventRepository.findByEventIdAndIsDeletedFalseAndIsExpiredFalse(eventId)
+        var event = eventRepository.findByEventIdAndIsDeletedFalse(eventId)
                 .orElseThrow(() -> new ResourceNotFoundException("Event", "eventId", eventId.toString(),
                         Collections.singletonList("This event may have been deleted or does not exist.")));
         return eventPacker.packEvent(event);
@@ -191,9 +187,9 @@ public class EventService {
         Event event = eventRepository.findByEventIdAndIsDeletedFalseAndIsExpiredFalse(eventId)
                 .orElseThrow(() -> new ResourceNotFoundException("Event", "eventId", eventId.toString(),
                         Collections.singletonList("This event may have been deleted or does not exist.")));
-        List<EventRegistration> eventRegistrations = eventRegistrationRepository.findByEventId(eventId);
+        List<EventRegistration> eventRegistrations = eventRegistrationRepository.findByEventIdAndIsDeletedFalse(eventId);
         for (EventRegistration registration : eventRegistrations) {
-            registration.setActive(false);
+            registration.setDeleted(false);
         }
         eventRegistrationRepository.saveAll(eventRegistrations);
 
@@ -225,4 +221,5 @@ public class EventService {
     public List<Rating> getAllRatings() {
         return eventRatingRepository.findAll();
     }
+
 }

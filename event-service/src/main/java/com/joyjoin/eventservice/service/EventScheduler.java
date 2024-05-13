@@ -31,8 +31,8 @@ public class EventScheduler {
             if (event.getTime().isBefore(now) && !event.isExpired()) {
                 event.setExpired(true);
                 // Fetch and update all registrations related to this event
-                List<EventRegistration> registrations = eventRegistrationRepository.findByEventId(event.getEventId());
-                registrations.forEach(registration -> registration.setActive(false));
+                List<EventRegistration> registrations = eventRegistrationRepository.findByEventIdAndIsDeletedFalse(event.getEventId());
+                registrations.forEach(registration -> registration.setExpired(true));
                 eventRegistrationRepository.saveAll(registrations);
 
                 // Fetch and update the participation count

@@ -156,7 +156,6 @@ export default {
         data.images = imagesPayload;
       }
 
-      console.log("Data to be sent:", data);
       try {
         const createEventUrl = BASE_URL_EVENT_SERVICE + "/events/create";
         console.log(createEventUrl);

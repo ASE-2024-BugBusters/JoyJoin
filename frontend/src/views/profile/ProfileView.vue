@@ -37,7 +37,7 @@
   </div>
 
   <!--User's All Posts-->
-  <UserAllPosts/>
+  <UserAllPosts :userId="userId"/>
 </template>
 
 <script>
@@ -91,7 +91,6 @@ export default {
       try {
         const response = await axios.get(getProfileUrl, axios_options);
         const data = response.data[0];
-        console.log(data);
         userProfile.value = {
           nickname: data.nickname,
           biography: data.biography
@@ -123,7 +122,6 @@ export default {
 
     const fetchFollowers = async function () {
       const url = BASE_URL_USER_SERVICE + '/user/users/' + userId.value + '/follower';
-      console.log(url);
       try {
         const response = await axios.get(url, axios_options);
         followers.value = response.data;
@@ -135,7 +133,6 @@ export default {
 
     const fetchFollowings = async function () {
       const url = BASE_URL_USER_SERVICE + '/user/users/' + userId.value + '/followee';
-      console.log(url);
       try {
         const response = await axios.get(url, axios_options);
         followings.value = response.data;
@@ -208,7 +205,6 @@ export default {
     }
 
     watch(() => route.params.user_id, (new_id) => {
-      console.log(new_id);
       userId.value = new_id;
       showFollowerList.value = false;
       showFollowingList.value = false;
