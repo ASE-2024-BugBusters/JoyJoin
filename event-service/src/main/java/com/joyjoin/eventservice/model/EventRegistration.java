@@ -22,8 +22,10 @@ public class EventRegistration {
     private UUID registrationId;
     private UUID eventId;
     private UUID userId;
+
     // when the user is removed from the event or the event is deleted, this registration will be marked as deleted;
     private boolean isDeleted = false;
+
     // when the event has expired, this registration will be marked as expired;
     private boolean isExpired = false;
 

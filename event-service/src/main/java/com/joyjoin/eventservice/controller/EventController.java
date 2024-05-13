@@ -225,18 +225,39 @@ public class EventController {
     }
 
 
+    /**
+     * Submits a new rating for an event.
+     * This method accepts a rating object, validates it, and processes it to store the rating.
+     *
+     * @param rating the {@link Rating} object populated from the POST request body, must be valid as per JSR-303 annotations
+     * @return the saved {@link Rating} object
+     */
     @PostMapping("/rating")
     public Rating rating(@Valid @RequestBody Rating rating) {
         return eventService.rateEvent(rating);
     }
 
+    /**
+     * Retrieves all ratings for a specific event identified by its UUID.
+     * This method fetches and returns a list of {@link Rating} objects associated with the given event ID.
+     *
+     * @param eventId the UUID of the event for which ratings are being requested
+     * @return a list of {@link Rating} objects for the specified event
+     */
     @GetMapping("/rating/{eventId}")
     public List<Rating> getRatingByEventId(@PathVariable UUID eventId) {
         return eventService.getRatingsByEventId(eventId);
     }
 
+    /**
+     * Retrieves ratings for all events.
+     * This method fetches and returns a list of all {@link Rating} objects available in the system.
+     *
+     * @return a list of all {@link Rating} objects
+     */
     @GetMapping("/rating")
     public List<Rating> getAllRatings() {
         return eventService.getAllRatings();
     }
+
 }

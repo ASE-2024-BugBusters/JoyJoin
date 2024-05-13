@@ -20,5 +20,7 @@ public class EventParticipationCount {
     @Id
     private UUID eventId;
     private Integer participantCount = 0;
+
+    // when event is expired or deleted, the eventRegistrationCount instance will be marked as isActive = false;
     private boolean isActive = true;
 }
