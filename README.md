@@ -1,3 +1,5 @@
+*NOTE*: please find the GitHub repository at https://github.com/ASE-2024-BugBusters/JoyJoin, where you can also find the wiki, scrum boards and the history pull requests.
+
 # Project Organization
 ## Introduction
 This documentation outlines the adapted Scrum methodology utilized by our team for project management. We have employed Git Scrum boards to organize tasks and facilitate collaboration among team members. Our approach involves dividing the project into three distinct phases, each marked by specific deliverables. This documentation provides an overview of our process and workflow.
